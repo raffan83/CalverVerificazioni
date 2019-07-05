@@ -55,45 +55,20 @@ public class PannelloMisuraMaster extends JPanel
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private JTextField denominazioneField;
-	private JTextField cod_int_field;
-	private JTextField construct_field;
-	private JTextField model_field;
-	private JTextField matricola_field;
-	private JTextField freq_field;
-	private JTextField res_field;
-	private JTextField campo_misura_field;
-	private JTextField id_str_field;
-	private JTextField proc_field;
-	private JTextArea textAreaNote;
-	private JButton btnSalva;
 	static JTree tree =null;
 	JPopupMenu popupMenu,popupMenuMisura;
 	JMenuItem jmit,jmit1,jmitMisura;
 	int current;
-	
-	private JSlider slider_1=null;
-	private JSlider slider_2=null;
-	private JSlider slider_3=null;
-	private JSlider slider_4=null;
-	private JSlider slider_5=null;
-	private JSlider slider_6=null;
-	
-
 	JLabel lblTipoStrumento;
-	private JTextField id_field;
-	private JTextField address_field;
-	private JTextField reparto_field;
-	private JTextField utilizzatore_field;
-	private JTextField textField_com_port;
-	private JTextField textField_delay;
-	
-	private Splash spl=null;
+
 	JPanel panel_dati_misura;
 	JPanel panel_struttura;
 	JPanel panel_avvio;
 	JPanel panel_stampa;
-	private JPanel panel_tabella,panel_controllo_visuale;
+	private JPanel panel_tabella;
+	private JPanel panel_prova_ripetibilita;
+	private JPanel panel_prova_decentramento;
+	private JPanel panel_prova_linearita;
 	JSplitPane splitPane;
 
 
@@ -103,10 +78,20 @@ public class PannelloMisuraMaster extends JPanel
 	static JFrame myFrame=null;
 	JTable table_dati_strumento=null;
 	JTable tabellaSecurTest=null;
-	private JTable tabellaDomandePreliminari;
 	JFrame f;
 	ArrayList<ButtonGroup> listaRisposte = new ArrayList<>();
-	private JTable table;
+	private JTable tableRip,tableDec,tableLin;
+	
+	ModelRipetibilita modelRip;
+	ModelDecentramento modelDec;
+	ModelLinearita modelLin;
+	
+	private JTextField textField_p_p_rip;
+	private JTextField textField_mpe_rip;
+	private JTextField textField_esito_rip;
+	private JTextField textField;
+	private JTextField textField_1;
+	
 	public PannelloMisuraMaster(String id) throws Exception
 	{
 		SessionBO.prevPage="PSS";
@@ -121,30 +106,43 @@ public class PannelloMisuraMaster extends JPanel
 
 		JPanel masterPanel = new JPanel();
 		
-		masterPanel.setLayout(new MigLayout("", "[grow]", "[70%,grow][15%]"));
+		masterPanel.setLayout(new MigLayout("", "[grow]", "[][70%,grow][15%]"));
 
 
-		
-		panel_controllo_visuale=costruisciPanelloLinearita();
 		panel_tabella = costruisciTabella();
+		panel_prova_ripetibilita=costruisciPanelloRipetibilita();
+		panel_prova_decentramento=costruisciPanelloDecentramento();
+		panel_prova_linearita=costruisciPannelloLinearita();
+		
+		
 		panel_struttura =creaPanelStruttura();
+		
+		JLabel lblCampo = new JLabel("Campo");
+		lblCampo.setFont(new Font("Arial", Font.BOLD, 14));
+		masterPanel.add(lblCampo, "flowx,cell 0 0");
 		
 
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		
-		tabbedPane.addTab("Misura",panel_tabella);
+		tabbedPane.addTab("Controllo preliminare",panel_tabella);
+		tabbedPane.addTab("Prova Ripetibilità", panel_prova_ripetibilita);
+		tabbedPane.addTab("Prova Decentramento", panel_prova_decentramento);
+		tabbedPane.addTab("Prova Linearità", panel_prova_linearita);
 		
-		tabbedPane.addTab("Controllo Visivo", panel_controllo_visuale);
-		masterPanel.add(tabbedPane, "cell 0 0,grow");
-		masterPanel.add(panel_struttura,"cell 0 1,grow");
+		masterPanel.add(tabbedPane, "cell 0 1,grow");
+		masterPanel.add(panel_struttura,"cell 0 2,grow");
 
 
-		double height=(SessionBO.heightFrame*73)/100;
+     	double height=(SessionBO.heightFrame*73)/100;
 		double width=(SessionBO.widthFrame*70)/100;
-
 		masterPanel.setPreferredSize(new Dimension((int)width-50,(int) height/2));
 
 		JScrollPane scroll= new JScrollPane(masterPanel);
+		
+		JComboBox comboBox = new JComboBox();
+		comboBox.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "3"}));
+		comboBox.setFont(new Font("Arial", Font.BOLD, 14));
+		masterPanel.add(comboBox, "cell 0 0");
 
 		this.add(scroll, "cell 0 0,grow");
 
@@ -156,60 +154,280 @@ public class PannelloMisuraMaster extends JPanel
 	}
 
 	
-	private JPanel costruisciPanelloLinearita() {
+
+	private JPanel costruisciPanelloRipetibilita() {
 		
-		JPanel pannello= new JPanel();
+		JPanel pannelloRipetibilita= new JPanel();
 		
-		pannello.setBorder(new TitledBorder(new LineBorder(new Color(255, 0, 0), 2, true), "Condizioni visive", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		pannello.setBackground(Color.WHITE);
-		pannello.setLayout(new MigLayout("", "[][grow]", "[][][grow]"));
+		pannelloRipetibilita.setBorder(new TitledBorder(new LineBorder(new Color(255, 0, 0), 2, true), "Prova Ripetibilità", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		pannelloRipetibilita.setBackground(Color.WHITE);
+		pannelloRipetibilita.setLayout(new MigLayout("", "[22.00][][grow]", "[][][][][][][][13.00][][13.00][]"));
 		
-		JLabel lblNewLabel = new JLabel("Prova di Ripetibilit\u00E0");
-		lblNewLabel.setFont(new Font("Calibri", Font.BOLD, 14));
-		pannello.add(lblNewLabel, "flowx,cell 1 0");
+		tableRip = new JTable();
 		
-		JLabel lblNewLabel_2 = new JLabel("(Rif.UNI CEI EN 45501:2015: A.4.10)");
-		lblNewLabel_2.setFont(new Font("Calibri", Font.PLAIN, 14));
-		pannello.add(lblNewLabel_2, "cell 1 0");
+		modelRip = new ModelRipetibilita(strumento.getUm());
 		
-		table = new JTable();
+		tableRip.setModel(modelRip);
 		
-		ModelLinearita modelLin = new ModelLinearita();
+		tableRip.setRowHeight(25);
+		tableRip.setFont(new Font("Arial", Font.PLAIN, 12));
+		tableRip.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
 		
-		table.setModel(modelLin);
-		
-		table.setRowHeight(25);
-		table.setFont(new Font("Arial", Font.PLAIN, 14));
-		table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 16));
-		
-		table.setDefaultRenderer(Object.class, new MyCellRenderer());
+		tableRip.setDefaultRenderer(Object.class, new MyCellRenderer());
 		
 		
 		if (strumento.getClasse()==1 || strumento.getClasse()==2) 
 		{
 			for (int i = 0; i < 6; i++) {
 				
-				modelLin.addRow(new Object[0]);
-				modelLin.setValueAt(i+1, i, 0);
+				modelRip.addRow(new Object[0]);
+				modelRip.setValueAt(i+1, i, 0);
 			}
 		}
 		else 
 		{	
 				for (int i = 0; i < 3; i++) {
 				
-					modelLin.addRow(new Object[0]);
-					modelLin.setValueAt(i+1, i, 0);
+					modelRip.addRow(new Object[0]);
+					modelRip.setValueAt(i+1, i, 0);
 				}
 		}
 		
+		JLabel lblNewLabel = new JLabel("Prova di Ripetibilit\u00E0");
+		lblNewLabel.setFont(new Font("Calibri", Font.BOLD, 14));
+		pannelloRipetibilita.add(lblNewLabel, "cell 0 0 2 1");
+		
+		JLabel lblNewLabel_2 = new JLabel("(Rif.UNI CEI EN 45501:2015: A.4.10)");
+		lblNewLabel_2.setFont(new Font("Calibri", Font.PLAIN, 14));
+		pannelloRipetibilita.add(lblNewLabel_2, "cell 2 0");
 		
 		
-		pannello.add(table, "cell 1 2,alignx left,aligny top");
+		JScrollPane scrollTab = new JScrollPane(tableRip);
+		
+		pannelloRipetibilita.add(scrollTab, "cell 1 3 2 1,width :750:,alignx left,height :200:,aligny top");
+		
+		JLabel lblNewLabel_3 = new JLabel("Note: 3 ripetizioni per Bilance di Classe III e IIII, 6 ripetizioni per bilance di Classe I e II");
+		lblNewLabel_3.setForeground(Color.RED);
+		lblNewLabel_3.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloRipetibilita.add(lblNewLabel_3, "cell 1 4 2 1");
+		
+		JLabel lblPmaxpmin = new JLabel("Pmax-Pmin:");
+		lblPmaxpmin.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloRipetibilita.add(lblPmaxpmin, "cell 1 6,alignx trailing");
+		
+		textField_p_p_rip = new JTextField();
+		textField_p_p_rip.setFont(new Font("Arial", Font.PLAIN, 12));
+		pannelloRipetibilita.add(textField_p_p_rip, "cell 2 6,width :100:");
+		textField_p_p_rip.setColumns(10);
+		
+		JLabel lblMpe = new JLabel("MPE :");
+		lblMpe.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloRipetibilita.add(lblMpe, "cell 1 8,alignx trailing");
+		
+		textField_mpe_rip = new JTextField();
+		textField_mpe_rip.setFont(new Font("Arial", Font.PLAIN, 12));
+		textField_mpe_rip.setColumns(10);
+		pannelloRipetibilita.add(textField_mpe_rip, "cell 2 8,width :100:");
+		
+		JLabel lblEsito = new JLabel("ESITO:");
+		lblEsito.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloRipetibilita.add(lblEsito, "cell 1 10,alignx trailing");
+		
+		textField_esito_rip = new JTextField();
+		textField_esito_rip.setBackground(Color.YELLOW);
+		textField_esito_rip.setFont(new Font("Arial", Font.PLAIN, 12));
+		textField_esito_rip.setColumns(10);
+		pannelloRipetibilita.add(textField_esito_rip, "cell 2 10,width :100:");
 
-		return pannello;
+		return pannelloRipetibilita;
 	}
+	
+	private JPanel costruisciPanelloDecentramento() {
+		JPanel pannelloDecentramento= new JPanel();
+		
+		pannelloDecentramento.setBorder(new TitledBorder(new LineBorder(new Color(255, 0, 0), 2, true), "Prova Ripetibilità", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		pannelloDecentramento.setBackground(Color.WHITE);
+		pannelloDecentramento.setLayout(new MigLayout("", "[22.00][][160.00][160][160][]", "[][][][][][][][]"));
+		
+		tableDec = new JTable();
+		
+		modelDec = new ModelDecentramento(strumento.getUm());
+		
+		tableDec.setModel(modelDec);
+		
+		tableDec.setRowHeight(17);
+		tableDec.setFont(new Font("Arial", Font.PLAIN, 12));
+		tableDec.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+		
+		tableDec.setDefaultRenderer(Object.class, new MyCellRenderer());
+		
+		int indice=1;
+		
+		for (int i = 0; i < 10; i=i+2) {
+			
+			modelDec.addRow(new Object[0]);
+			modelDec.setValueAt("E0", i, 0);
+			modelDec.addRow(new Object[0]);
+			modelDec.setValueAt(indice, i+1, 0);
+			indice++;
+		}
 
+		
+		JLabel lblNewLabel = new JLabel("Prova di Ripetibilit\u00E0");
+		lblNewLabel.setFont(new Font("Calibri", Font.BOLD, 14));
+		pannelloDecentramento.add(lblNewLabel, "cell 0 0 6 1");
+		
+		JLabel lblNewLabel_2 = new JLabel("(Rif.UNI CEI EN 45501:2015: A.4.7)");
+		lblNewLabel_2.setFont(new Font("Calibri", Font.PLAIN, 14));
+		pannelloDecentramento.add(lblNewLabel_2, "cell 0 0");
+		
+		JLabel lblEsempiDiTipici = new JLabel("Esempi di tipici ricettori di carico");
+		lblEsempiDiTipici.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloDecentramento.add(lblEsempiDiTipici, "cell 0 1 5 1,alignx center");
+		
+		JLabel lblNewLabel_4 = new JLabel("");
+		lblNewLabel_4.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/bil_qua.png")));
+		pannelloDecentramento.add(lblNewLabel_4, "cell 2 2,alignx center");
+		
+		JLabel lblNewLabel_5 = new JLabel("");
+		lblNewLabel_5.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/bil_cer.png")));
+		pannelloDecentramento.add(lblNewLabel_5, "cell 3 2,alignx center");
+		
+		JLabel label = new JLabel("");
+		label.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/bil_tri.png")));
+		pannelloDecentramento.add(label, "cell 4 2,alignx center");
+		
+		JRadioButton rdbtn_quad = new JRadioButton("");
+		rdbtn_quad.setBackground(Color.WHITE);
+		pannelloDecentramento.add(rdbtn_quad, "cell 2 3,alignx center");
+		
+		JRadioButton rdbtn_cer = new JRadioButton("");
+		rdbtn_cer.setBackground(Color.WHITE);
+		pannelloDecentramento.add(rdbtn_cer, "cell 3 3,alignx center");
+		
+		JRadioButton rdbtn_tri = new JRadioButton("");
+		rdbtn_tri.setBackground(Color.WHITE);
+		pannelloDecentramento.add(rdbtn_tri, "cell 4 3,alignx center");
+		
+		JLabel lblNewLabel_6 = new JLabel("Numero di punti di appoggi del ricettore di carico:");
+		lblNewLabel_6.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloDecentramento.add(lblNewLabel_6, "cell 1 4 3 1,alignx left");
+		
+		JLabel lblCarico = new JLabel("Carico");
+		lblCarico.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloDecentramento.add(lblCarico, "flowx,cell 4 4,alignx right");
+		
+		JLabel lblStrumentoSpeciale = new JLabel("Strumento speciale");
+		lblStrumentoSpeciale.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloDecentramento.add(lblStrumentoSpeciale, "flowx,cell 5 4,alignx right");
+		
+		
+		JScrollPane scrollTab = new JScrollPane(tableDec);
+		
+		pannelloDecentramento.add(scrollTab, "cell 1 5 5 1,width :750:,alignx left,height :200:,aligny top");
+		
+		JLabel lblEsito = new JLabel("ESITO:");
+		lblEsito.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloDecentramento.add(lblEsito, "cell 1 7,alignx trailing");
+		
+		textField_1 = new JTextField();
+		textField_1.setColumns(10);
+		pannelloDecentramento.add(textField_1, "cell 4 4,width :50:50,alignx right");
+		
+		JComboBox comboBox = new JComboBox();
+		comboBox.setModel(new DefaultComboBoxModel(new String[] {"SI", "NO"}));
+		pannelloDecentramento.add(comboBox, "cell 5 4,alignx right");
+		
+		textField = new JTextField();
+		pannelloDecentramento.add(textField, "cell 1 4,width :50:50");
+		textField.setColumns(10);
+		
+		textField_esito_rip = new JTextField();
+		textField_esito_rip.setBackground(Color.YELLOW);
+		textField_esito_rip.setFont(new Font("Arial", Font.PLAIN, 12));
+		textField_esito_rip.setColumns(10);
+		pannelloDecentramento.add(textField_esito_rip, "cell 2 7,width :100:");
 
+		ButtonGroup bg=new ButtonGroup();
+		bg.add(rdbtn_quad);
+		bg.add(rdbtn_cer);
+		bg.add(rdbtn_tri);
+		
+		return pannelloDecentramento;
+	}
+	
+	
+
+	private JPanel costruisciPannelloLinearita() {
+		
+		JPanel pannelloLinearita= new JPanel();
+		
+		pannelloLinearita.setBorder(new TitledBorder(new LineBorder(new Color(255, 0, 0), 2, true), "Prova Ripetibilità", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		pannelloLinearita.setBackground(Color.WHITE);
+		pannelloLinearita.setLayout(new MigLayout("", "[22.00][][grow]", "[][][][][][][][][13.00][][13.00][]"));
+		
+		tableLin = new JTable();
+		
+		modelLin = new ModelLinearita(strumento.getUm());
+		
+		tableLin.setModel(modelLin);
+		
+		tableLin.setRowHeight(25);
+		tableLin.setFont(new Font("Arial", Font.PLAIN, 12));
+		tableLin.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+		
+		tableLin.setDefaultRenderer(Object.class, new MyCellRenderer());
+		
+		for (int i = 0; i <=6; i++) {
+			
+			modelLin.addRow(new Object[0]);
+			
+			if(i==0)
+			{
+				modelLin.setValueAt("E0", i, 0);
+			}else
+			{
+				modelLin.setValueAt(i, i, 0);
+			}
+		}
+		
+		
+		JLabel lblNewLabel = new JLabel("Prova di Ripetibilit\u00E0");
+		lblNewLabel.setFont(new Font("Calibri", Font.BOLD, 14));
+		pannelloLinearita.add(lblNewLabel, "cell 0 0 2 1");
+		
+		JLabel lblNewLabel_2 = new JLabel("(Rif.UNI CEI EN 45501:2015: A.4.4.1 - A.4.2.3)");
+		lblNewLabel_2.setFont(new Font("Calibri", Font.PLAIN, 14));
+		pannelloLinearita.add(lblNewLabel_2, "cell 2 0");
+		
+		JLabel lblTipoDispositivoDi = new JLabel("Tipo dispositivo di azzeramento");
+		lblTipoDispositivoDi.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloLinearita.add(lblTipoDispositivoDi, "cell 1 2,alignx trailing");
+		
+		JComboBox comboBox_tipo_azzeramento = new JComboBox();
+		comboBox_tipo_azzeramento.setModel(new DefaultComboBoxModel(new String[] {"Automatico", "Non automatico o semiautomatico"}));
+		comboBox_tipo_azzeramento.setFont(new Font("Arial", Font.PLAIN, 12));
+		pannelloLinearita.add(comboBox_tipo_azzeramento, "cell 2 2");
+		
+		
+		JScrollPane scrollTab = new JScrollPane(tableLin);
+		
+		pannelloLinearita.add(scrollTab, "cell 1 4 2 1,growx,alignx left,height :200:,aligny top");
+		
+
+		JLabel lblEsito = new JLabel("ESITO:");
+		lblEsito.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloLinearita.add(lblEsito, "cell 1 6,alignx left");
+		
+		textField_esito_rip = new JTextField();
+		textField_esito_rip.setBackground(Color.YELLOW);
+		textField_esito_rip.setFont(new Font("Arial", Font.PLAIN, 12));
+		textField_esito_rip.setColumns(10);
+		pannelloLinearita.add(textField_esito_rip, "cell 1 6,width :100:");
+
+		return pannelloLinearita;
+	}
+	
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
 	
@@ -249,7 +467,6 @@ public class PannelloMisuraMaster extends JPanel
 			String domanda =listaDomande.get(i);
 			y=i*30;
 			
-			System.out.println(y);
 			JLabel lab1= new JLabel(domanda);
 			lab1.setBounds(10, y, 900, 25);
 			lab1.setFont(f);
@@ -416,15 +633,16 @@ public class PannelloMisuraMaster extends JPanel
 
 	}
 	
-	class ModelLinearita extends DefaultTableModel {
+	class ModelRipetibilita extends DefaultTableModel {
 
 
-		public ModelLinearita() {
+		public ModelRipetibilita(String um) 
+		{
 			addColumn("N° Ripetizioni");
-			addColumn("Massa L");
-			addColumn("Indicazione I");
-			addColumn("Carico aggiuntivo  ΔL");
-			addColumn("P");
+			addColumn("Massa L ("+um+")");
+			addColumn("Indicazione I ("+um+")");
+			addColumn("Carico Agg.  ΔL ("+um+")");
+			addColumn("P ("+um+")");
 
 		}
 		@Override
@@ -447,6 +665,121 @@ public class PannelloMisuraMaster extends JPanel
 
 		@Override
 		public boolean isCellEditable(int row, int column) {
+			
+			if(column>2 && column<5)
+			{
+				return true;
+			}else
+			{
+				return true;
+			}
+		}
+
+
+	}
+	
+	class ModelDecentramento extends DefaultTableModel {
+
+
+		public ModelDecentramento(String um) 
+		{
+			addColumn("Posizione n°");
+			addColumn("Massa L ("+um+")");
+			addColumn("Indicazione I ("+um+")");
+			addColumn("Carico Agg.  ΔL ("+um+")");
+			addColumn("Errore E ("+um+")");
+			addColumn("Er. corretto Ec ("+um+")");
+			addColumn("MPE(±) ("+um+")");
+
+		}
+		@Override
+		public Class<?> getColumnClass(int column) {
+			switch (column) {
+			case 0:
+				return String.class;
+			case 1:
+				return String.class;
+			case 2:
+				return String.class;
+			case 3:
+				return String.class;
+			case 4:
+				return String.class;
+			case 5:
+				return String.class;
+			case 6:
+				return String.class;
+			default:
+				return String.class;
+			}
+		}
+
+		@Override
+		public boolean isCellEditable(int row, int column) {
+			
+			if(column>2 && column<5)
+			{
+				return true;
+			}else
+			{
+				return true;
+			}
+		}
+
+
+	}
+	
+	class ModelLinearita extends DefaultTableModel {
+
+
+		public ModelLinearita(String um) 
+		{
+			addColumn("Rif. n°");
+			addColumn("Massa L ("+um+")");
+			addColumn("↑ Indicazione I ("+um+")");
+			addColumn("↓ Indicazione I ("+um+")");
+			addColumn("↑ Carico Agg.  ΔL ("+um+")");
+			addColumn("↓ Carico Agg.  ΔL ("+um+")");
+			addColumn("↑ Errore E ("+um+")");
+			addColumn("↓ Errore E ("+um+")");
+			addColumn("↑ Er. corretto Ec ("+um+")");
+			addColumn("↓ Er. corretto Ec ("+um+")");
+			addColumn("MPE(±) ("+um+")");
+
+		}
+		@Override
+		public Class<?> getColumnClass(int column) {
+			switch (column) {
+			case 0:
+				return String.class;
+			case 1:
+				return String.class;
+			case 2:
+				return String.class;
+			case 3:
+				return String.class;
+			case 4:
+				return String.class;
+			case 5:
+				return String.class;
+			case 6:
+				return String.class;
+			case 7:
+				return String.class;
+			case 8:
+				return String.class;
+			case 9:
+				return String.class;
+			case 10:
+				return String.class;
+			default:
+				return String.class;
+			}
+		}
+
+		@Override
+		public boolean isCellEditable(int row, int column) {
+			
 			if(column>2 && column<5)
 			{
 				return true;
