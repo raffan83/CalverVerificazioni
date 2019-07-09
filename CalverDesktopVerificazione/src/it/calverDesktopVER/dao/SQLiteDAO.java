@@ -315,13 +315,13 @@ public class SQLiteDAO {
 
 		try{
 			con=getConnection();
-			pst=con.prepareStatement("INSERT INTO ver_misura(id_ver_strumento,data_verificazione,seq_risposte,stato) VALUES(?,?,?)",pst.RETURN_GENERATED_KEYS);
+			pst=con.prepareStatement("INSERT INTO ver_misura(id_ver_strumento,data_verificazione,seq_risposte,stato) VALUES(?,?,?,?)",pst.RETURN_GENERATED_KEYS);
 			
 			pst.setInt(1,Integer.parseInt(id));
 			SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 			Date d = new Date();
 			pst.setString(2,sdf.format(d));
-			pst.setString(3,"0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0");
+			pst.setString(3,"0");
 			pst.setString(4,"0");
 			pst.execute();
 		
@@ -2000,7 +2000,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 
 		try{
 			con=getConnection();
-			pst=con.prepareStatement("INSERT INTO ver_mobilita(id_misura,campo,caso,carico) VALUES(?,?,?)");
+			pst=con.prepareStatement("INSERT INTO ver_mobilita(id_misura,campo,caso,carico) VALUES(?,?,?,?)");
 
 
 			if(tipoStrumento!=3) 
@@ -2056,6 +2056,91 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		}
 
 		
+	}
+	public static void insertProvaDecentramento(int idMisura, int tipoStrumento) throws Exception {
+	
+		Connection con =null;
+		PreparedStatement pst= null;
+
+		try{
+			con=getConnection();
+			pst=con.prepareStatement("INSERT INTO ver_decentramento(id_misura,campo,posizione) VALUES(?,?,?)");
+
+
+			if(tipoStrumento!=3) 
+			{
+				for (int i = 0; i < 10; i++) 
+
+				{
+					pst.setInt(1,idMisura);		
+					pst.setInt(2,0);
+					pst.setInt(3,i+1);
+
+					pst.execute();
+				}
+
+			}
+			else 
+			{
+				for (int y = 0; y < 3; y++) {
+
+					int campo=y+1;	
+
+					for (int i = 0; i < 10; i++) 
+
+					{
+						pst.setInt(1,idMisura);		
+						pst.setInt(2,campo);
+						pst.setInt(3,i+1);
+
+						pst.execute();
+					}
+				}	
+			}
+
+		}catch(Exception ex)
+		{
+			ex.printStackTrace();
+			throw ex;
+		}
+		finally
+		{
+			pst.close();
+			con.close();
+		}
+		
+		
+	}
+	public static void saveControlloPreliminare(int idMisura, String sequence) throws Exception {
+		
+		
+		Connection con=null;
+		PreparedStatement pst=null;
+		ResultSet rs=null;
+		int toRet=0;
+		
+		try 
+		{
+			con=getConnection();
+			pst=con.prepareStatement("UPDATE ver_misura set seq_risposte=? WHERE id=?");
+			
+			pst.setString(1, sequence);
+			pst.setInt(2, idMisura);
+			
+			pst.executeQuery();
+			
+		}
+		catch (Exception e) 
+		{
+		 e.printStackTrace();	
+		 throw e;
+		}
+		finally
+		{
+			pst.close();
+			con.close();
+		}
+
 	}
 
 }

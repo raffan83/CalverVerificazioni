@@ -1,14 +1,9 @@
 package it.calverDesktopVER.bo;
 
 
-import java.io.ByteArrayOutputStream;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 import it.calverDesktopVER.dao.SQLiteDAO;
-import it.calverDesktopVER.utl.Utility;
 
 
 // Referenced classes of package it.calverDesktop.bo:
@@ -37,6 +32,7 @@ public class GestioneMisuraBO
     	
     	SQLiteDAO.insertProvaMobilita(idMisura,tipoStrumento);
     	
+    	SQLiteDAO.insertProvaDecentramento(idMisura,tipoStrumento);
     	
         return idMisura;
     }
@@ -71,6 +67,12 @@ public class GestioneMisuraBO
 		
 		
 		return toReturn;
+	}
+
+	public static void saveControlloPreliminare(int idMisura, String sequence) throws Exception {
+		
+		SQLiteDAO.saveControlloPreliminare(idMisura,sequence);
+		
 	}
 
 	
