@@ -14,7 +14,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
+import it.calverDesktopVER.dto.VerAccuratezzaDTO;
+import it.calverDesktopVER.dto.VerClassiDTO;
+import it.calverDesktopVER.dto.VerDecentramentoDTO;
+import it.calverDesktopVER.dto.VerLinearitaDTO;
+import it.calverDesktopVER.dto.VerMisuraDTO;
+import it.calverDesktopVER.dto.VerMobilitaDTO;
+import it.calverDesktopVER.dto.VerRipetibilitaDTO;
 import it.calverDesktopVER.dto.VerStrumentoDTO;
 import it.calverDesktopVER.utl.Costanti;
 import it.calverDesktopVER.utl.Utility;
@@ -2116,9 +2124,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		
 		Connection con=null;
 		PreparedStatement pst=null;
-		ResultSet rs=null;
-		int toRet=0;
-		
+
 		try 
 		{
 			con=getConnection();
@@ -2127,7 +2133,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			pst.setString(1, sequence);
 			pst.setInt(2, idMisura);
 			
-			pst.executeQuery();
+			pst.execute();
 			
 		}
 		catch (Exception e) 
@@ -2142,5 +2148,435 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		}
 
 	}
+	public static VerMisuraDTO getStatoMisura(int idMisura) throws Exception {
+		Connection con=null;
+		PreparedStatement pst=null;
+		ResultSet rs=null;
+		VerMisuraDTO misura=null;
+		
+		try 
+		{
+			con=getConnection();
+			pst=con.prepareStatement("SELECT * FROM ver_misura WHERE id=?");
+			pst.setInt(1, idMisura);
+			
+			rs=pst.executeQuery();
+			
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			
+			
+			
+			while(rs.next())
+			{
+				misura= new VerMisuraDTO();
+				misura.setId(idMisura);
+				misura.setIdVerIntervento(rs.getInt("id_ver_strumento"));
+				misura.setDataVerificazione(sdf.parse(rs.getString("data_verificazione")));
+				
+				String dataScadenza=rs.getString("data_scadenza");
+				
+				if(dataScadenza!=null)
+				{
+					misura.setDataScadenza(sdf.parse(dataScadenza));
+				}
+				
+				misura.setNumeroRapporto(rs.getString("numero_rapporto"));
+				misura.setNumeroAttestato(rs.getString("numero_attestato"));
+				misura.setRegistro(rs.getString("registro"));
+				misura.setProcedura(rs.getString("procedura"));
+				misura.setNomeRiparatore(rs.getString("nome_riparatore"));
+				misura.setDataRiparazione(rs.getDate("data_riparazione"));
+				misura.setSeqRisposte(rs.getString("seq_risposte"));
+				misura.setIdNonConforme(rs.getInt("id_non_conforme"));
+				misura.setStato(rs.getInt("stato"));
+			}
+			
+		}
+		catch (Exception e) 
+		{
+		 e.printStackTrace();	
+		 throw e;
+		}
+		finally
+		{
+			pst.close();
+			con.close();
+		}
+
+		return misura;
+	}
+	public static List<VerRipetibilitaDTO> getListaProvaRipetibilita(int idMisura) throws Exception {
+		Connection con=null;
+		PreparedStatement pst=null;
+		ResultSet rs=null;
+		ArrayList<VerRipetibilitaDTO> listaRipetibilita= new ArrayList<>();
+		
+		VerRipetibilitaDTO ver_rip = null;
+		
+		try 
+		{
+			con=getConnection();
+			pst=con.prepareStatement("SELECT * FROM ver_ripetibilita WHERE id_misura=? ORDER BY id ASC");
+			pst.setInt(1, idMisura);
+			
+			rs=pst.executeQuery();
+			
+			
+			while(rs.next())
+			{
+				ver_rip=new VerRipetibilitaDTO(); 
+				ver_rip.setId(rs.getInt("id"));
+			    ver_rip.setCampo(rs.getInt("campo"));
+			    ver_rip.setNumeroRipetizione(rs.getInt("numero_ripetizione"));
+			    ver_rip.setMassa(rs.getBigDecimal("massa"));
+			    ver_rip.setIndicazione(rs.getBigDecimal("indicazione"));
+			    ver_rip.setCaricoAgg(rs.getBigDecimal("carico_agg"));
+			    ver_rip.setPortata(rs.getBigDecimal("portata"));
+			    ver_rip.setDeltaPortata(rs.getBigDecimal("delta_portata"));
+			    ver_rip.setMpe(rs.getBigDecimal("mpe"));
+			    ver_rip.setEsito(rs.getString("esito"));
+			    
+			    listaRipetibilita.add(ver_rip);
+			    
+			}
+			
+		}
+		catch (Exception e) 
+		{
+		 e.printStackTrace();	
+		 throw e;
+		}
+		finally
+		{
+			pst.close();
+			con.close();
+		}
+
+		return listaRipetibilita;
+	}
+	public static List<VerDecentramentoDTO> getListaProvaDecentramento(int idMisura) throws Exception {
+		Connection con=null;
+		PreparedStatement pst=null;
+		ResultSet rs=null;
+		ArrayList<VerDecentramentoDTO> listaDecentraento= new ArrayList<>();
+		
+		VerDecentramentoDTO ver_dec = null;
+		
+		try 
+		{
+			con=getConnection();
+			pst=con.prepareStatement("SELECT * FROM ver_decentramento WHERE id_misura=? ORDER BY id ASC");
+			pst.setInt(1, idMisura);
+			
+			rs=pst.executeQuery();
+			
+			
+			while(rs.next())
+			{
+				ver_dec=new VerDecentramentoDTO();
+				ver_dec.setId(rs.getInt("id"));
+				ver_dec.setTipoRicettore(rs.getInt("tipo_ricettore"));
+				ver_dec.setPuntiAppoggio(rs.getInt("punti_appoggio"));
+			    ver_dec.setCampo(rs.getInt("campo"));
+			    ver_dec.setPosizione(rs.getInt("posizione"));
+			    ver_dec.setMassa(rs.getBigDecimal("massa"));
+			    ver_dec.setIndicazione(rs.getBigDecimal("indicazione"));
+			    ver_dec.setCaricoAgg(rs.getBigDecimal("carico_agg"));
+			    ver_dec.setErrore(rs.getBigDecimal("errore"));
+			    ver_dec.setErroreCor(rs.getBigDecimal("errore_cor"));
+			    ver_dec.setMpe(rs.getBigDecimal("mpe"));
+			    ver_dec.setEsito(rs.getString("esito"));
+			    
+			    listaDecentraento.add(ver_dec);
+			    
+			}
+			
+		}
+		catch (Exception e) 
+		{
+		 e.printStackTrace();	
+		 throw e;
+		}
+		finally
+		{
+			pst.close();
+			con.close();
+		}
+
+		return listaDecentraento;
+	}
+	
+	public static List<VerLinearitaDTO> getListaProvaLinearita(int idMisura) throws Exception {
+		Connection con=null;
+		PreparedStatement pst=null;
+		ResultSet rs=null;
+		ArrayList<VerLinearitaDTO> listaLinearita= new ArrayList<>();
+		
+		VerLinearitaDTO ver_lin = null;
+		
+		try 
+		{
+			con=getConnection();
+			pst=con.prepareStatement("SELECT * FROM ver_linearita WHERE id_misura=? ORDER BY id ASC");
+			pst.setInt(1, idMisura);
+			
+			rs=pst.executeQuery();
+			
+			
+			while(rs.next())
+			{
+				ver_lin=new VerLinearitaDTO();
+				ver_lin.setId(rs.getInt("id"));
+				ver_lin.setTipoAzzeramento(rs.getInt("tipo_azzeramento"));
+			    ver_lin.setCampo(rs.getInt("campo"));
+			    ver_lin.setRiferimento(rs.getInt("riferimento"));
+			    ver_lin.setMassa(rs.getBigDecimal("massa"));
+			    ver_lin.setIndicazioneSalita(rs.getBigDecimal("indicazione_salita"));
+			    ver_lin.setIndicazioneDiscesa(rs.getBigDecimal("indicazione_discesa"));
+			    ver_lin.setCaricoAggSalita(rs.getBigDecimal("carico_agg_salita"));
+			    ver_lin.setCaricoAggDiscesa(rs.getBigDecimal("carico_agg_discesa"));		    
+			    ver_lin.setErroreSalita(rs.getBigDecimal("errore_salita"));
+			    ver_lin.setErroreDiscesa(rs.getBigDecimal("errore_discesa"));
+			    ver_lin.setErroreCorSalita(rs.getBigDecimal("errore_cor_salita"));
+			    ver_lin.setErroreCorDiscesa(rs.getBigDecimal("errore_cor_discesa"));
+			    ver_lin.setMpe(rs.getBigDecimal("mpe"));
+			    ver_lin.setDivisione(rs.getBigDecimal("divisione"));
+			    ver_lin.setEsito(rs.getString("esito"));
+			    
+			    listaLinearita.add(ver_lin);
+			    
+			}
+			
+		}
+		catch (Exception e) 
+		{
+		 e.printStackTrace();	
+		 throw e;
+		}
+		finally
+		{
+			pst.close();
+			con.close();
+		}
+
+		return listaLinearita;
+	}
+	
+	
+	public static List<VerAccuratezzaDTO> getListaProvaAccuratezza(int idMisura) throws Exception {
+		Connection con=null;
+		PreparedStatement pst=null;
+		ResultSet rs=null;
+		ArrayList<VerAccuratezzaDTO> listaAccuratezza= new ArrayList<>();
+		
+		VerAccuratezzaDTO ver_acc = null;
+		
+		try 
+		{
+			con=getConnection();
+			pst=con.prepareStatement("SELECT * FROM ver_accuratezza WHERE id_misura=? ORDER BY id ASC");
+			pst.setInt(1, idMisura);
+			
+			rs=pst.executeQuery();
+			
+			
+			while(rs.next())
+			{
+				ver_acc=new VerAccuratezzaDTO();
+				ver_acc.setId(rs.getInt("id"));
+				ver_acc.setTipoTara(rs.getInt("tipo_tara"));
+			    ver_acc.setCampo(rs.getInt("campo"));
+			    ver_acc.setPosizione(rs.getInt("posizione"));
+			    ver_acc.setMassa(rs.getBigDecimal("massa"));
+			    ver_acc.setIndicazione(rs.getBigDecimal("indicazione"));
+			    ver_acc.setCaricoAgg(rs.getBigDecimal("carico_agg"));
+			    ver_acc.setErrore(rs.getBigDecimal("errore"));
+			    ver_acc.setErroreCor(rs.getBigDecimal("errore_cor"));
+			    ver_acc.setMpe(rs.getBigDecimal("mpe"));
+			    ver_acc.setEsito(rs.getString("esito"));
+			    
+			    listaAccuratezza.add(ver_acc);
+			    
+			}
+			
+		}
+		catch (Exception e) 
+		{
+		 e.printStackTrace();	
+		 throw e;
+		}
+		finally
+		{
+			pst.close();
+			con.close();
+		}
+
+		return listaAccuratezza;
+	}
+	public static List<VerMobilitaDTO> getListaProvaMobilita(int idMisura) throws Exception {
+		Connection con=null;
+		PreparedStatement pst=null;
+		ResultSet rs=null;
+		ArrayList<VerMobilitaDTO> listaMobilita= new ArrayList<>();
+		
+		VerMobilitaDTO ver_mob = null;
+		
+		try 
+		{
+			con=getConnection();
+			pst=con.prepareStatement("SELECT * FROM ver_mobilita WHERE id_misura=? ORDER BY id ASC");
+			pst.setInt(1, idMisura);
+			
+			rs=pst.executeQuery();			
+			
+			while(rs.next())
+			{
+				ver_mob=new VerMobilitaDTO();
+				ver_mob.setId(rs.getInt("id"));
+			    ver_mob.setCampo(rs.getInt("campo"));
+			    ver_mob.setCaso(rs.getInt("caso"));
+			    ver_mob.setCarico(rs.getInt("carico"));
+			    ver_mob.setMassa(rs.getBigDecimal("massa"));
+			    ver_mob.setIndicazione(rs.getBigDecimal("indicazione"));
+			    ver_mob.setCaricoAgg(rs.getBigDecimal("carico_agg"));
+			    ver_mob.setPostIndicazione(rs.getBigDecimal("post_indicazione"));
+			    ver_mob.setDifferenziale(rs.getBigDecimal("differenziale"));
+			    ver_mob.setDivisione(rs.getBigDecimal("divisione"));
+			    ver_mob.setCheck(rs.getString("check_stato"));
+			    ver_mob.setEsito(rs.getString("esito"));
+			    
+			    listaMobilita.add(ver_mob);
+			    
+			}
+			
+		}
+		catch (Exception e) 
+		{
+		 e.printStackTrace();	
+		 throw e;
+		}
+		finally
+		{
+			pst.close();
+			con.close();
+		}
+
+		return listaMobilita;
+		
+	}
+	public static ArrayList<VerClassiDTO> getListaClassi(int _classe) throws Exception {
+		
+		Connection con=null;
+		PreparedStatement pst=null;
+		ResultSet rs=null;
+		
+		ArrayList<VerClassiDTO> listaClassi = new ArrayList<>();
+		
+		VerClassiDTO classe;
+		
+		try 
+		{
+			con=getConnection();
+			pst=con.prepareStatement("SELECT * FROM ver_classi WHERE classe=?");
+			pst.setInt(1, _classe);
+			
+			rs=pst.executeQuery();
+			
+			while(rs.next())
+			{
+				classe=new VerClassiDTO();
+				classe.setClasse(_classe);
+				classe.setLimiteInferiore(rs.getInt("limite_inferiore"));
+				classe.setLimiteSuperiore(rs.getInt("limite_superiore"));
+				classe.setErrore(rs.getBigDecimal("errore"));
+				
+				listaClassi.add(classe);
+			}
+			
+		}
+		catch (Exception e) 
+		{
+		 e.printStackTrace();	
+		 throw e;
+		}
+		finally
+		{
+			pst.close();
+			con.close();
+		}
+
+		return listaClassi;
+	}
+	public static void updateVerRipetibilita(VerRipetibilitaDTO ripetibilita,int idMisura) throws Exception {
+		
+
+		Connection con=null;
+		PreparedStatement pst=null;
+
+		try 
+		{
+			con=getConnection();
+			pst=con.prepareStatement("UPDATE ver_ripetibilita set massa=?,indicazione=?,carico_agg=?,portata=?"
+					+ " WHERE id=?");
+			
+			pst.setBigDecimal(1, ripetibilita.getMassa());
+			pst.setBigDecimal(2, ripetibilita.getIndicazione());
+			pst.setBigDecimal(3, ripetibilita.getCaricoAgg());
+			pst.setBigDecimal(4, ripetibilita.getPortata());
+			pst.setInt(5, ripetibilita.getId());
+			
+			pst.execute();
+			
+		
+		
+		 updateValoriComuniRipetibilita(con,ripetibilita,idMisura);
+	} 
+		catch (Exception e) 
+		{
+		 e.printStackTrace();	
+		 throw e;
+		}
+		finally
+		{
+			pst.close();
+			con.close();
+		}
+		
+	}
+	private static void updateValoriComuniRipetibilita(Connection con, VerRipetibilitaDTO ripetibilita,int idMisura) throws Exception {
+		
+		PreparedStatement pst=null;
+
+		try 
+		{
+			con=getConnection();
+			pst=con.prepareStatement("UPDATE ver_ripetibilita set delta_portata=?,mpe=?,esito=? "
+					+ " WHERE id_misura=?");
+			
+			pst.setBigDecimal(1, ripetibilita.getDeltaPortata());
+			pst.setBigDecimal(2, ripetibilita.getMpe());
+			pst.setString(3, ripetibilita.getEsito());
+			pst.setInt(4,idMisura);
+			
+			pst.execute();
+			
+		
+		
+		
+	} 
+		catch (Exception e) 
+		{
+		 e.printStackTrace();	
+		 throw e;
+		}
+		finally
+		{
+			pst.close();
+	
+		}
+		
+	}
+
+
 
 }

@@ -3,7 +3,6 @@ package it.calverDesktopVER.dto;
 import java.math.BigDecimal;
 
 
-
 public class VerLinearitaDTO {
 
 	private static final long serialVersionUID = 1L;
@@ -14,21 +13,29 @@ public class VerLinearitaDTO {
 	private int campo;
 
 	
-	private BigDecimal caricoAgg;
+	private BigDecimal caricoAggSalita;
+	
+	private BigDecimal caricoAggDiscesa;
 
 	private BigDecimal divisione;
 
-	private BigDecimal errore;
+	private BigDecimal erroreSalita;
+	
+	private BigDecimal erroreDiscesa;
 
 	
-	private BigDecimal erroreCor;
+	private BigDecimal erroreCorSalita;
+	
+	private BigDecimal erroreCorDiscesa;
 
 	private String esito;
 
 	
 	private int idMisura;
 
-	private BigDecimal indicazione;
+	private BigDecimal indicazioneSalita;
+	
+	private BigDecimal indicazioneDiscesa;
 
 	private BigDecimal massa;
 
@@ -58,36 +65,12 @@ public class VerLinearitaDTO {
 		this.campo = campo;
 	}
 
-	public BigDecimal getCaricoAgg() {
-		return this.caricoAgg;
-	}
-
-	public void setCaricoAgg(BigDecimal caricoAgg) {
-		this.caricoAgg = caricoAgg;
-	}
-
 	public BigDecimal getDivisione() {
 		return this.divisione;
 	}
 
 	public void setDivisione(BigDecimal divisione) {
 		this.divisione = divisione;
-	}
-
-	public BigDecimal getErrore() {
-		return this.errore;
-	}
-
-	public void setErrore(BigDecimal errore) {
-		this.errore = errore;
-	}
-
-	public BigDecimal getErroreCor() {
-		return this.erroreCor;
-	}
-
-	public void setErroreCor(BigDecimal erroreCor) {
-		this.erroreCor = erroreCor;
 	}
 
 	public String getEsito() {
@@ -104,14 +87,6 @@ public class VerLinearitaDTO {
 
 	public void setIdMisura(int idMisura) {
 		this.idMisura = idMisura;
-	}
-
-	public BigDecimal getIndicazione() {
-		return this.indicazione;
-	}
-
-	public void setIndicazione(BigDecimal indicazione) {
-		this.indicazione = indicazione;
 	}
 
 	public BigDecimal getMassa() {
@@ -144,6 +119,70 @@ public class VerLinearitaDTO {
 
 	public void setTipoAzzeramento(int tipoAzzeramento) {
 		this.tipoAzzeramento = tipoAzzeramento;
+	}
+
+	public BigDecimal getCaricoAggSalita() {
+		return caricoAggSalita;
+	}
+
+	public void setCaricoAggSalita(BigDecimal caricoAggSalita) {
+		this.caricoAggSalita = caricoAggSalita;
+	}
+
+	public BigDecimal getCaricoAggDiscesa() {
+		return caricoAggDiscesa;
+	}
+
+	public void setCaricoAggDiscesa(BigDecimal caricoAggDiscesa) {
+		this.caricoAggDiscesa = caricoAggDiscesa;
+	}
+
+	public BigDecimal getErroreSalita() {
+		return erroreSalita;
+	}
+
+	public void setErroreSalita(BigDecimal erroreSalita) {
+		this.erroreSalita = erroreSalita;
+	}
+
+	public BigDecimal getErroreDiscesa() {
+		return erroreDiscesa;
+	}
+
+	public void setErroreDiscesa(BigDecimal erroreDiscesa) {
+		this.erroreDiscesa = erroreDiscesa;
+	}
+
+	public BigDecimal getErroreCorSalita() {
+		return erroreCorSalita;
+	}
+
+	public void setErroreCorSalita(BigDecimal erroreCorSalita) {
+		this.erroreCorSalita = erroreCorSalita;
+	}
+
+	public BigDecimal getErroreCorDiscesa() {
+		return erroreCorDiscesa;
+	}
+
+	public void setErroreCorDiscesa(BigDecimal erroreCorDiscesa) {
+		this.erroreCorDiscesa = erroreCorDiscesa;
+	}
+
+	public BigDecimal getIndicazioneSalita() {
+		return indicazioneSalita;
+	}
+
+	public void setIndicazioneSalita(BigDecimal indicazioneSalita) {
+		this.indicazioneSalita = indicazioneSalita;
+	}
+
+	public BigDecimal getIndicazioneDiscesa() {
+		return indicazioneDiscesa;
+	}
+
+	public void setIndicazioneDiscesa(BigDecimal indicazioneDiscesa) {
+		this.indicazioneDiscesa = indicazioneDiscesa;
 	}
 
 

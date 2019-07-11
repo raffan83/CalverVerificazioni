@@ -3,7 +3,12 @@ package it.calverDesktopVER.bo;
 
 import java.util.ArrayList;
 
+import org.sqlite.SQLite;
+
 import it.calverDesktopVER.dao.SQLiteDAO;
+import it.calverDesktopVER.dto.VerClassiDTO;
+import it.calverDesktopVER.dto.VerMisuraDTO;
+import it.calverDesktopVER.dto.VerRipetibilitaDTO;
 
 
 // Referenced classes of package it.calverDesktop.bo:
@@ -72,6 +77,35 @@ public class GestioneMisuraBO
 	public static void saveControlloPreliminare(int idMisura, String sequence) throws Exception {
 		
 		SQLiteDAO.saveControlloPreliminare(idMisura,sequence);
+		
+	}
+
+	public static VerMisuraDTO getMisura(int idMisura) throws Exception {
+		
+		VerMisuraDTO misura = SQLiteDAO.getStatoMisura(idMisura);
+		
+		misura.setVerRipetibilitas(SQLiteDAO.getListaProvaRipetibilita(idMisura));
+		
+		misura.setVerDecentramentos(SQLiteDAO.getListaProvaDecentramento(idMisura));
+		
+		misura.setVerLinearitas(SQLiteDAO.getListaProvaLinearita(idMisura));
+		
+		
+		misura.setVerAccuratezzas(SQLiteDAO.getListaProvaAccuratezza(idMisura));
+		
+		misura.setVerMobilitas(SQLiteDAO.getListaProvaMobilita(idMisura));
+		return misura;
+	}
+
+	public static ArrayList<VerClassiDTO> getListaClassi(int classe) throws Exception {
+		
+		
+		return SQLiteDAO.getListaClassi(classe);
+	}
+
+	public static void updateVerRipetibilita(VerRipetibilitaDTO ripetibilita,int idMisura) throws Exception {
+		
+		SQLiteDAO.updateVerRipetibilita(ripetibilita,idMisura);
 		
 	}
 

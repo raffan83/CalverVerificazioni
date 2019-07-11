@@ -44,6 +44,8 @@ public class VerMisuraDTO {
 	
 	private String seqRisposte;
 	
+	private int stato;
+	
 
 	private List<VerDecentramentoDTO> verDecentramentos;
 
@@ -237,4 +239,14 @@ public class VerMisuraDTO {
 	public void setVerLinearitas(List<VerLinearitaDTO> verLinearitas) {
 		this.verLinearitas = verLinearitas;
 	}
+
+	public int getStato() {
+		return stato;
+	}
+
+	public void setStato(int stato) {
+		this.stato = stato;
+	}
+	
+	
 }
