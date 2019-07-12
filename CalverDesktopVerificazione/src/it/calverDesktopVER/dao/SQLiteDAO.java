@@ -1855,11 +1855,11 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 
 			if(tipoStrumento!=3) 
 			{
-				for (int i = 0; i < 5; i++) 
+				for (int i = 0; i < 6; i++) 
 
 				{
 					pst.setInt(1,idMisura);		
-					pst.setInt(2,0);
+					pst.setInt(2,1);
 					pst.setInt(3,i+1);
 
 					pst.execute();
@@ -1872,7 +1872,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 
 					int campo=y+1;	
 
-					for (int i = 0; i < 5; i++) 
+					for (int i = 0; i < 6; i++) 
 
 					{
 						pst.setInt(1,idMisura);		
@@ -1913,7 +1913,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 
 				{
 					pst.setInt(1,idMisura);		
-					pst.setInt(2,0);
+					pst.setInt(2,1);
 					pst.setInt(3,i+1);
 
 					pst.execute();
@@ -1965,7 +1965,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			{
 				
 					pst.setInt(1,idMisura);		
-					pst.setInt(2,0);
+					pst.setInt(2,1);
 					pst.setInt(3,1);
 
 					pst.execute();
@@ -2021,7 +2021,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 
 				{
 					pst.setInt(1,idMisura);		
-					pst.setInt(2,0);
+					pst.setInt(2,1);
 					pst.setInt(3,z);
 					pst.setInt(4,i+1);
 
@@ -2081,7 +2081,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 
 				{
 					pst.setInt(1,idMisura);		
-					pst.setInt(2,0);
+					pst.setInt(2,1);
 					pst.setInt(3,i+1);
 
 					pst.execute();
@@ -2517,13 +2517,14 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		{
 			con=getConnection();
 			pst=con.prepareStatement("UPDATE ver_ripetibilita set massa=?,indicazione=?,carico_agg=?,portata=?"
-					+ " WHERE id=?");
+					+ " WHERE id=? and campo=?");
 			
 			pst.setBigDecimal(1, ripetibilita.getMassa());
 			pst.setBigDecimal(2, ripetibilita.getIndicazione());
 			pst.setBigDecimal(3, ripetibilita.getCaricoAgg());
 			pst.setBigDecimal(4, ripetibilita.getPortata());
 			pst.setInt(5, ripetibilita.getId());
+			pst.setInt(6, ripetibilita.getCampo());
 			
 			pst.execute();
 			
@@ -2551,12 +2552,13 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		{
 			con=getConnection();
 			pst=con.prepareStatement("UPDATE ver_ripetibilita set delta_portata=?,mpe=?,esito=? "
-					+ " WHERE id_misura=?");
+					+ " WHERE id_misura=? and campo=?");
 			
 			pst.setBigDecimal(1, ripetibilita.getDeltaPortata());
 			pst.setBigDecimal(2, ripetibilita.getMpe());
 			pst.setString(3, ripetibilita.getEsito());
 			pst.setInt(4,idMisura);
+			pst.setInt(5, ripetibilita.getCampo());
 			
 			pst.execute();
 			
@@ -2573,6 +2575,106 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		{
 			pst.close();
 	
+		}
+		
+	}
+	public static void updateValoriDecentramento(VerDecentramentoDTO decentramento, int idMisura) throws Exception {
+		
+		Connection con=null;
+		PreparedStatement pst=null;
+		PreparedStatement pst1=null;
+
+		try 
+		{
+			con=getConnection();
+			pst=con.prepareStatement("UPDATE ver_decentramento set tipo_ricettore=?,punti_appoggio=?,massa=?,indicazione=?,carico_agg=?,"
+									+"errore=?,errore_cor=?,mpe=?"
+									+"WHERE id=? AND campo=? ");
+			
+			pst.setInt(1,decentramento.getTipoRicettore() );
+			pst.setInt(2, decentramento.getPuntiAppoggio());
+			pst.setBigDecimal(3, decentramento.getMassa());
+			pst.setBigDecimal(4,decentramento.getIndicazione());
+			pst.setBigDecimal(5, decentramento.getCaricoAgg());
+			pst.setBigDecimal(6, decentramento.getErrore());
+			pst.setBigDecimal(7, decentramento.getErroreCor());
+			pst.setBigDecimal(8, decentramento.getMpe());
+			pst.setInt(9, decentramento.getId());
+			pst.setInt(10, decentramento.getCampo());
+			pst.execute();
+			
+		
+			pst1=con.prepareStatement("UPDATE ver_decentramento set esito=? WHERE id_misura=? AND campo=?");
+			pst1.setString(1, decentramento.getEsito());
+			pst1.setInt(2, idMisura);
+			pst1.setInt(3, decentramento.getCampo());
+			pst1.execute();
+			
+			
+			
+	} 
+		catch (Exception e) 
+		{
+		 e.printStackTrace();	
+		 throw e;
+		}
+		finally
+		{
+			pst.close();
+			pst1.close();
+			con.close();
+		}
+		
+		
+	}
+	public static void updateValoriLinearita(VerLinearitaDTO linearita, int id_misura) throws Exception {
+	
+		Connection con=null;
+		PreparedStatement pst=null;
+		PreparedStatement pst1=null;
+
+		try 
+		{
+			con=getConnection();
+			pst=con.prepareStatement("UPDATE ver_linearita set tipo_azzeramento=?,massa=?,indicazione_salita=?,indicazione_discesa=?,carico_agg_salita=?,carico_agg_discesa=?,"
+									+"errore_salita=?,errore_discesa=?,errore_cor_salita=?,errore_cor_discesa=?,mpe=?"
+									+"WHERE id=? AND campo=? ");
+			
+			pst.setInt(1,linearita.getTipoAzzeramento() );
+			pst.setBigDecimal(2,linearita.getMassa());
+			pst.setBigDecimal(3, linearita.getIndicazioneSalita());
+			pst.setBigDecimal(4,linearita.getIndicazioneDiscesa());
+			pst.setBigDecimal(5, linearita.getCaricoAggSalita());
+			pst.setBigDecimal(6, linearita.getCaricoAggDiscesa());
+			pst.setBigDecimal(7, linearita.getErroreSalita());
+			pst.setBigDecimal(8, linearita.getErroreDiscesa());
+			pst.setBigDecimal(9, linearita.getErroreCorSalita());
+			pst.setBigDecimal(10, linearita.getErroreCorDiscesa());
+			pst.setBigDecimal(11, linearita.getMpe());
+			pst.setInt(12, linearita.getId());
+			pst.setInt(13, linearita.getCampo());
+			pst.execute();
+			
+		
+			pst1=con.prepareStatement("UPDATE ver_linearita set esito=? WHERE id_misura=? AND campo=?");
+			pst1.setString(1, linearita.getEsito());
+			pst1.setInt(2, id_misura);
+			pst1.setInt(3, linearita.getCampo());
+			pst1.execute();
+			
+			
+			
+	} 
+		catch (Exception e) 
+		{
+		 e.printStackTrace();	
+		 throw e;
+		}
+		finally
+		{
+			pst.close();
+			pst1.close();
+			con.close();
 		}
 		
 	}

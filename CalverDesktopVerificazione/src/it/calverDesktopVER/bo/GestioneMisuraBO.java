@@ -7,6 +7,8 @@ import org.sqlite.SQLite;
 
 import it.calverDesktopVER.dao.SQLiteDAO;
 import it.calverDesktopVER.dto.VerClassiDTO;
+import it.calverDesktopVER.dto.VerDecentramentoDTO;
+import it.calverDesktopVER.dto.VerLinearitaDTO;
 import it.calverDesktopVER.dto.VerMisuraDTO;
 import it.calverDesktopVER.dto.VerRipetibilitaDTO;
 
@@ -106,6 +108,18 @@ public class GestioneMisuraBO
 	public static void updateVerRipetibilita(VerRipetibilitaDTO ripetibilita,int idMisura) throws Exception {
 		
 		SQLiteDAO.updateVerRipetibilita(ripetibilita,idMisura);
+		
+	}
+
+	public static void updateValoriDecentramento(VerDecentramentoDTO decentramento, int idMisura) throws Exception {
+		
+		SQLiteDAO.updateValoriDecentramento(decentramento,idMisura);
+		
+	}
+
+	public static void updateValoriLinearita(VerLinearitaDTO linearita, int id) throws Exception {
+		
+		SQLiteDAO.updateValoriLinearita(linearita,id);
 		
 	}
 

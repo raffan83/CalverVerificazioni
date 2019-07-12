@@ -47,6 +47,7 @@ import it.calverDesktopVER.bo.GestioneStrumentoVER_BO;
 import it.calverDesktopVER.bo.SessionBO;
 import it.calverDesktopVER.dto.VerClassiDTO;
 import it.calverDesktopVER.dto.VerDecentramentoDTO;
+import it.calverDesktopVER.dto.VerLinearitaDTO;
 import it.calverDesktopVER.dto.VerMisuraDTO;
 import it.calverDesktopVER.dto.VerRipetibilitaDTO;
 import it.calverDesktopVER.dto.VerStrumentoDTO;
@@ -367,6 +368,7 @@ public class PannelloMisuraMaster extends JPanel
 						ripetibilita.setMpe(new BigDecimal(textField_mpe_rip.getText()));
 						ripetibilita.setEsito(esito);
 						
+						ripetibilita.setCampo(comboBox_campo.getSelectedIndex()+1);
 						GestioneMisuraBO.updateVerRipetibilita(ripetibilita,misura.getId());
 						
 						modelRip.setValueAt(portata.toPlainString(),row, 4);
@@ -575,16 +577,74 @@ public class PannelloMisuraMaster extends JPanel
 		tableDec.setFont(new Font("Arial", Font.PLAIN, 12));
 		tableDec.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
 		
+		ArrayList<VerDecentramentoDTO> listaDecentramento=(ArrayList<VerDecentramentoDTO>)misura.getVerDecentramentos();
 	
+		TableColumn column = tableDec.getColumnModel().getColumn(tableDec.getColumnModel().getColumnIndex("id"));
+		tableDec.removeColumn(column);
 		
 		int indice=1;
 		
-		for (int i = 0; i < 10; i=i+2) {
+		for (int i = 0; i < listaDecentramento.size(); i=i+2) {
 			
+			VerDecentramentoDTO ver = listaDecentramento.get(i);
 			modelDec.addRow(new Object[0]);
 			modelDec.setValueAt("E0", i, 0);
 			modelDec.addRow(new Object[0]);
 			modelDec.setValueAt(indice, i+1, 0);
+
+			if(ver.getMassa()!=null) 
+			{
+				modelDec.setValueAt(ver.getMassa(), i, 1);
+			}
+			if(ver.getIndicazione()!=null) 
+			{
+				modelDec.setValueAt(ver.getIndicazione(), i, 2);
+			}
+			if(ver.getCaricoAgg()!=null) 
+			{
+				modelDec.setValueAt(ver.getCaricoAgg(), i, 3);
+			}
+			if(ver.getErrore()!=null) 
+			{
+				modelDec.setValueAt(ver.getErrore(), i, 4);
+			}
+			if(ver.getErroreCor()!=null) 
+			{
+				modelDec.setValueAt(ver.getErroreCor(), i, 5);
+			}
+			if(ver.getMpe()!=null) 
+			{
+				modelDec.setValueAt(ver.getMpe(), i, 6);
+			}
+			
+			ver=listaDecentramento.get(i+1);
+			if(ver.getMassa()!=null) 
+			{
+				modelDec.setValueAt(ver.getMassa(), i+1, 1);
+			}
+			if(ver.getIndicazione()!=null) 
+			{
+				modelDec.setValueAt(ver.getIndicazione(), i+1, 2);
+			}
+			if(ver.getCaricoAgg()!=null) 
+			{
+				modelDec.setValueAt(ver.getCaricoAgg(), i+1, 3);
+			}
+			if(ver.getErrore()!=null) 
+			{
+				modelDec.setValueAt(ver.getErrore(), i+1, 4);
+			}
+			if(ver.getErroreCor()!=null) 
+			{
+				modelDec.setValueAt(ver.getErroreCor(), i+1, 5);
+			}
+			if(ver.getMpe()!=null) 
+			{
+				modelDec.setValueAt(ver.getMpe(), i+1, 6);
+			}
+			
+			modelDec.setValueAt(listaDecentramento.get(i).getId(), i, 7);
+			modelDec.setValueAt(listaDecentramento.get(i+1).getId(), i+1, 7);
 			indice++;
 		}
 
@@ -637,7 +697,7 @@ public class PannelloMisuraMaster extends JPanel
 		lblStrumentoSpeciale.setFont(new Font("Arial", Font.BOLD, 12));
 		pannelloDecentramento.add(lblStrumentoSpeciale, "flowx,cell 5 4,alignx right");
 		
-		ArrayList<VerDecentramentoDTO> listaDecentramento=(ArrayList<VerDecentramentoDTO>)misura.getVerDecentramentos();
+		
 		
 		JScrollPane scrollTab = new JScrollPane(tableDec);
 		
@@ -714,7 +774,7 @@ public class PannelloMisuraMaster extends JPanel
 		textField_esito_dec.setColumns(10);
 		pannelloDecentramento.add(textField_esito_dec, "cell 2 7,width :100:");
 
-		ButtonGroup bg=new ButtonGroup();
+		final ButtonGroup bg=new ButtonGroup();
 		bg.add(rdbtn_quad);
 		bg.add(rdbtn_cer);
 		bg.add(rdbtn_tri);
@@ -726,6 +786,19 @@ public class PannelloMisuraMaster extends JPanel
 		}
 		
 		comboBox.setSelectedIndex(0);
+		
+		
+		if(listaDecentramento.get(0).getEsito()!=null) 
+		{
+			if(listaDecentramento.get(0).getEsito().equals("POSITIVO")) 
+			{
+				textField_esito_dec.setBackground(Color.GREEN);
+			}else 
+			{
+				textField_esito_dec.setBackground(Color.RED);
+			}
+			textField_esito_dec.setText(listaDecentramento.get(0).getEsito());
+		}
 		
 	
 		
@@ -784,6 +857,25 @@ public class PannelloMisuraMaster extends JPanel
 									modelDec.setValueAt(mpe, row, 6);
 								}
 								
+								String esito =valutaEsitoDecentramento();
+								
+								VerDecentramentoDTO decentramento = new VerDecentramentoDTO();
+								
+								decentramento.setId(Integer.parseInt(modelDec.getValueAt(row, 7).toString()));
+								decentramento.setTipoRicettore(getTipoRicettore(bg));
+								decentramento.setPuntiAppoggio(Integer.parseInt(textField_punti_appoggio.getText()));
+								decentramento.setMassa(mas);
+								decentramento.setIndicazione(ind);
+								decentramento.setCaricoAgg(car);
+								decentramento.setErrore(errore);
+								decentramento.setErroreCor(errore_corr);
+								decentramento.setMpe(new BigDecimal(mpe));
+								decentramento.setEsito(esito);
+								decentramento.setCampo(comboBox_campo.getSelectedIndex()+1);
+							
+								GestioneMisuraBO.updateValoriDecentramento(decentramento,misura.getId());
+								
+								
 							}
 							
 						}catch (Exception ex) {
@@ -793,6 +885,45 @@ public class PannelloMisuraMaster extends JPanel
 					
 				}
 			  }
+
+			private String valutaEsitoDecentramento() {
+				
+				
+				for (int i = 0; i <modelDec.getRowCount(); i++) 
+				
+				{
+					Object mpe= modelDec.getValueAt(i,6);
+					Object err_cor=modelDec.getValueAt(i,5);
+					
+					if(mpe!=null && err_cor!=null) 
+					{
+						if(Double.parseDouble(err_cor.toString())>Double.parseDouble(mpe.toString())) 
+						{
+							return "NEGATIVO";
+						}
+					}
+					
+				}
+				return "POSITIVO";
+			}
+
+			private int getTipoRicettore(ButtonGroup bg) {
+				
+				int i=0;
+				
+					int indice=1;
+					for (Enumeration<AbstractButton> buttons = bg.getElements(); buttons.hasMoreElements();) {
+				            AbstractButton button = buttons.nextElement();
+
+				            if (button.isSelected()) 
+				            {
+				            	return indice;
+				                	
+				            }
+				            indice++;
+					}
+					return i;
+			}
 
 			private BigDecimal getErrore(BigDecimal mas, BigDecimal ind, BigDecimal err, BigDecimal car) {
 				
@@ -854,6 +985,11 @@ public class PannelloMisuraMaster extends JPanel
 		pannelloLinearita.setBackground(Color.WHITE);
 		pannelloLinearita.setLayout(new MigLayout("", "[22.00][][grow]", "[][][][][][][][][13.00][][13.00][]"));
 		
+		final JComboBox comboBox_tipo_azzeramento = new JComboBox();
+		comboBox_tipo_azzeramento.setModel(new DefaultComboBoxModel(new String[] {"Non automatico o semiautomatico","Automatico"}));
+		comboBox_tipo_azzeramento.setFont(new Font("Arial", Font.PLAIN, 12));
+		
+		
 		tableLin = new JTable();
 		
 		modelLin = new ModelLinearita(strumento.getUm());
@@ -866,16 +1002,106 @@ public class PannelloMisuraMaster extends JPanel
 		
 		tableLin.setDefaultRenderer(Object.class, new MyCellRenderer());
 		
-		for (int i = 0; i <=6; i++) {
+		ArrayList<VerLinearitaDTO> listaLinearita = (ArrayList<VerLinearitaDTO>)misura.getVerLinearitas();
+		
+		int campo=comboBox_campo.getSelectedIndex()+1;
+		
+		for (int i = 0; i <=5; i++) {
+			
+			VerLinearitaDTO lin=listaLinearita.get(i);
 			
 			modelLin.addRow(new Object[0]);
 			
 			if(i==0)
 			{
 				modelLin.setValueAt("E0", i, 0);
+				
 			}else
 			{
 				modelLin.setValueAt(i, i, 0);
+			}
+			
+			if(lin.getMassa()!=null) 
+			{
+				modelLin.setValueAt(lin.getMassa(), i, 1);	
+			}else 
+			{
+				if(i==0) {
+					if(comboBox_tipo_azzeramento.getSelectedIndex()==0) 
+					{
+						modelLin.setValueAt("0", i, 1);
+					}
+					else
+					{
+						BigDecimal massa=getE(comboBox_campo.getSelectedIndex()).multiply(BigDecimal.TEN).setScale(2,RoundingMode.HALF_DOWN);
+						modelLin.setValueAt(massa.toPlainString(), i, 1);
+					}
+				}
+				if(i==1) 
+				{
+					modelLin.setValueAt(strumento.getPortataMinCampo(campo).setScale(2).toPlainString(), i, 1);
+				}
+				if(i==2) 
+				{
+					modelLin.setValueAt(strumento.getPortataMaxCampo(campo).setScale(2).multiply(new BigDecimal("0.4")).setScale(2,RoundingMode.HALF_UP), i, 1);
+				}
+				if(i==3) 
+				{
+					modelLin.setValueAt(strumento.getPortataMaxCampo(campo).multiply(new BigDecimal("0.6")).toPlainString(), i, 1);
+				}
+				if(i==4) 
+				{
+					modelLin.setValueAt(strumento.getPortataMaxCampo(campo).multiply(new BigDecimal("0.8")).toPlainString(), i, 1);
+				}
+				if(i==5) 
+				{
+					modelLin.setValueAt(strumento.getPortataMaxCampo(campo), i, 1);
+				}
+			}
+			
+			if(lin.getIndicazioneSalita()!=null) 
+			{
+				modelLin.setValueAt(lin.getIndicazioneSalita(), i, 2);	
+			}
+			
+			if(lin.getIndicazioneDiscesa()!=null) 
+			{
+				modelLin.setValueAt(lin.getIndicazioneDiscesa(), i, 3);	
+			}
+			
+			if(lin.getCaricoAggSalita()!=null) 
+			{
+				modelLin.setValueAt(lin.getCaricoAggSalita(), i, 4);	
+			}
+			
+			if(lin.getCaricoAggDiscesa()!=null) 
+			{
+				modelLin.setValueAt(lin.getCaricoAggDiscesa(), i, 5);	
+			}
+			
+			if(lin.getErroreSalita()!=null) 
+			{
+				modelLin.setValueAt(lin.getErroreSalita(), i, 6);	
+			}
+			
+			if(lin.getErroreDiscesa()!=null) 
+			{
+				modelLin.setValueAt(lin.getErroreDiscesa(), i, 7);	
+			}
+			
+			if(lin.getErroreCorSalita()!=null) 
+			{
+				modelLin.setValueAt(lin.getErroreCorSalita(), i, 8);	
+			}
+			
+			if(lin.getErroreCorDiscesa()!=null) 
+			{
+				modelLin.setValueAt(lin.getErroreCorDiscesa(), i, 9);	
+			}
+			
+			if(lin.getMpe()!=null) 
+			{
+				modelLin.setValueAt(lin.getMpe(), i, 10);	
 			}
 		}
 		
@@ -892,10 +1118,22 @@ public class PannelloMisuraMaster extends JPanel
 		lblTipoDispositivoDi.setFont(new Font("Arial", Font.BOLD, 12));
 		pannelloLinearita.add(lblTipoDispositivoDi, "cell 1 2,alignx trailing");
 		
-		JComboBox comboBox_tipo_azzeramento = new JComboBox();
-		comboBox_tipo_azzeramento.setModel(new DefaultComboBoxModel(new String[] {"Automatico", "Non automatico o semiautomatico"}));
-		comboBox_tipo_azzeramento.setFont(new Font("Arial", Font.PLAIN, 12));
+		
 		pannelloLinearita.add(comboBox_tipo_azzeramento, "cell 2 2");
+		
+		
+		if(listaLinearita.get(0).getTipoAzzeramento()!=0) 
+		{
+			if(listaLinearita.get(0).getTipoAzzeramento()==1) 
+			{
+				comboBox_tipo_azzeramento.setSelectedIndex(1);
+			}
+			else 
+			{
+				comboBox_tipo_azzeramento.setSelectedIndex(1);
+			}
+		}
+		
 		
 		
 		JScrollPane scrollTab = new JScrollPane(tableLin);
@@ -913,6 +1151,176 @@ public class PannelloMisuraMaster extends JPanel
 		textField_esito_lin.setFont(new Font("Arial", Font.PLAIN, 12));
 		textField_esito_lin.setColumns(10);
 		pannelloLinearita.add(textField_esito_lin, "cell 1 6,width :100:");
+		
+		if(listaLinearita.get(0).getEsito()!=null) 
+		{
+			if(listaLinearita.get(0).getEsito().equals("POSITIVO")) 
+			{
+				textField_esito_lin.setBackground(Color.GREEN);
+			}else 
+			{
+				textField_esito_lin.setBackground(Color.RED);
+			}
+			textField_esito_lin.setText(listaLinearita.get(0).getEsito());
+		}
+		
+		
+		tableLin.getModel().addTableModelListener(new TableModelListener() {
+
+			  public void tableChanged(TableModelEvent e) {
+			   
+					int row = e.getFirstRow();
+					int column=e.getColumn();
+
+					if(column==2 || column==3 || column==4 || column==5) 
+					{
+						int campo=comboBox_campo.getSelectedIndex();
+						
+						Object massa=modelLin.getValueAt(row, 1);
+						Object indicazioneSalita=modelLin.getValueAt(row, 2);
+						Object indicazioneDiscesa=modelLin.getValueAt(row, 3);
+						Object car_agg_salita=modelLin.getValueAt(row, 4);
+						Object car_agg_discesa=modelLin.getValueAt(row, 5);
+						
+						if(massa!=null && indicazioneSalita!=null && indicazioneDiscesa!=null
+						   && car_agg_salita!=null && car_agg_discesa!=null) 
+						{
+							BigDecimal mas;
+							BigDecimal indSalita;
+							BigDecimal indDiscesa;
+							BigDecimal car_aggSalita;
+							BigDecimal car_aggDiscesa;
+							BigDecimal erroreSalita;
+							BigDecimal erroreDiscesa;
+							BigDecimal erroreSalita_cor = null;
+							BigDecimal erroreDiscesa_cor = null;
+							
+							try 
+							{
+								 mas=new BigDecimal(massa.toString());
+								 indSalita=new BigDecimal(indicazioneSalita.toString());
+								 indDiscesa=new BigDecimal(indicazioneSalita.toString());
+								
+								 car_aggSalita=new BigDecimal(car_agg_salita.toString());
+								 car_aggDiscesa=new BigDecimal(car_agg_discesa.toString());
+						
+								if(row==0) 
+								{
+								 erroreSalita=indSalita.add(getE(campo).divide(new BigDecimal("2"), RoundingMode.HALF_UP)
+										                .subtract(car_aggSalita).subtract(mas));
+								
+								 erroreDiscesa=indDiscesa.add(getE(campo).divide(new BigDecimal("2"), RoundingMode.HALF_UP)
+						                .subtract(car_aggDiscesa).subtract(mas));
+								
+								String mpe=getMPE(mas.toPlainString(), campo);
+								
+								modelLin.setValueAt(erroreSalita, row, 6);
+								modelLin.setValueAt(erroreDiscesa, row, 7);
+								modelLin.setValueAt("0", row, 8);
+								modelLin.setValueAt("0", row, 9);
+								modelLin.setValueAt(mpe, row, 10);
+								}
+								
+								else 
+								{
+									 erroreSalita=indSalita.add(getE(campo).divide(new BigDecimal("2"), RoundingMode.HALF_UP)
+							                .subtract(car_aggSalita).subtract(mas));
+					
+									 erroreDiscesa=indDiscesa.add(getE(campo).divide(new BigDecimal("2"), RoundingMode.HALF_UP)
+							                .subtract(car_aggDiscesa).subtract(mas));
+					
+									
+									erroreSalita_cor=new BigDecimal(modelLin.getValueAt(0, 7).toString()).subtract(erroreSalita);
+					
+									erroreDiscesa_cor=new BigDecimal(modelLin.getValueAt(0, 8).toString()).subtract(erroreDiscesa);
+									
+									String mpe=getMPE(mas.toPlainString(), campo);
+									
+									modelLin.setValueAt(erroreSalita, row, 6);
+									modelLin.setValueAt(erroreDiscesa, row, 7);
+									modelLin.setValueAt(erroreSalita_cor, row, 8);
+									modelLin.setValueAt(erroreDiscesa_cor, row, 9);
+									modelLin.setValueAt(mpe, row, 10);
+									
+								}
+								
+								String esito=valutaEsitoLinearita();
+								
+								if(esito.equals("POSITIVO")) 
+								{
+									textField_esito_lin.setBackground(Color.GREEN);
+								}
+								else 
+								{
+									textField_esito_lin.setBackground(Color.RED);	
+								}
+								textField_esito_lin.setText(esito);
+								
+								VerLinearitaDTO linearita = new VerLinearitaDTO();
+								
+								linearita.setTipoAzzeramento(comboBox_tipo_azzeramento.getSelectedIndex());
+								linearita.setCampo(comboBox_campo.getSelectedIndex()+1);
+								linearita.setMassa(mas);
+								linearita.setIndicazioneSalita(indSalita);
+								linearita.setIndicazioneDiscesa(indDiscesa);
+								linearita.setCaricoAggSalita(car_aggSalita);
+								linearita.setCaricoAggSalita(car_aggDiscesa);
+								linearita.setErroreSalita(erroreSalita);
+								linearita.setErroreDiscesa(erroreDiscesa);
+								linearita.setErroreCorSalita(erroreSalita_cor);
+								linearita.setErroreCorDiscesa(erroreDiscesa_cor);
+								linearita.setEsito(esito);
+								
+								GestioneMisuraBO.updateValoriLinearita(linearita, misura.getId());
+								
+								
+							}
+							catch (Exception e2) 
+							{
+								e2.printStackTrace();
+							}
+							
+							
+						}
+						
+					}
+					
+			  }
+
+			private String valutaEsitoLinearita() {
+				
+				for (int i = 0; i <modelLin.getRowCount(); i++) 
+					
+				{
+					Object mpe= modelLin.getValueAt(i,10);
+					Object err_sal=modelLin.getValueAt(i,6);
+					Object err_dis=modelLin.getValueAt(i,7);
+					Object err_cor_sal=modelLin.getValueAt(i,8);
+					Object err_cor_dis=modelLin.getValueAt(i,9);
+					if(i==0 && mpe!=null && err_sal!=null && err_dis!=null) 
+					{
+						if(Math.abs(Double.parseDouble(err_sal.toString())) > Math.abs(Double.parseDouble(mpe.toString())) ||
+						   Math.abs(Double.parseDouble(err_dis.toString())) > Math.abs(Double.parseDouble(mpe.toString()))	) 
+							{
+								return "NEGATIVO";
+							} 
+					}
+					
+					if(i>0 && mpe!=null && err_sal!=null && err_dis!=null) 
+					{
+						if(Math.abs(Double.parseDouble(err_cor_sal.toString())) > Math.abs(Double.parseDouble(mpe.toString())) ||
+						   Math.abs(Double.parseDouble(err_cor_dis.toString())) > Math.abs(Double.parseDouble(mpe.toString()))	) 
+									{
+										return "NEGATIVO";
+									} 
+					}
+					
+				}
+				return "POSITIVO";
+			}
+			  
+		});
+		
 
 		return pannelloLinearita;
 	}
@@ -1429,6 +1837,7 @@ public class PannelloMisuraMaster extends JPanel
 			addColumn("Errore E ("+um+")");
 			addColumn("Er. corretto Ec ("+um+")");
 			addColumn("MPE(±) ("+um+")");
+			addColumn("id");
 
 		}
 		@Override
@@ -1447,6 +1856,8 @@ public class PannelloMisuraMaster extends JPanel
 			case 5:
 				return String.class;
 			case 6:
+				return String.class;
+			case 7:
 				return String.class;
 			default:
 				return String.class;
@@ -1519,12 +1930,12 @@ public class PannelloMisuraMaster extends JPanel
 		@Override
 		public boolean isCellEditable(int row, int column) {
 			
-			if(column>2 && column<5)
+			if(column==2 || column==3 || column==4 || column==5)
 			{
 				return true;
 			}else
 			{
-				return true;
+				return false;
 			}
 		}
 

@@ -196,5 +196,40 @@ public class VerStrumentoDTO {
 	public void setId_sede(int id_sede) {
 		this.id_sede = id_sede;
 	}
+	public BigDecimal getPortataMinCampo(int i) {
+
+			if(i==1) 
+			{
+				return portata_min_C1;
+			}
+			if(i==2) 
+			{
+				return portata_min_C2;
+			}
+			if(i==3) 
+			{
+				return portata_min_C3;
+			}
+			
+			return null;
+	}
+	
+	public BigDecimal getPortataMaxCampo(int i) {
+
+		if(i==1) 
+		{
+			return getPortata_max_C1();
+		}
+		if(i==2) 
+		{
+			return getPortata_max_C2();
+		}
+		if(i==3) 
+		{
+			return getPortata_max_C3();
+		}
+		
+		return null;
+}
 		
 }
