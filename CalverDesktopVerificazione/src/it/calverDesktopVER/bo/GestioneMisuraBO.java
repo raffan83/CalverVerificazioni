@@ -6,10 +6,12 @@ import java.util.ArrayList;
 import org.sqlite.SQLite;
 
 import it.calverDesktopVER.dao.SQLiteDAO;
+import it.calverDesktopVER.dto.VerAccuratezzaDTO;
 import it.calverDesktopVER.dto.VerClassiDTO;
 import it.calverDesktopVER.dto.VerDecentramentoDTO;
 import it.calverDesktopVER.dto.VerLinearitaDTO;
 import it.calverDesktopVER.dto.VerMisuraDTO;
+import it.calverDesktopVER.dto.VerMobilitaDTO;
 import it.calverDesktopVER.dto.VerRipetibilitaDTO;
 
 
@@ -117,9 +119,21 @@ public class GestioneMisuraBO
 		
 	}
 
-	public static void updateValoriLinearita(VerLinearitaDTO linearita, int id) throws Exception {
+	public static void updateValoriLinearita(VerLinearitaDTO linearita, int idMisura) throws Exception {
 		
-		SQLiteDAO.updateValoriLinearita(linearita,id);
+		SQLiteDAO.updateValoriLinearita(linearita,idMisura);
+		
+	}
+
+	public static void updateAccuratezzaTara(VerAccuratezzaDTO acc, int idMisura) throws Exception {
+		
+		SQLiteDAO.updateAccuratezzaTara(acc,idMisura);
+		
+	}
+
+	public static void updateValoriMobilita(VerMobilitaDTO mob, int idMisura) throws Exception {
+		
+		SQLiteDAO.updateValoriMobilita(mob,idMisura);
 		
 	}
 

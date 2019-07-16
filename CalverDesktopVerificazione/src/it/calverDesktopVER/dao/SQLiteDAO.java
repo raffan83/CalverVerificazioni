@@ -262,17 +262,17 @@ public class SQLiteDAO {
 			strumento.setPortata_min_C1(rs.getBigDecimal("portata_min_C1"));
 			strumento.setPortata_max_C1(rs.getBigDecimal("portata_max_C1"));
 			strumento.setDiv_ver_C1(rs.getBigDecimal("div_ver_C1"));
-			strumento.setDiv_ver_C1(rs.getBigDecimal("div_rel_C1"));
+			strumento.setDiv_rel_C1(rs.getBigDecimal("div_rel_C1"));
 			strumento.setNumero_div_C1(rs.getBigDecimal("numero_div_C1"));
 			strumento.setPortata_min_C2(rs.getBigDecimal("portata_min_C2"));
 			strumento.setPortata_max_C2(rs.getBigDecimal("portata_max_C2"));
 			strumento.setDiv_ver_C2(rs.getBigDecimal("div_ver_C2"));
-			strumento.setDiv_ver_C2(rs.getBigDecimal("div_rel_C2"));
+			strumento.setDiv_rel_C2(rs.getBigDecimal("div_rel_C2"));
 			strumento.setNumero_div_C2(rs.getBigDecimal("numero_div_C2"));
 			strumento.setPortata_min_C3(rs.getBigDecimal("portata_min_C3"));
 			strumento.setPortata_max_C3(rs.getBigDecimal("portata_max_C3"));
 			strumento.setDiv_ver_C3(rs.getBigDecimal("div_ver_C3"));
-			strumento.setDiv_ver_C3(rs.getBigDecimal("div_rel_C3"));
+			strumento.setDiv_rel_C3(rs.getBigDecimal("div_rel_C3"));
 			strumento.setNumero_div_C3(rs.getBigDecimal("numero_div_C3"));
 			
 		}
@@ -2038,13 +2038,13 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 					for (int z = 1; z <=2; z++) {
 						
 					
-					for (int i = 0; i < 6; i++) 
+					for (int i = 0; i < 3; i++) 
 
 					{
 						pst.setInt(1,idMisura);		
 						pst.setInt(2,campo);
 						pst.setInt(3,z);
-						pst.setInt(3,i+1);
+						pst.setInt(4,i+1);
 
 						pst.execute();
 					}
@@ -2660,6 +2660,93 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			pst1.setString(1, linearita.getEsito());
 			pst1.setInt(2, id_misura);
 			pst1.setInt(3, linearita.getCampo());
+			pst1.execute();
+			
+			
+			
+	} 
+		catch (Exception e) 
+		{
+		 e.printStackTrace();	
+		 throw e;
+		}
+		finally
+		{
+			pst.close();
+			pst1.close();
+			con.close();
+		}
+		
+	}
+	public static void updateAccuratezzaTara(VerAccuratezzaDTO acc, int idMisura) throws Exception {
+	
+		
+		Connection con=null;
+		PreparedStatement pst=null;
+
+		try 
+		{
+			con=getConnection();
+			pst=con.prepareStatement("UPDATE ver_accuratezza set tipo_tara=?,massa=?,indicazione=?,carico_agg=?,"
+									+"errore=?,mpe=?,esito=?"
+									+"WHERE id=? AND campo=? ");
+			
+			pst.setInt(1,acc.getTipoTara() );
+			pst.setBigDecimal(2, acc.getMassa());
+			pst.setBigDecimal(3,acc.getIndicazione());
+			pst.setBigDecimal(4, acc.getCaricoAgg());
+			pst.setBigDecimal(5, acc.getErrore());
+			pst.setBigDecimal(6, acc.getMpe());
+			pst.setString(7, acc.getEsito());
+			pst.setInt(8, acc.getId());
+			pst.setInt(9, acc.getCampo());
+			pst.execute();
+			
+	} 
+		catch (Exception e) 
+		{
+		 e.printStackTrace();	
+		 throw e;
+		}
+		finally
+		{
+			pst.close();
+			con.close();
+		}
+		
+		
+	}
+	public static void updateValoriMobilita(VerMobilitaDTO mob, int idMisura) throws Exception {
+	
+		
+		Connection con=null;
+		PreparedStatement pst=null;
+		PreparedStatement pst1=null;
+
+		try 
+		{
+			con=getConnection();
+			pst=con.prepareStatement("UPDATE ver_mobilita set massa=?,indicazione=?,carico_agg=?,post_indicazione=?,differenziale=?,divisione=?,check_stato=? "+		
+									"WHERE id=? AND campo=? ");
+			
+
+			pst.setBigDecimal(1, mob.getMassa());
+			pst.setBigDecimal(2,mob.getIndicazione());
+			pst.setBigDecimal(3, mob.getCaricoAgg());
+			pst.setBigDecimal(4, mob.getPostIndicazione());
+			pst.setBigDecimal(5,mob.getDifferenziale());
+			pst.setBigDecimal(6, mob.getDivisione());
+			pst.setString(7, mob.getCheck());
+			pst.setInt(8, mob.getId());
+			pst.setInt(9, mob.getCampo());
+			pst.execute();
+			
+		
+			pst1=con.prepareStatement("UPDATE ver_mobilita set esito=? WHERE id_misura=? AND campo=? AND caso=?");
+			pst1.setString(1, mob.getEsito());
+			pst1.setInt(2, idMisura);
+			pst1.setInt(3, mob.getCampo());
+			pst1.setInt(4, mob.getCaso());
 			pst1.execute();
 			
 			

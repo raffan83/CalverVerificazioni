@@ -196,39 +196,131 @@ public class VerStrumentoDTO {
 	public void setId_sede(int id_sede) {
 		this.id_sede = id_sede;
 	}
-	public BigDecimal getPortataMinCampo(int i) {
 
-			if(i==1) 
-			{
-				return portata_min_C1;
-			}
-			if(i==2) 
-			{
-				return portata_min_C2;
-			}
-			if(i==3) 
-			{
-				return portata_min_C3;
-			}
-			
-			return null;
+	public BigDecimal getDivisioneReale(int campo, int tipoStrumento, double carico) {
+
+	if(tipoStrumento==1) 
+	{
+		return div_rel_C1;
+	}	
+	
+	
+	if(tipoStrumento==2) 
+	{
+		if(carico>=0 && carico <portata_max_C1.doubleValue()) 
+		{
+			return div_rel_C1;
+		}
+		if(carico>=portata_min_C2.doubleValue() && carico <portata_max_C2.doubleValue()) 
+		{
+			return div_rel_C2;
+		}
+		
+		if(carico>=portata_min_C3.doubleValue() && carico <portata_max_C3.doubleValue()) 
+		{
+			return div_rel_C3;
+		}
+		
 	}
 	
-	public BigDecimal getPortataMaxCampo(int i) {
+	if(tipoStrumento==3) 
+	{	
+	if(campo==1) 
+		{
+			return div_rel_C1;
+		}
+		if(campo==2) 
+		{
+			return div_rel_C2;
+		}
+		if(campo==3) 
+		{
+			return div_rel_C3;
+		}
+	}	
+		return null;
+}
+	
+	
+	public BigDecimal getPortataMaxCampo(int campo, int idTipoStrumento) {
 
-		if(i==1) 
+		if(idTipoStrumento==1) 
 		{
 			return getPortata_max_C1();
 		}
-		if(i==2) 
+		
+		if(idTipoStrumento==2) 
+		{
+			if(portata_max_C3.doubleValue()!=0) 
+			{
+				return portata_max_C3;
+			}
+			if(portata_max_C2.doubleValue()!=0) 
+			{
+				return portata_max_C2;
+			}
+			if(portata_max_C1.doubleValue()!=0) 
+			{
+				return portata_max_C1;
+			}
+		}
+	
+	if(idTipoStrumento==3) 
+	{	
+		if(campo==1) 
+		{
+			return getPortata_max_C1();
+		}
+		if(campo==2) 
 		{
 			return getPortata_max_C2();
 		}
-		if(i==3) 
+		if(campo==3) 
 		{
 			return getPortata_max_C3();
 		}
+	}	
+		return null;
+}
+	
+	public BigDecimal getPortataMinCampo(int campo, int idTipoStrumento) {
+
+		if(idTipoStrumento==1) 
+		{
+			return getPortata_min_C1();
+		}
 		
+		if(idTipoStrumento==2) 
+		{
+			if(portata_min_C1.doubleValue()!=0) 
+			{
+				return portata_min_C1;
+			}
+			if(portata_min_C2.doubleValue()!=0) 
+			{
+				return portata_min_C2;
+			}
+			if(portata_min_C3.doubleValue()!=0) 
+			{
+				return portata_min_C3;
+			}
+		}
+	
+	if(idTipoStrumento==3) 
+	{	
+		if(campo==1) 
+		{
+			return getPortata_min_C1();
+		}
+		if(campo==2) 
+		{
+			return getPortata_min_C2();
+		}
+		if(campo==3) 
+		{
+			return getPortata_min_C3();
+		}
+	}	
 		return null;
 }
 		

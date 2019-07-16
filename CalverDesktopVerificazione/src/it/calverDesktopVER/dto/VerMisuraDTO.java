@@ -1,5 +1,6 @@
 package it.calverDesktopVER.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -172,68 +173,102 @@ public class VerMisuraDTO {
 		this.seqRisposte = seqRisposte;
 	}
 
-	public List<VerDecentramentoDTO> getVerDecentramentos() {
-		return this.verDecentramentos;
+	public List<VerDecentramentoDTO> getVerDecentramentos(int campo) {
+
+		    List<VerDecentramentoDTO> lista = new ArrayList<VerDecentramentoDTO>();
+				
+				for (VerDecentramentoDTO ver : verDecentramentos) 
+				{
+					if(ver.getCampo()==campo) 
+					{
+						lista.add(ver);
+					}
+				}
+				
+				return lista;
+				
+		
 	}
 
 	public void setVerDecentramentos(List<VerDecentramentoDTO> verDecentramentos) {
 		this.verDecentramentos = verDecentramentos;
 	}
 
-	public VerDecentramentoDTO addVerDecentramento(VerDecentramentoDTO verDecentramento) {
-		getVerDecentramentos().add(verDecentramento);
-		verDecentramento.setVerMisura(this);
-
-		return verDecentramento;
-	}
-
-	public VerDecentramentoDTO removeVerDecentramento(VerDecentramentoDTO verDecentramento) {
-		getVerDecentramentos().remove(verDecentramento);
-		verDecentramento.setVerMisura(null);
-
-		return verDecentramento;
-	}
-
-	public List<VerRipetibilitaDTO> getVerRipetibilitas() {
-		return this.verRipetibilitas;
+	public List<VerRipetibilitaDTO> getVerRipetibilitas(int campo) {
+		
+		List<VerRipetibilitaDTO> lista = new ArrayList<VerRipetibilitaDTO>();
+		
+		for (VerRipetibilitaDTO ver : verRipetibilitas) 
+		{
+			if(ver.getCampo()==campo) 
+			{
+				lista.add(ver);
+			}
+		}
+		
+		return lista;
+		
 	}
 
 	public void setVerRipetibilitas(List<VerRipetibilitaDTO> verRipetibilitas) {
 		this.verRipetibilitas = verRipetibilitas;
 	}
 
-	public VerRipetibilitaDTO addVerRipetibilita(VerRipetibilitaDTO verRipetibilita) {
-		getVerRipetibilitas().add(verRipetibilita);
-		verRipetibilita.setVerMisura(this);
-
-		return verRipetibilita;
-	}
-
-	public VerRipetibilitaDTO removeVerRipetibilita(VerRipetibilitaDTO verRipetibilita) {
-		getVerRipetibilitas().remove(verRipetibilita);
-		verRipetibilita.setVerMisura(null);
-
-		return verRipetibilita;
-	}
-
-	public List<VerAccuratezzaDTO> getVerAccuratezzas() {
-		return verAccuratezzas;
+	public List<VerAccuratezzaDTO> getVerAccuratezzas(int campo) {
+		
+		List<VerAccuratezzaDTO> lista = new ArrayList<VerAccuratezzaDTO>();
+		
+		for (VerAccuratezzaDTO ver : verAccuratezzas) 
+		{
+			if(ver.getCampo()==campo) 
+			{
+				lista.add(ver);
+			}
+		}
+		
+		return lista;
 	}
 
 	public void setVerAccuratezzas(List<VerAccuratezzaDTO> verAccuratezzas) {
 		this.verAccuratezzas = verAccuratezzas;
 	}
 
-	public List<VerMobilitaDTO> getVerMobilitas() {
-		return verMobilitas;
+	public List<VerMobilitaDTO> getVerMobilitas(int campo,int caso) {
+		
+		  List<VerMobilitaDTO> lista = new ArrayList<VerMobilitaDTO>();
+			
+			for (VerMobilitaDTO ver : verMobilitas) 
+			{
+				if(ver.getCampo()==campo && ver.getCaso()==caso) 
+				{
+					lista.add(ver);
+				}
+			}
+			
+			return lista;
+		
+
 	}
 
 	public void setVerMobilitas(List<VerMobilitaDTO> verMobilitas) {
 		this.verMobilitas = verMobilitas;
 	}
 
-	public List<VerLinearitaDTO> getVerLinearitas() {
-		return verLinearitas;
+	public List<VerLinearitaDTO> getVerLinearitas(int campo) {
+		
+    List<VerLinearitaDTO> lista = new ArrayList<VerLinearitaDTO>();
+		
+		for (VerLinearitaDTO ver : verLinearitas) 
+		{
+			if(ver.getCampo()==campo) 
+			{
+				lista.add(ver);
+			}
+		}
+		
+		return lista;
+		
+	
 	}
 
 	public void setVerLinearitas(List<VerLinearitaDTO> verLinearitas) {
