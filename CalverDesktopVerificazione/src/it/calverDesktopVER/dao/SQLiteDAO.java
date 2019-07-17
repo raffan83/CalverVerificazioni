@@ -2093,7 +2093,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 
 		try{
 			con=getConnection();
-			pst=con.prepareStatement("INSERT INTO ver_decentramento(id_misura,campo,posizione) VALUES(?,?,?)");
+			pst=con.prepareStatement("INSERT INTO ver_decentramento(id_misura,campo,posizione,speciale) VALUES(?,?,?,?)");
 
 
 			if(tipoStrumento!=3) 
@@ -2104,6 +2104,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 					pst.setInt(1,idMisura);		
 					pst.setInt(2,1);
 					pst.setInt(3,i+1);
+					pst.setString(4, "N");
 
 					pst.execute();
 				}
@@ -2121,6 +2122,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 						pst.setInt(1,idMisura);		
 						pst.setInt(2,campo);
 						pst.setInt(3,i+1);
+						pst.setString(4, "N");
 
 						pst.execute();
 					}
@@ -2307,6 +2309,8 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			    ver_dec.setErroreCor(rs.getBigDecimal("errore_cor"));
 			    ver_dec.setMpe(rs.getBigDecimal("mpe"));
 			    ver_dec.setEsito(rs.getString("esito"));
+			    ver_dec.setCarico(rs.getBigDecimal("carico"));
+			    ver_dec.setSpeciale(rs.getString("speciale"));
 			    
 			    listaDecentraento.add(ver_dec);
 			    
@@ -2625,10 +2629,12 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			pst.execute();
 			
 		
-			pst1=con.prepareStatement("UPDATE ver_decentramento set esito=? WHERE id_misura=? AND campo=?");
+			pst1=con.prepareStatement("UPDATE ver_decentramento set esito=?,speciale=?,carico=? WHERE id_misura=? AND campo=?");
 			pst1.setString(1, decentramento.getEsito());
-			pst1.setInt(2, idMisura);
-			pst1.setInt(3, decentramento.getCampo());
+			pst1.setString(2, decentramento.getSpeciale());
+			pst1.setBigDecimal(3, decentramento.getCarico());
+			pst1.setInt(4, idMisura);
+			pst1.setInt(5, decentramento.getCampo());
 			pst1.execute();
 			
 			

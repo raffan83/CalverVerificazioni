@@ -616,7 +616,12 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 					
 					if(save)
 					{
-						GestioneStrumentoVER_BO.insertStrumento(strumento);
+						int id=GestioneStrumentoVER_BO.insertStrumento(strumento);
+					
+						if(id>0) 
+						{
+							JOptionPane.showMessageDialog(null,"Inserimento completato correttamente - ID Strumento: "+id,"Strumento",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/confirm.png")));
+						}
 					}
 				} 
 				catch (Exception e2) {

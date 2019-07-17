@@ -147,13 +147,7 @@ public class PannelloMisuraMaster extends JPanel
 		}
 
 		panel_tabella = costruisciTabella();
-		panel_prova_ripetibilita=costruisciPanelloRipetibilita();
-		panel_prova_decentramento=costruisciPanelloDecentramento();
-		panel_prova_linearita=costruisciPannelloLinearita();
-		panel_prova_accuratezza= costruisciPannelloAccuratezza();
-		panel_prova_mobilita=costruisciPannelloMobilita();
-
-
+		
 		panel_struttura =creaPanelStruttura();
 
 		JLabel lblCampo = new JLabel("Campo");
@@ -165,13 +159,27 @@ public class PannelloMisuraMaster extends JPanel
 
 		final JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 
+		
 		tabbedPane.addTab("Controllo preliminare",panel_tabella);
+		
+		panel_prova_ripetibilita=costruisciPanelloRipetibilita();
 		tabbedPane.addTab("Prova Ripetibilità", panel_prova_ripetibilita);
+		
+		panel_prova_decentramento=costruisciPanelloDecentramento();
 		tabbedPane.addTab("Prova Decentramento", panel_prova_decentramento);
+		
+		panel_prova_linearita=costruisciPannelloLinearita();
 		tabbedPane.addTab("Prova Linearità", panel_prova_linearita);
+		
+		if(strumento.getTipologia()==2) 
+		{
+		panel_prova_accuratezza= costruisciPannelloAccuratezza();
 		tabbedPane.addTab("Prova Accuratezza", panel_prova_accuratezza);
+		
+		panel_prova_mobilita=costruisciPannelloMobilita();
 		tabbedPane.addTab("Prova Mobilità", panel_prova_mobilita);
-
+		
+		}
 		masterPanel.add(tabbedPane, "cell 0 1,grow");
 		masterPanel.add(panel_struttura,"cell 0 2,grow");
 
@@ -188,9 +196,28 @@ public class PannelloMisuraMaster extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
+				try {
+					misura=GestioneMisuraBO.getMisura(SessionBO.idMisura);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				panel_prova_ripetibilita=costruisciPanelloRipetibilita();
-
+				panel_prova_decentramento=costruisciPanelloDecentramento();
+				panel_prova_linearita=costruisciPanelloRipetibilita();
+				
 				tabbedPane.setComponentAt(1, panel_prova_ripetibilita);
+				tabbedPane.setComponentAt(2, panel_prova_decentramento);
+				tabbedPane.setComponentAt(3, panel_prova_linearita);
+				
+				if(strumento.getTipologia()==2) 
+				{
+					panel_prova_accuratezza= costruisciPannelloAccuratezza();
+					tabbedPane.setComponentAt(4, panel_prova_accuratezza);
+					
+					panel_prova_mobilita=costruisciPannelloMobilita();
+					tabbedPane.setComponentAt(5, panel_prova_mobilita);
+				}
 			}
 		});
 
@@ -797,6 +824,10 @@ public class PannelloMisuraMaster extends JPanel
 		textField_carico.setColumns(10);
 		pannelloDecentramento.add(textField_carico, "cell 4 4,width :50:50,alignx right");
 
+		
+		
+		
+		
 		final JComboBox comboBox = new JComboBox();
 		comboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -815,6 +846,18 @@ public class PannelloMisuraMaster extends JPanel
 		comboBox.setModel(new DefaultComboBoxModel(new String[] {"NO\t", "SI"}));
 		pannelloDecentramento.add(comboBox, "cell 5 4,alignx right");
 
+		
+		if(listaDecentramento.get(0).getSpeciale().equals("N")) 
+		{
+			comboBox.setSelectedIndex(0);
+			tableDec.setDefaultRenderer(Object.class, new MyRendererDecentramentoNormal());
+		}else 
+		{
+			comboBox.setSelectedIndex(1);
+			tableDec.setDefaultRenderer(Object.class, new MyRendererDecentramentoSpecial());
+		}
+		
+		
 		textField_punti_appoggio = new JTextField();
 		pannelloDecentramento.add(textField_punti_appoggio, "cell 1 4,width :50:50");
 		textField_punti_appoggio.setColumns(10);
@@ -961,7 +1004,15 @@ public class PannelloMisuraMaster extends JPanel
 							decentramento.setMpe(new BigDecimal(mpe));
 							decentramento.setEsito(esito);
 							decentramento.setCampo(comboBox_campo.getSelectedIndex()+1);
-
+							
+							if(comboBox.getSelectedIndex()==0) 
+							{
+								decentramento.setSpeciale("N");
+							}else 
+							{
+								decentramento.setSpeciale("S");
+							}
+							decentramento.setCarico(new BigDecimal(textField_carico.getText()));
 							GestioneMisuraBO.updateValoriDecentramento(decentramento,misura.getId());
 
 

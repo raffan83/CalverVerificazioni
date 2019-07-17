@@ -32,6 +32,10 @@ public class VerDecentramentoDTO implements Serializable {
 	private int puntiAppoggio;
 
 	private int tipoRicettore;
+	
+	private BigDecimal carico;
+	
+	private String speciale;
 
 	private VerMisuraDTO verMisura;
 
@@ -140,6 +144,22 @@ public class VerDecentramentoDTO implements Serializable {
 
 	public void setVerMisura(VerMisuraDTO verMisura) {
 		this.verMisura = verMisura;
+	}
+
+	public BigDecimal getCarico() {
+		return carico;
+	}
+
+	public void setCarico(BigDecimal carico) {
+		this.carico = carico;
+	}
+
+	public String getSpeciale() {
+		return speciale;
+	}
+
+	public void setSpeciale(String speciale) {
+		this.speciale = speciale;
 	}
 
 }

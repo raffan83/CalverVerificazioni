@@ -601,6 +601,9 @@ public class PannelloStrumentoMaster extends JPanel implements ActionListener {
 		add(scrollPane,"cell 0 2,growx,growy");
 
 		JButton btnCreaStrumento = new JButton("Crea Strumento");
+		
+		JButton btnVisualizzaStrumento = new JButton("Visualizza Strumento");
+		
 
 		JButton btnGetRowSelected = new JButton("Carica Scheda");
 		btnGetRowSelected.addActionListener(new ActionListener() {
@@ -621,9 +624,14 @@ public class PannelloStrumentoMaster extends JPanel implements ActionListener {
 	//	btnGetRowSelected.setBounds(220, 425, 150, 50);
 		btnGetRowSelected.setFont(new Font("Arial",Font.BOLD, 14));
 		btnGetRowSelected.setIcon(new ImageIcon(PannelloTOP.class.getResource("/image/load.png")));
+		
 		btnCreaStrumento.setFont(new Font("Arial",Font.BOLD, 14));
 		btnCreaStrumento.setIcon(new ImageIcon(PannelloTOP.class.getResource("/image/make.png")));
 		add(btnCreaStrumento, "cell 0 1, gapleft 25, height :30:");
+		
+		btnVisualizzaStrumento.setFont(new Font("Arial",Font.BOLD, 14));
+		btnVisualizzaStrumento.setIcon(new ImageIcon(PannelloTOP.class.getResource("/image/check.png")));
+		add(btnVisualizzaStrumento, "cell 0 1, gapleft 25, height :30:");
 
 		JLabel labsearch= new JLabel("Cerca ");
 		labsearch.setForeground(Color.black);
@@ -668,6 +676,7 @@ public class PannelloStrumentoMaster extends JPanel implements ActionListener {
 		add(jtfFilter,"cell 0 4,height :30:");
 
 		add(btnGetRowSelected, "cell 0 4,height :35:,gapleft 25");
+		
 		btnCreaStrumento.addActionListener(new ActionListener() {
 
 			@Override
@@ -676,6 +685,43 @@ public class PannelloStrumentoMaster extends JPanel implements ActionListener {
 				JPanel panelDB =new PannelloCreazioneStrumento();
 
 				SystemGUI.callPanel(panelDB, "PCS");
+
+			}
+		});
+		
+		btnVisualizzaStrumento.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+
+				String id="";
+				for (int i = 0; i < table.getRowCount(); i++) {
+					Boolean chked = Boolean.valueOf(table.getValueAt(i, 0).toString());
+					String dataCol1 = table.getValueAt(i, 1).toString();
+					if (chked) {
+						id=dataCol1;
+						break;
+					}
+				}
+						
+					if(!id.equals(""))	
+					{
+						VerStrumentoDTO strumento;
+						try {
+							
+							strumento = GestioneStrumentoVER_BO.getStrumento(id);
+							JPanel panelDB =new PannelloVisualizzazioneStrumento(strumento);
+							SystemGUI.callPanel(panelDB, "PVS");
+							
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						
+					}
+					
+				
 
 			}
 		});
@@ -761,11 +807,11 @@ public class PannelloStrumentoMaster extends JPanel implements ActionListener {
 			
 		});
 		
-		popupMenu= new JPopupMenu();
-		jmit= new JMenuItem("Duplica Strumento");
-		jmit.addActionListener(this);
-		popupMenu.add(jmit);
-		table.setComponentPopupMenu(popupMenu);
+	//	popupMenu= new JPopupMenu();
+	//	jmit= new JMenuItem("Duplica Strumento");
+	//	jmit.addActionListener(this);
+	//	popupMenu.add(jmit);
+	//	table.setComponentPopupMenu(popupMenu);
 		
 		
 	}
@@ -807,8 +853,7 @@ public class PannelloStrumentoMaster extends JPanel implements ActionListener {
 		table.setRowSorter(rowSorter);
 		table.setDefaultRenderer(Object.class, new MyCellRenderer());
 		table.setComponentPopupMenu(popupMenu);
-		
-		scrollPane.getViewport().add(table);
+		scrollPane.setViewportView(table);
 
 		table.repaint();
 
