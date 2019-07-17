@@ -3,6 +3,7 @@ package it.calverDesktopVER.dto;
 import java.math.BigDecimal;
 import java.util.Date;
 
+
 public class VerStrumentoDTO {
 	
 	private int id;
@@ -13,8 +14,8 @@ public class VerStrumentoDTO {
 	private int classe;
 	private int id_tipo_strumento;
 	private String um;
-	private Date data_ultima_verifica;
-	private Date data_prossima_verifica;
+	private String data_ultima_verifica;
+	private String data_prossima_verifica;
 	private BigDecimal portata_min_C1;
 	private BigDecimal portata_max_C1;
 	private BigDecimal div_ver_C1;
@@ -32,9 +33,26 @@ public class VerStrumentoDTO {
 	private BigDecimal numero_div_C3;
 	private int id_cliente;
 	private int id_sede;
+	private int anno_marcatura_ce;
+	private String data_messa_in_servizio;
+	private int tipologia;
+	private int freq_mesi;
 
 	public int getId() {
 		return id;
+	}
+	public int getAnno_marcatura_ce() {
+		return anno_marcatura_ce;
+	}
+	public void setAnno_marcatura_ce(int anno_marcatura_ce) {
+		this.anno_marcatura_ce = anno_marcatura_ce;
+	}
+
+	public int getTipologia() {
+		return tipologia;
+	}
+	public void setTipologia(int tipologia) {
+		this.tipologia = tipologia;
 	}
 	public void setId(int id) {
 		this.id = id;
@@ -81,18 +99,6 @@ public class VerStrumentoDTO {
 	}
 	public void setUm(String um) {
 		this.um = um;
-	}
-	public Date getData_ultima_verifica() {
-		return data_ultima_verifica;
-	}
-	public void setData_ultima_verifica(Date data_ultima_verifica) {
-		this.data_ultima_verifica = data_ultima_verifica;
-	}
-	public Date getData_prossima_verifica() {
-		return data_prossima_verifica;
-	}
-	public void setData_prossima_verifica(Date data_prossima_verifica) {
-		this.data_prossima_verifica = data_prossima_verifica;
 	}
 	public BigDecimal getPortata_min_C1() {
 		return portata_min_C1;
@@ -323,5 +329,29 @@ public class VerStrumentoDTO {
 	}	
 		return null;
 }
+	public int getFreq_mesi() {
+		return freq_mesi;
+	}
+	public void setFreq_mesi(int freq_mesi) {
+		this.freq_mesi = freq_mesi;
+	}
+	public String getData_ultima_verifica() {
+		return data_ultima_verifica;
+	}
+	public void setData_ultima_verifica(String data_ultima_verifica) {
+		this.data_ultima_verifica = data_ultima_verifica;
+	}
+	public String getData_prossima_verifica() {
+		return data_prossima_verifica;
+	}
+	public void setData_prossima_verifica(String data_prossima_verifica) {
+		this.data_prossima_verifica = data_prossima_verifica;
+	}
+	public String getData_messa_in_servizio() {
+		return data_messa_in_servizio;
+	}
+	public void setData_messa_in_servizio(String data_messa_in_servizio) {
+		this.data_messa_in_servizio = data_messa_in_servizio;
+	}
 		
 }

@@ -194,8 +194,8 @@ public class SQLiteDAO {
 			strumento.setClasse(rs.getInt("classe"));
 			strumento.setId_tipo_strumento(rs.getInt("id_ver_tipo_strumento"));
 			strumento.setUm(rs.getString("um"));
-			strumento.setData_ultima_verifica(rs.getDate("data_ultima_verifica"));
-			strumento.setData_prossima_verifica(rs.getDate("data_prossima_verifica"));
+			strumento.setData_ultima_verifica(rs.getString("data_ultima_verifica"));
+			strumento.setData_prossima_verifica(rs.getString("data_prossima_verifica"));
 			strumento.setPortata_min_C1(rs.getBigDecimal("portata_min_C1"));
 			strumento.setPortata_max_C1(rs.getBigDecimal("portata_max_C1"));
 			strumento.setDiv_ver_C1(rs.getBigDecimal("div_ver_C1"));
@@ -211,6 +211,10 @@ public class SQLiteDAO {
 			strumento.setDiv_ver_C3(rs.getBigDecimal("div_ver_C3"));
 			strumento.setDiv_ver_C3(rs.getBigDecimal("div_rel_C3"));
 			strumento.setNumero_div_C3(rs.getBigDecimal("numero_div_C3"));
+			strumento.setAnno_marcatura_ce(rs.getInt("anno_marcatura_CE"));
+			strumento.setData_messa_in_servizio(rs.getString("data_ms"));
+			strumento.setTipologia(rs.getInt("id_tipologia"));
+			strumento.setFreq_mesi(rs.getInt("freq_mesi"));
 
 			
 			listaStrumenti.add(strumento);
@@ -257,8 +261,8 @@ public class SQLiteDAO {
 			strumento.setClasse(rs.getInt("classe"));
 			strumento.setId_tipo_strumento(rs.getInt("id_ver_tipo_strumento"));
 			strumento.setUm(rs.getString("um"));
-			strumento.setData_ultima_verifica(rs.getDate("data_ultima_verifica"));
-			strumento.setData_prossima_verifica(rs.getDate("data_prossima_verifica"));
+			strumento.setData_ultima_verifica(rs.getString("data_ultima_verifica"));
+			strumento.setData_prossima_verifica(rs.getString("data_prossima_verifica"));
 			strumento.setPortata_min_C1(rs.getBigDecimal("portata_min_C1"));
 			strumento.setPortata_max_C1(rs.getBigDecimal("portata_max_C1"));
 			strumento.setDiv_ver_C1(rs.getBigDecimal("div_ver_C1"));
@@ -274,6 +278,10 @@ public class SQLiteDAO {
 			strumento.setDiv_ver_C3(rs.getBigDecimal("div_ver_C3"));
 			strumento.setDiv_rel_C3(rs.getBigDecimal("div_rel_C3"));
 			strumento.setNumero_div_C3(rs.getBigDecimal("numero_div_C3"));
+			strumento.setAnno_marcatura_ce(rs.getInt("anno_marcatura_CE"));
+			strumento.setData_messa_in_servizio(rs.getString("data_ms"));
+			strumento.setTipologia(rs.getInt("id_tipologia"));
+			strumento.setFreq_mesi(rs.getInt("freq_mesi"));
 			
 		}
 	}catch(Exception ex)
@@ -1361,7 +1369,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 	
 
 
-	public static int insertStrumento(VerStrumentoDTO strumento, String nomeSede) throws Exception {
+	public static int insertStrumento(VerStrumentoDTO strumento) throws Exception {
 		
 		Connection con=null;
 		PreparedStatement pst=null;
@@ -1369,33 +1377,47 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		{
 			con=getConnection();
 			
-			pst=con.prepareStatement("INSERT INTO tblStrumenti(indirizzo,denominazione,codice_interno,costruttore,modello,classificazione,matricola," +
-															   "risoluzione,campo_misura,freq_verifica_mesi,tipoRapporto,statoStrumento," +
-																"reparto,utilizzatore,procedura,id_tipo_strumento,note,creato,importato,luogo_verifica) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+			pst=con.prepareStatement("INSERT INTO ver_strumento(denominazione,costruttore,modello,matricola,classe,id_ver_tipo_strumento,um,"+
+																"portata_min_C1,portata_max_C1,div_ver_C1,div_rel_C1,numero_div_C1," +
+																"portata_min_C2,portata_max_C2,div_ver_C2,div_rel_C2,numero_div_C2," +
+																"portata_min_C3,portata_max_C3,div_ver_C3,div_rel_C3,numero_div_C3," +
+																"anno_marcatura_CE,data_ms,id_tipologia,freq_mesi,creato) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 																Statement.RETURN_GENERATED_KEYS);
 			
 			
-//			pst.setString(1, nomeSede);
-//			pst.setString(2, strumento.getDenominazione());
-//			pst.setString(3, strumento.getCodice_interno());
-//			pst.setString(4, strumento.getCostruttore());
-//			pst.setString(5, strumento.getModello());
-//			pst.setString(6, strumento.getClassificazione());
-//			pst.setString(7, strumento.getMatricola());
-//			pst.setString(8, strumento.getRisoluzione());
-//			pst.setString(9, strumento.getCampo_misura());
-//			pst.setInt(10, strumento.getFreq_taratura());
-//			pst.setString(11, strumento.getTipoRapporto());
-//			pst.setString(12, strumento.getStatoStrumento());
-//			pst.setString(13, strumento.getReparto());
-//			pst.setString(14, strumento.getUtilizzatore());
-//			pst.setString(15, strumento.getProcedura());
-//			pst.setString(16, strumento.getId_tipoStrumento());
-//			pst.setString(17, strumento.getNote());
-//			pst.setString(18, "S");
-//			pst.setString(19, "N");
-//			pst.setString(20, ""+strumento.getLuogoVerifica());
-//		
+
+			pst.setString(1, strumento.getDenominazione());
+			pst.setString(2, strumento.getCostruttore());
+			pst.setString(3, strumento.getModello());
+			pst.setString(4, strumento.getMatricola());
+			pst.setInt(5, strumento.getClasse());
+			pst.setInt(6, strumento.getId_tipo_strumento());
+			pst.setString(7, strumento.getUm());
+			
+			pst.setBigDecimal(8, strumento.getPortata_min_C1());
+			pst.setBigDecimal(9, strumento.getPortata_max_C1());
+			pst.setBigDecimal(10, strumento.getDiv_ver_C1());
+			pst.setBigDecimal(11, strumento.getDiv_rel_C1());
+			pst.setBigDecimal(12, strumento.getNumero_div_C1());
+			
+			pst.setBigDecimal(13, strumento.getPortata_min_C2());
+			pst.setBigDecimal(14, strumento.getPortata_max_C2());
+			pst.setBigDecimal(15, strumento.getDiv_ver_C2());
+			pst.setBigDecimal(16, strumento.getDiv_rel_C2());
+			pst.setBigDecimal(17, strumento.getNumero_div_C2());
+			
+			pst.setBigDecimal(18, strumento.getPortata_min_C3());
+			pst.setBigDecimal(19, strumento.getPortata_max_C3());
+			pst.setBigDecimal(20, strumento.getDiv_ver_C3());
+			pst.setBigDecimal(21, strumento.getDiv_rel_C3());
+			pst.setBigDecimal(22, strumento.getNumero_div_C3());
+			
+			pst.setInt(23, strumento.getAnno_marcatura_ce());
+			pst.setString(24,strumento.getData_messa_in_servizio());
+			pst.setInt(25, strumento.getTipologia());
+			pst.setInt(26, strumento.getFreq_mesi());
+			pst.setString(27,"S");
+	
 			pst.executeUpdate();
 			
 			ResultSet rs = pst.getGeneratedKeys();
@@ -1412,8 +1434,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		}
 	}
 
-
-
+	
 	public static String getNomeSede() {
 		Connection con=null;
 		PreparedStatement pst=null;

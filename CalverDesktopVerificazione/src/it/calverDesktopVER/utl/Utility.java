@@ -211,4 +211,28 @@ public class Utility {
 			}
 		
 	}
+
+	public static boolean isDate(String date) {
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		try 
+		{
+			sdf.parse(date);
+			return true;
+		} catch (Exception e) 
+		{
+			return false;
+		}
+	}
+
+	public static boolean isDouble(String text) {
+		try 
+		{
+			Double.parseDouble(text);
+			return true;
+		} catch (Exception e) 
+		{
+			return false;
+		}
+	}
 }

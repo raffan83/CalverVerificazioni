@@ -459,8 +459,8 @@ public class PannelloStrumentoMaster extends JPanel implements ActionListener {
 				VerStrumentoDTO strumento=listaStrumenti.get(i);
 							
 				MyObject object = new MyObject(""+strumento.getId(),""+strumento.getClasse(),Utility.getTipoStrumento(strumento.getId_tipo_strumento()),strumento.getUm(),
-						strumento.getMatricola(),strumento.getDenominazione(),strumento.getCostruttore(),strumento.getModello(),Utility.getDate(strumento.getData_ultima_verifica()),
-						Utility.getDate(strumento.getData_prossima_verifica()));
+						strumento.getMatricola(),strumento.getDenominazione(),strumento.getCostruttore(),strumento.getModello(),strumento.getData_ultima_verifica(),
+						strumento.getData_prossima_verifica());
 				manager.addObject(object);
 			}
 			
@@ -564,7 +564,7 @@ public class PannelloStrumentoMaster extends JPanel implements ActionListener {
 		add(lblFiltra,"cell 0 1, height :30:");
 
 		String[] data={"Tutti","Lavorati","Chiusi","Aperti","Precedenti"};
-		final JComboBox<String> combo= new JComboBox<String>(data);
+		final JComboBox<String> combo= new JComboBox<String>(/*data*/);
 		combo.setFont(new Font("Arial",Font.BOLD, 14));
 		combo.setForeground(Color.black);
 		add(combo,"cell 0 1, width 150::, height :30:");
@@ -776,8 +776,8 @@ public class PannelloStrumentoMaster extends JPanel implements ActionListener {
 		for (int i = 0; i < listaStrumenti.size(); i++) {
 			VerStrumentoDTO strumento=listaStrumenti.get(i);
 			MyObject object = new MyObject(""+strumento.getId(),""+strumento.getClasse(),Utility.getTipoStrumento(strumento.getId_tipo_strumento()),strumento.getUm(),
-					strumento.getMatricola(),strumento.getDenominazione(),strumento.getCostruttore(),strumento.getModello(),Utility.getDate(strumento.getData_ultima_verifica()),
-					Utility.getDate(strumento.getData_prossima_verifica()));
+					strumento.getMatricola(),strumento.getDenominazione(),strumento.getCostruttore(),strumento.getModello(),strumento.getData_ultima_verifica(),
+					strumento.getData_prossima_verifica());
 			manager.addObject(object);
 		}
 

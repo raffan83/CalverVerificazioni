@@ -19,9 +19,7 @@ public class GestioneStrumentoVER_BO {
 
 	public static int insertStrumento(VerStrumentoDTO strumento) throws Exception {
 		
-		String nomeSede=SQLiteDAO.getNomeSede();
-		
-		return SQLiteDAO.insertStrumento(strumento,nomeSede);
+		return SQLiteDAO.insertStrumento(strumento);
 		
 	}
 
