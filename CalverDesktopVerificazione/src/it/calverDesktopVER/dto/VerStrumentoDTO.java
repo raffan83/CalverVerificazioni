@@ -217,12 +217,12 @@ public class VerStrumentoDTO {
 		{
 			return div_rel_C1;
 		}
-		if(carico>=portata_min_C2.doubleValue() && carico <portata_max_C2.doubleValue()) 
+		if(carico>=portata_min_C2.doubleValue() && carico <=portata_max_C2.doubleValue()) 
 		{
 			return div_rel_C2;
 		}
 		
-		if(carico>=portata_min_C3.doubleValue() && carico <portata_max_C3.doubleValue()) 
+		if(carico>portata_min_C3.doubleValue() && carico <=portata_max_C3.doubleValue()) 
 		{
 			return div_rel_C3;
 		}

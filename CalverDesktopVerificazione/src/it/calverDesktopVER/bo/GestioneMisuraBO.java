@@ -98,6 +98,7 @@ public class GestioneMisuraBO
 		misura.setVerAccuratezzas(SQLiteDAO.getListaProvaAccuratezza(idMisura));
 		
 		misura.setVerMobilitas(SQLiteDAO.getListaProvaMobilita(idMisura));
+		
 		return misura;
 	}
 
@@ -135,6 +136,11 @@ public class GestioneMisuraBO
 		
 		SQLiteDAO.updateValoriMobilita(mob,idMisura);
 		
+	}
+
+	public static void terminaMisura(int id) throws Exception {
+
+		SQLiteDAO.terminaMisura(id);
 	}
 
 	

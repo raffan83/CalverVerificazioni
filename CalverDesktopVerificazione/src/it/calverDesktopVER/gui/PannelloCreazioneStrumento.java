@@ -200,6 +200,28 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 		comboBox_tipologia.setFont(new Font("Arial", Font.PLAIN, 14));
 		add(comboBox_tipologia, "cell 1 6 2 1");
 		
+		
+		comboBox_tipologia.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+			
+				if(comboBox_tipologia.getSelectedIndex()==1) 
+				{
+					textField_freqMesi.setText("36");
+					textField_freqMesi.setEditable(false);
+				}else 
+				{
+					textField_freqMesi.setEditable(true);
+				}
+				
+			}
+		});
+		
+		JLabel lblSeNonReperibile = new JLabel("* Se non reperibile inserire 01/01/1900");
+		lblSeNonReperibile.setFont(new Font("Arial", Font.BOLD, 11));
+		add(lblSeNonReperibile, "cell 4 6 2 1,alignx left,aligny top");
+		
 		JLabel lblPortatamin = new JLabel("Portata(min)");
 		lblPortatamin.setFont(new Font("Arial", Font.BOLD, 14));
 		add(lblPortatamin, "cell 1 8,alignx center");
@@ -725,7 +747,7 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 						if(Double.parseDouble(textField_divisione_verifica_c3.getText())!=0)
 							{
 								double divisioni =Double.parseDouble(textField_pr_max_c3.getText())/Double.parseDouble(textField_divisione_verifica_c3.getText());
-								textField_numero_divisioni_c1.setText(""+divisioni);
+								textField_numero_divisioni_c3.setText(""+divisioni);
 							}
 					}
 				} catch (NumberFormatException e2) {

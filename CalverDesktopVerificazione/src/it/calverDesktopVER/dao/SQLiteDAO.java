@@ -1336,39 +1336,6 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		
 	}
 
-
-
-	public static void terminaMisura(String idStrumento, String classe) throws Exception {
-		
-		Connection con=null;
-		PreparedStatement pst=null;
-	
-		try
-		{
-			con=getConnection();
-			
-			pst=con.prepareStatement("UPDATE  tblMisuraSicurezzaElettrica SET stato=1, SK=? WHERE id_strumento=?");
-
-			pst.setString(1, classe);
-			pst.setInt(2, Integer.parseInt(idStrumento));
-			
-		
-
-			pst.execute();		
-			
-		}catch (Exception e) {
-			e.printStackTrace();
-			throw e;
-		}finally
-		{
-			pst.close();
-			con.close();
-		}
-
-	}
-	
-
-
 	public static int insertStrumento(VerStrumentoDTO strumento) throws Exception {
 		
 		Connection con=null;
@@ -2715,7 +2682,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		{
 			con=getConnection();
 			pst=con.prepareStatement("UPDATE ver_accuratezza set tipo_tara=?,massa=?,indicazione=?,carico_agg=?,"
-									+"errore=?,mpe=?,esito=?"
+									+"errore=?,errore_cor=?,mpe=?,esito=?"
 									+"WHERE id=? AND campo=? ");
 			
 			pst.setInt(1,acc.getTipoTara() );
@@ -2723,10 +2690,11 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			pst.setBigDecimal(3,acc.getIndicazione());
 			pst.setBigDecimal(4, acc.getCaricoAgg());
 			pst.setBigDecimal(5, acc.getErrore());
-			pst.setBigDecimal(6, acc.getMpe());
-			pst.setString(7, acc.getEsito());
-			pst.setInt(8, acc.getId());
-			pst.setInt(9, acc.getCampo());
+			pst.setBigDecimal(6, acc.getErroreCor());
+			pst.setBigDecimal(7, acc.getMpe());
+			pst.setString(8, acc.getEsito());
+			pst.setInt(9, acc.getId());
+			pst.setInt(10, acc.getCampo());
 			pst.execute();
 			
 	} 
@@ -2790,6 +2758,34 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			pst1.close();
 			con.close();
 		}
+		
+	}
+	public static void terminaMisura(int id) throws Exception {
+		
+		Connection con=null;
+		PreparedStatement pst=null;
+	
+		try
+		{
+			con=getConnection();
+			
+			pst=con.prepareStatement("UPDATE  ver_misura SET stato=1 WHERE id=?");
+
+			
+			pst.setInt(1, id);
+			
+
+			pst.execute();		
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}finally
+		{
+			pst.close();
+			con.close();
+		}
+
 		
 	}
 

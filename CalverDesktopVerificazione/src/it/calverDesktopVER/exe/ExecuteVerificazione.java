@@ -17,6 +17,7 @@ import it.calverDesktopVER.bo.GestioneRegistro;
 import it.calverDesktopVER.bo.SessionBO;
 import it.calverDesktopVER.gui.FirstAccess;
 import it.calverDesktopVER.gui.GeneralGUI;
+import it.calverDesktopVER.gui.InitSplash;
 import it.calverDesktopVER.utl.Costanti;
 
 public class ExecuteVerificazione {
@@ -35,8 +36,15 @@ public class ExecuteVerificazione {
 	            	try
 	            	{
 	            		
-	            		
+	            		final InitSplash fr= new InitSplash();
 	            		 
+	            		fr.setVisible(true);
+  	           	        
+  	           	        InitSplash.setMessage("Inizzializzazione applicazione...", 0);
+  	           	        Thread.sleep(50);
+  	           	        
+  	           	        InitSplash.setMessage("Caricamento chiavi di registro...", 1);
+  	           	        
 	            		 if(!GestioneRegistro.isConfig()) 
 	            		 { 
 	            				SwingUtilities.invokeLater(new Runnable(){
@@ -47,7 +55,6 @@ public class ExecuteVerificazione {
 	            		            	JFrame f=new FirstAccess();
 	            		            	
 	            		            	URL iconURL = this.getClass().getResource("/image/logo.png");
-	            		            	
 	            		            	
 	            		            	ImageIcon img = new ImageIcon(iconURL);
 	            		            	f.setIconImage(img.getImage());
@@ -79,6 +86,7 @@ public class ExecuteVerificazione {
 		        	  GestioneRegistro.setStringValue(Costanti.COD_PRINT, "1");
 		          }
 		          
+		          InitSplash.setMessage("Creazione interfaccia utente...", 30);
 		          
 	            	GeneralGUI g1 = new GeneralGUI();
 	            	
@@ -94,6 +102,11 @@ public class ExecuteVerificazione {
 	      	        
 	            	g1.setDefaultCloseOperation(3);
 	      	        g1.setVisible(true);
+	      	        
+	      	      InitSplash.setMessage("Avvio Applicazione...", 100);
+	      	      Thread.sleep(500);
+	      	      fr.dispose();
+	      	        
 	            		}
 	      	        }
 	            	catch(Exception ex)
