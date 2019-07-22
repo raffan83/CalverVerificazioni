@@ -18,11 +18,14 @@ import java.util.regex.Pattern;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -42,8 +45,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-import org.apache.commons.io.filefilter.FileFileFilter;
-
+import it.calverDesktopVER.bo.GestioneCampioneBO;
 import it.calverDesktopVER.bo.GestioneMisuraBO;
 import it.calverDesktopVER.bo.GestioneStrumentoVER_BO;
 import it.calverDesktopVER.bo.SessionBO;
@@ -61,9 +63,7 @@ import net.miginfocom.swing.MigLayout;
 
 public class PannelloMisuraMaster extends JPanel 
 {
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 1L;
 	static JTree tree =null;
 	JPopupMenu popupMenu,popupMenuMisura;
@@ -75,6 +75,7 @@ public class PannelloMisuraMaster extends JPanel
 	JPanel panel_struttura;
 	JPanel panel_avvio;
 	JPanel panel_stampa;
+	private JPanel panel_datiGenarali;
 	private JPanel panel_tabella;
 	private JPanel panel_prova_ripetibilita;
 	private JPanel panel_prova_decentramento;
@@ -82,6 +83,7 @@ public class PannelloMisuraMaster extends JPanel
 	private JPanel panel_prova_accuratezza;
 	private JPanel panel_prova_mobilita;
 	JSplitPane splitPane;
+	private static DefaultListModel<String> dlm;
 
 
 	VerStrumentoDTO strumento;
@@ -94,6 +96,9 @@ public class PannelloMisuraMaster extends JPanel
 	JFrame f;
 	ArrayList<ButtonGroup> listaRisposte = new ArrayList<>();
 	private JTable tableRip,tableDec,tableLin,tableAcc,tabellaMobilita1,tabellaMobilita2;
+	
+	private static String[] listaCampioniCompleta=null;
+	
 
 	ModelRipetibilita modelRip;
 	ModelDecentramento modelDec;
@@ -116,6 +121,8 @@ public class PannelloMisuraMaster extends JPanel
 	ArrayList<VerClassiDTO> listaClassi;
 	private JTextField textField_esito_mob_1;
 	private boolean flag;
+	private JTextField textField_nomeRiparatore;
+	private JTextField textField_dataRiparazione;
 	public PannelloMisuraMaster(String id) throws Exception
 	{
 		SessionBO.prevPage="PSS";
@@ -147,7 +154,10 @@ public class PannelloMisuraMaster extends JPanel
 			comboBox_campo.setModel(new DefaultComboBoxModel(new String[] {"1"}));
 		}
 
+		panel_datiGenarali = costruisciDatiGenerali();
+		
 		panel_tabella = costruisciTabella();
+		
 		
 		panel_struttura =creaPanelStruttura();
 
@@ -160,6 +170,8 @@ public class PannelloMisuraMaster extends JPanel
 
 		final JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 
+		
+		tabbedPane.addTab("Dati Generali",panel_datiGenarali);
 		
 		tabbedPane.addTab("Controllo preliminare",panel_tabella);
 		
@@ -223,6 +235,188 @@ public class PannelloMisuraMaster extends JPanel
 		});
 
 
+	}
+
+
+
+
+	private JPanel costruisciDatiGenerali() {
+		
+		JPanel pannelloDatiGenerali = new JPanel();
+		pannelloDatiGenerali.setBorder(new TitledBorder(new LineBorder(new Color(255, 0, 0), 2, true), "Dati Generali", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		pannelloDatiGenerali.setBackground(Color.WHITE);
+		pannelloDatiGenerali.setLayout(new MigLayout("", "[][9.00][][][][]", "[][][][][][][][38.00][30.00][29.00][grow][]"));
+		
+		JLabel lblTipoVerifica = new JLabel("Tipo Verifica");
+		lblTipoVerifica.setFont(new Font("Arial", Font.BOLD, 14));
+		pannelloDatiGenerali.add(lblTipoVerifica, "cell 0 1,alignx trailing");
+		
+		JComboBox comboBox_tipo_verifica = new JComboBox();
+		comboBox_tipo_verifica.setFont(new Font("Arial", Font.BOLD, 12));
+		comboBox_tipo_verifica.setModel(new DefaultComboBoxModel(new String[] {"Periodica", "Prima", "Collaudo"}));
+		pannelloDatiGenerali.add(comboBox_tipo_verifica, "cell 2 1");
+		
+		JLabel lblMotivoVerifica = new JLabel("Motivo Verifica");
+		lblMotivoVerifica.setFont(new Font("Arial", Font.BOLD, 14));
+		pannelloDatiGenerali.add(lblMotivoVerifica, "cell 0 3,alignx trailing");
+		
+		final JComboBox comboBox_motivo = new JComboBox();
+		comboBox_motivo.setFont(new Font("Arial", Font.BOLD, 12));
+		comboBox_motivo.setModel(new DefaultComboBoxModel(new String[] {"Scadenza validità periodica", "Verifica dopo riparazione", "Accertamento CCIAA"}));
+		pannelloDatiGenerali.add(comboBox_motivo, "flowx,cell 2 3");
+		
+		
+		final JLabel lblDataRiparazione = new JLabel("Data riparazione");
+		lblDataRiparazione.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloDatiGenerali.add(lblDataRiparazione, "flowx,cell 4 3,alignx trailing");
+		
+		JCheckBox chckbxNewCheckBox = new JCheckBox("Lo strumento presenta difetti tali da pregiudicare l'affidabilità metrologica");
+		chckbxNewCheckBox.setFont(new Font("Arial", Font.BOLD, 14));
+		chckbxNewCheckBox.setBackground(Color.WHITE);
+		pannelloDatiGenerali.add(chckbxNewCheckBox, "cell 0 5 5 1");
+		
+		JLabel lblListaCampioniLavoro = new JLabel("Lista campioni lavoro");
+		lblListaCampioniLavoro.setFont(new Font("Arial", Font.BOLD, 14));
+		pannelloDatiGenerali.add(lblListaCampioniLavoro, "cell 0 7 5 1");
+		
+		JLabel lblListaCampioni = new JLabel("Lista Campioni");
+		lblListaCampioni.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloDatiGenerali.add(lblListaCampioni, "cell 0 8,alignx right");
+		
+		try {
+			listaCampioniCompleta=GestioneCampioneBO.getListaCampioniCompleta();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		final JComboBox comboBox_lista_campioni = new JComboBox(listaCampioniCompleta);
+		pannelloDatiGenerali.add(comboBox_lista_campioni, "cell 2 8 3 1");
+		
+		JLabel lblListaParametri = new JLabel("Lista Parametri");
+		lblListaParametri.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloDatiGenerali.add(lblListaParametri, "cell 0 9,alignx right");
+		
+		final JComboBox comboBox_listaParametri = new JComboBox();
+		comboBox_listaParametri.setModel(new DefaultComboBoxModel(new String[] {"Seleziona Parametro..."}));
+		pannelloDatiGenerali.add(comboBox_listaParametri, "cell 2 9 3 1");
+		
+		JScrollPane scrollPaneListaCMP = new JScrollPane();
+		pannelloDatiGenerali.add(scrollPaneListaCMP, "cell 2 10,grow");
+		
+		dlm= new DefaultListModel<String>();
+		
+		final JList list_cmp = new JList(dlm);
+		list_cmp.setFont(new Font("Arial", Font.BOLD, 12));
+		scrollPaneListaCMP.setViewportView(list_cmp);
+		
+		JButton btnNewButton = new JButton("Aggiungi");
+	
+		btnNewButton.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/add.png")));
+		btnNewButton.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloDatiGenerali.add(btnNewButton, "flowx,cell 2 11");
+		
+		JButton btnElimina = new JButton("Elimina");
+		btnElimina.setFont(new Font("Arial", Font.BOLD, 12));
+		btnElimina.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/delete.png")));
+		pannelloDatiGenerali.add(btnElimina, "cell 2 11");
+		
+		final JLabel lblNomeRiparatore = new JLabel("Nome Riparatore");
+		lblNomeRiparatore.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloDatiGenerali.add(lblNomeRiparatore, "cell 2 3,alignx trailing");
+		
+		textField_nomeRiparatore = new JTextField();
+		pannelloDatiGenerali.add(textField_nomeRiparatore, "cell 2 3,width :200:");
+		textField_nomeRiparatore.setColumns(10);
+		
+		textField_dataRiparazione = new JTextField();
+		textField_dataRiparazione.setColumns(10);
+		pannelloDatiGenerali.add(textField_dataRiparazione, "cell 4 3,width :120:");
+		
+
+		comboBox_motivo.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				if(comboBox_motivo.getSelectedIndex()==1) 
+				{
+					lblNomeRiparatore.setVisible(true);
+					lblDataRiparazione.setVisible(true);
+					textField_nomeRiparatore.setVisible(true);
+					textField_dataRiparazione.setVisible(true);
+				}
+				else 
+				{
+					lblNomeRiparatore.setVisible(false);
+					lblDataRiparazione.setVisible(false);
+					textField_nomeRiparatore.setVisible(false);
+					textField_dataRiparazione.setVisible(false);
+				
+				}
+				
+			}
+		});
+		
+		comboBox_lista_campioni.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+			
+			if (comboBox_lista_campioni.getSelectedIndex()!=0) 
+			{
+				String[] listaParametriTaratura;
+				try {
+					listaParametriTaratura = GestioneCampioneBO.getParametriTaratura(comboBox_lista_campioni.getSelectedItem().toString());
+					
+					comboBox_listaParametri.removeAllItems();
+
+					for(String str : listaParametriTaratura) {
+
+
+						comboBox_listaParametri.addItem(str);
+					}
+				
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}else 
+			{
+				comboBox_listaParametri.removeAllItems();
+				comboBox_listaParametri.addItem("Seleziona Parametro...");
+			}	
+			}
+		});
+		
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				if(comboBox_lista_campioni.getSelectedIndex()>0 && comboBox_listaParametri.getSelectedIndex()>0 ) 
+				{
+					String campione= comboBox_lista_campioni.getSelectedItem().toString()+"("+comboBox_listaParametri.getSelectedItem().toString()+")";
+
+					dlm.addElement(campione);
+				}
+			}
+		});
+		
+		
+		btnElimina.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				if(dlm.size()>0 && list_cmp.getSelectedIndex()>-1)
+				{
+					dlm.removeElementAt(list_cmp.getSelectedIndex());
+				}
+				
+			}
+		});
+		
+		
+		comboBox_motivo.setSelectedIndex(0);
+		
+		return pannelloDatiGenerali;
 	}
 
 
@@ -1404,38 +1598,29 @@ public class PannelloMisuraMaster extends JPanel
 				int row = e.getFirstRow();
 				int column=e.getColumn();
 
-				if(column==1 || column==2 || column==3 || column==4 || column==5) 
+				if(column==1 || column==2 || column==4 ) 
 				{
 					int campo=comboBox_campo.getSelectedIndex();
 
 					Object massa=modelLin.getValueAt(row, 1);
 					Object indicazioneSalita=modelLin.getValueAt(row, 2);
-					Object indicazioneDiscesa=modelLin.getValueAt(row, 3);
 					Object car_agg_salita=modelLin.getValueAt(row, 4);
-					Object car_agg_discesa=modelLin.getValueAt(row, 5);
 
-					if(massa!=null && indicazioneSalita!=null && indicazioneDiscesa!=null
-							&& car_agg_salita!=null && car_agg_discesa!=null) 
+					if(massa!=null && indicazioneSalita!=null && car_agg_salita!=null ) 
 					{
 						BigDecimal mas;
 						BigDecimal indSalita;
 						BigDecimal indDiscesa;
 						BigDecimal car_aggSalita;
-						BigDecimal car_aggDiscesa;
 						BigDecimal erroreSalita;
-						BigDecimal erroreDiscesa;
 						BigDecimal erroreSalita_cor = null;
-						BigDecimal erroreDiscesa_cor = null;
+						
 
 						try 
 						{
 							mas=new BigDecimal(massa.toString());
 							indSalita=new BigDecimal(indicazioneSalita.toString());
-							indDiscesa=new BigDecimal(indicazioneDiscesa.toString());
-
 							car_aggSalita=new BigDecimal(car_agg_salita.toString());
-							car_aggDiscesa=new BigDecimal(car_agg_discesa.toString());
-
 							BigDecimal err_div=getE(campo,strumento.getId_tipo_strumento(),mas);
 							
 							if(row==0) 
@@ -1443,15 +1628,9 @@ public class PannelloMisuraMaster extends JPanel
 								erroreSalita=indSalita.add(err_div.setScale(4).divide(new BigDecimal("2"), RoundingMode.HALF_UP)
 										.subtract(car_aggSalita).subtract(mas));
 
-								erroreDiscesa=indDiscesa.add(err_div.setScale(4).divide(new BigDecimal("2"), RoundingMode.HALF_UP)
-										.subtract(car_aggDiscesa).subtract(mas));
-
 								String mpe=getMPE(mas.toPlainString(), campo);
-
-								erroreDiscesa_cor=BigDecimal.ZERO;
 								erroreSalita_cor=BigDecimal.ZERO;
 								modelLin.setValueAt(erroreSalita, row, 6);
-								modelLin.setValueAt(erroreDiscesa, row, 7);
 								modelLin.setValueAt("0", row, 8);
 								modelLin.setValueAt("0", row, 9);
 								modelLin.setValueAt(mpe, row, 10);
@@ -1462,20 +1641,11 @@ public class PannelloMisuraMaster extends JPanel
 								erroreSalita=indSalita.add(err_div.setScale(4).divide(new BigDecimal("2"), RoundingMode.HALF_UP)
 										.subtract(car_aggSalita).subtract(mas));
 
-								erroreDiscesa=indDiscesa.add(err_div.setScale(4).divide(new BigDecimal("2"), RoundingMode.HALF_UP)
-										.subtract(car_aggDiscesa).subtract(mas));
-
-
+							
 								erroreSalita_cor=erroreSalita.subtract(new BigDecimal(modelLin.getValueAt(0, 6).toString()));
-
-								erroreDiscesa_cor=erroreDiscesa.subtract(new BigDecimal(modelLin.getValueAt(0, 7).toString()));
-
 								String mpe=getMPE(mas.toPlainString(), campo);
-
 								modelLin.setValueAt(erroreSalita, row, 6);
-								modelLin.setValueAt(erroreDiscesa, row, 7);
 								modelLin.setValueAt(erroreSalita_cor, row, 8);
-								modelLin.setValueAt(erroreDiscesa_cor, row, 9);
 								modelLin.setValueAt(mpe, row, 10);
 
 							}
@@ -1499,12 +1669,122 @@ public class PannelloMisuraMaster extends JPanel
 							linearita.setCampo(comboBox_campo.getSelectedIndex()+1);
 							linearita.setMassa(mas);
 							linearita.setIndicazioneSalita(indSalita);
-							linearita.setIndicazioneDiscesa(indDiscesa);
 							linearita.setCaricoAggSalita(car_aggSalita);
-							linearita.setCaricoAggDiscesa(car_aggDiscesa);
 							linearita.setErroreSalita(erroreSalita);
-							linearita.setErroreDiscesa(erroreDiscesa);
 							linearita.setErroreCorSalita(erroreSalita_cor);
+							linearita.setEsito(esito);
+							linearita.setMpe(new BigDecimal(getMPE(mas.toPlainString(), campo)));
+
+							GestioneMisuraBO.updateValoriLinearita(linearita, misura.getId());
+
+
+						}
+						catch (Exception e2) 
+						{
+							e2.printStackTrace();
+						}
+
+
+					}
+
+				}
+				
+				if(column==1 ||  column==3 || column==5) 
+				{
+					int campo=comboBox_campo.getSelectedIndex();
+					Object massa=modelLin.getValueAt(row, 1);
+					Object indicazioneDiscesa=modelLin.getValueAt(row, 3);
+					Object car_agg_discesa=modelLin.getValueAt(row, 5);
+
+					if(massa!=null  && indicazioneDiscesa!=null && car_agg_discesa!=null) 
+					{
+						BigDecimal mas;
+						BigDecimal indDiscesa;
+						BigDecimal car_aggDiscesa;
+						BigDecimal erroreDiscesa;
+						BigDecimal erroreDiscesa_cor = null;
+
+						try 
+						{
+							mas=new BigDecimal(massa.toString());
+							
+							indDiscesa=new BigDecimal(indicazioneDiscesa.toString());
+
+							
+							car_aggDiscesa=new BigDecimal(car_agg_discesa.toString());
+
+							BigDecimal err_div=getE(campo,strumento.getId_tipo_strumento(),mas);
+							
+							if(row==0) 
+							{
+							
+								erroreDiscesa=indDiscesa.add(err_div.setScale(4).divide(new BigDecimal("2"), RoundingMode.HALF_UP)
+										.subtract(car_aggDiscesa).subtract(mas));
+
+								String mpe=getMPE(mas.toPlainString(), campo);
+
+								erroreDiscesa_cor=BigDecimal.ZERO;
+							
+							
+								modelLin.setValueAt(erroreDiscesa, row, 7);
+								modelLin.setValueAt("0", row, 8);
+								modelLin.setValueAt("0", row, 9);
+								modelLin.setValueAt(mpe, row, 10);
+							}
+
+							else 
+							{
+							
+
+								erroreDiscesa=indDiscesa.add(err_div.setScale(4).divide(new BigDecimal("2"), RoundingMode.HALF_UP)
+										.subtract(car_aggDiscesa).subtract(mas));
+								
+								if(modelLin.getValueAt(0, 7)!=null) 
+								{
+									BigDecimal pivotErrore=new BigDecimal(modelLin.getValueAt(0, 7).toString());
+									
+									for (int i = 0; i <modelLin.getColumnCount(); i++) 
+									{
+										if(modelLin.getValueAt(i, 7)!=null) 
+										{
+											erroreDiscesa_cor=new BigDecimal(modelLin.getValueAt(i, 7).toString()).subtract(pivotErrore);
+											modelLin.setValueAt(erroreDiscesa_cor, row, 9);
+										}
+									 	
+										
+									}
+								}
+
+								
+
+								String mpe=getMPE(mas.toPlainString(), campo);
+								modelLin.setValueAt(erroreDiscesa, row, 7);
+								
+								modelLin.setValueAt(mpe, row, 10);
+
+							}
+
+							String esito=valutaEsitoLinearita();
+
+							if(esito.equals("POSITIVO")) 
+							{
+								textField_esito_lin.setBackground(Color.GREEN);
+							}
+							else 
+							{
+								textField_esito_lin.setBackground(Color.RED);	
+							}
+							textField_esito_lin.setText(esito);
+
+							VerLinearitaDTO linearita = new VerLinearitaDTO();
+
+							linearita.setId(Integer.parseInt(modelLin.getValueAt(row, 11).toString()));
+							linearita.setTipoAzzeramento(comboBox_tipo_azzeramento.getSelectedIndex());
+							linearita.setCampo(comboBox_campo.getSelectedIndex()+1);
+							linearita.setMassa(mas);
+							linearita.setIndicazioneDiscesa(indDiscesa);
+							linearita.setCaricoAggDiscesa(car_aggDiscesa);
+							linearita.setErroreDiscesa(erroreDiscesa);
 							linearita.setErroreCorDiscesa(erroreDiscesa_cor);
 							linearita.setEsito(esito);
 							linearita.setMpe(new BigDecimal(getMPE(mas.toPlainString(), campo)));
@@ -2551,6 +2831,12 @@ public class PannelloMisuraMaster extends JPanel
 						try 
 						{
 							//Controllo completamento dati
+							
+							/*
+							 * Data verificicazione =now()
+							 * Data scadenza freq_mesi+ now() se freq_mesi assente=36
+							 * 
+							 */
 							
 							GestioneMisuraBO.terminaMisura(misura.getId());
 

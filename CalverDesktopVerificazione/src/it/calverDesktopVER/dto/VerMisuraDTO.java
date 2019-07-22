@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
-
 public class VerMisuraDTO {
 
 	private static final long serialVersionUID = 1L;
@@ -22,13 +20,6 @@ public class VerMisuraDTO {
 	
 	private int idNonConforme;
 
-	
-	private int idTecnicoVerificatore;
-
-
-	private int idVerIntervento;
-
-	
 	private int idVerStrumento;
 
 	
@@ -38,14 +29,7 @@ public class VerMisuraDTO {
 
 	private String numeroRapporto;
 
-	private String procedura;
-
-	private String registro;
-
-	
 	private String seqRisposte;
-	
-	private int stato;
 	
 
 	private List<VerDecentramentoDTO> verDecentramentos;
@@ -57,8 +41,18 @@ public class VerMisuraDTO {
 	private List<VerMobilitaDTO> verMobilitas;
 	
 	private List<VerLinearitaDTO> verLinearitas;
+	
+	private String campioniLavoro;
+	
+	private int tipo_verifica;
+	
+	private int motivo_verifica;
+	
+	private String is_difetti;
+	
+	private int stato;
 
-	public VerMisuraDTO() {
+		public VerMisuraDTO() {
 	}
 
 	public int getId() {
@@ -101,29 +95,7 @@ public class VerMisuraDTO {
 		this.idNonConforme = idNonConforme;
 	}
 
-	public int getIdTecnicoVerificatore() {
-		return this.idTecnicoVerificatore;
-	}
-
-	public void setIdTecnicoVerificatore(int idTecnicoVerificatore) {
-		this.idTecnicoVerificatore = idTecnicoVerificatore;
-	}
-
-	public int getIdVerIntervento() {
-		return this.idVerIntervento;
-	}
-
-	public void setIdVerIntervento(int idVerIntervento) {
-		this.idVerIntervento = idVerIntervento;
-	}
-
-	public int getIdVerStrumento() {
-		return this.idVerStrumento;
-	}
-
-	public void setIdVerStrumento(int idVerStrumento) {
-		this.idVerStrumento = idVerStrumento;
-	}
+	
 
 	public String getNomeRiparatore() {
 		return this.nomeRiparatore;
@@ -147,22 +119,6 @@ public class VerMisuraDTO {
 
 	public void setNumeroRapporto(String numeroRapporto) {
 		this.numeroRapporto = numeroRapporto;
-	}
-
-	public String getProcedura() {
-		return this.procedura;
-	}
-
-	public void setProcedura(String procedura) {
-		this.procedura = procedura;
-	}
-
-	public String getRegistro() {
-		return this.registro;
-	}
-
-	public void setRegistro(String registro) {
-		this.registro = registro;
 	}
 
 	public String getSeqRisposte() {
@@ -229,6 +185,10 @@ public class VerMisuraDTO {
 		return lista;
 	}
 
+	public List<VerAccuratezzaDTO> getVerAccuratezzas() {
+		return verAccuratezzas;
+	}
+
 	public void setVerAccuratezzas(List<VerAccuratezzaDTO> verAccuratezzas) {
 		this.verAccuratezzas = verAccuratezzas;
 	}
@@ -275,12 +235,53 @@ public class VerMisuraDTO {
 		this.verLinearitas = verLinearitas;
 	}
 
+	public String getCampioniLavoro() {
+		return campioniLavoro;
+	}
+
+	public void setCampioniLavoro(String campioniLavoro) {
+		this.campioniLavoro = campioniLavoro;
+	}
+	
+
+	public String getIs_difetti() {
+		return is_difetti;
+	}
+
+	public void setIs_difetti(String is_difetti) {
+		this.is_difetti = is_difetti;
+	}
+
+	public int getTipo_verifica() {
+		return tipo_verifica;
+	}
+
+	public void setTipo_verifica(int tipo_verifica) {
+		this.tipo_verifica = tipo_verifica;
+	}
+
+	public int getMotivo_verifica() {
+		return motivo_verifica;
+	}
+
+	public void setMotivo_verifica(int motivo_verifica) {
+		this.motivo_verifica = motivo_verifica;
+	}
+
 	public int getStato() {
 		return stato;
 	}
 
 	public void setStato(int stato) {
 		this.stato = stato;
+	}
+
+	public int getIdVerStrumento() {
+		return idVerStrumento;
+	}
+
+	public void setIdVerStrumento(int idVerStrumento) {
+		this.idVerStrumento = idVerStrumento;
 	}
 	
 	

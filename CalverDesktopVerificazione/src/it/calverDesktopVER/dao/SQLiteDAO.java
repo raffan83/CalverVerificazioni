@@ -831,7 +831,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		return toRet;
 	}
 
-	public static ArrayList<String> getListaParametriTaratura(String codiceCampione, ArrayList<String> listaTipiGrandezza) throws Exception {
+	public static ArrayList<String> getListaParametriTaratura(String codiceCampione) throws Exception {
 		Connection con=null;
 		PreparedStatement pst=null;
 		ResultSet rs =null;
@@ -841,9 +841,9 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		{
 			con=getConnection();
 			
-			String tipoGrandezza=preparaTipiGrandezza(listaTipiGrandezza);
+
 			
-			pst=con.prepareStatement("select parametri_taratura FROM tblCampioni WHERE codice=? AND ("+tipoGrandezza);
+			pst=con.prepareStatement("select distinct(parametri_taratura) FROM tblCampioni WHERE codice=?");
 					
 			pst.setString(1, codiceCampione);
 			
@@ -2160,7 +2160,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			{
 				misura= new VerMisuraDTO();
 				misura.setId(idMisura);
-				misura.setIdVerIntervento(rs.getInt("id_ver_strumento"));
+				misura.setIdVerStrumento(rs.getInt("id_ver_strumento"));
 				misura.setDataVerificazione(sdf.parse(rs.getString("data_verificazione")));
 				
 				String dataScadenza=rs.getString("data_scadenza");
@@ -2172,13 +2172,15 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 				
 				misura.setNumeroRapporto(rs.getString("numero_rapporto"));
 				misura.setNumeroAttestato(rs.getString("numero_attestato"));
-				misura.setRegistro(rs.getString("registro"));
-				misura.setProcedura(rs.getString("procedura"));
+				misura.setTipo_verifica(rs.getInt("tipo_verifica"));
+				misura.setMotivo_verifica(rs.getInt("motivo_verifica"));
 				misura.setNomeRiparatore(rs.getString("nome_riparatore"));
 				misura.setDataRiparazione(rs.getDate("data_riparazione"));
 				misura.setSeqRisposte(rs.getString("seq_risposte"));
 				misura.setIdNonConforme(rs.getInt("id_non_conforme"));
 				misura.setStato(rs.getInt("stato"));
+				misura.setIs_difetti(rs.getString("isDifetti"));
+				misura.setCampioniLavoro(rs.getString("campioni_lavoro"));
 			}
 			
 		}
