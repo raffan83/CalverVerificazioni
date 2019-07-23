@@ -11,11 +11,11 @@ public class VerMisuraDTO {
 	
 	private int id;
 
-	private Date dataRiparazione;
+	private String dataRiparazione;
 
-	private Date dataScadenza;
+	private String dataScadenza;
 
-	private Date dataVerificazione;
+	private String dataVerificazione;
 
 	
 	private int idNonConforme;
@@ -63,28 +63,46 @@ public class VerMisuraDTO {
 		this.id = id;
 	}
 
-	public Date getDataRiparazione() {
-		return this.dataRiparazione;
+	
+
+	public String getDataRiparazione() {
+		return dataRiparazione;
 	}
 
-	public void setDataRiparazione(Date dataRiparazione) {
+	public void setDataRiparazione(String dataRiparazione) {
 		this.dataRiparazione = dataRiparazione;
 	}
 
-	public Date getDataScadenza() {
-		return this.dataScadenza;
+	public String getDataScadenza() {
+		return dataScadenza;
 	}
 
-	public void setDataScadenza(Date dataScadenza) {
+	public void setDataScadenza(String dataScadenza) {
 		this.dataScadenza = dataScadenza;
 	}
 
-	public Date getDataVerificazione() {
-		return this.dataVerificazione;
+	public String getDataVerificazione() {
+		return dataVerificazione;
 	}
 
-	public void setDataVerificazione(Date dataVerificazione) {
+	public void setDataVerificazione(String dataVerificazione) {
 		this.dataVerificazione = dataVerificazione;
+	}
+
+	public List<VerDecentramentoDTO> getVerDecentramentos() {
+		return verDecentramentos;
+	}
+
+	public List<VerRipetibilitaDTO> getVerRipetibilitas() {
+		return verRipetibilitas;
+	}
+
+	public List<VerMobilitaDTO> getVerMobilitas() {
+		return verMobilitas;
+	}
+
+	public List<VerLinearitaDTO> getVerLinearitas() {
+		return verLinearitas;
 	}
 
 	public int getIdNonConforme() {

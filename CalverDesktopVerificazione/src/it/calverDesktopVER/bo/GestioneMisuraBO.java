@@ -86,7 +86,7 @@ public class GestioneMisuraBO
 
 	public static VerMisuraDTO getMisura(int idMisura) throws Exception {
 		
-		VerMisuraDTO misura = SQLiteDAO.getStatoMisura(idMisura);
+		VerMisuraDTO misura = SQLiteDAO.getMisura(idMisura);
 		
 		misura.setVerRipetibilitas(SQLiteDAO.getListaProvaRipetibilita(idMisura));
 		
@@ -141,6 +141,12 @@ public class GestioneMisuraBO
 	public static void terminaMisura(int id) throws Exception {
 
 		SQLiteDAO.terminaMisura(id);
+	}
+
+	public static void updateMisura(VerMisuraDTO misura) throws Exception {
+		
+		SQLiteDAO.updateMisura(misura);
+		
 	}
 
 	

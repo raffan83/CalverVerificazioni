@@ -13,7 +13,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import it.calverDesktopVER.dto.VerAccuratezzaDTO;
@@ -334,7 +333,7 @@ public class SQLiteDAO {
 			pst=con.prepareStatement("INSERT INTO ver_misura(id_ver_strumento,data_verificazione,seq_risposte,stato) VALUES(?,?,?,?)",pst.RETURN_GENERATED_KEYS);
 			
 			pst.setInt(1,Integer.parseInt(id));
-			SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy");
 			Date d = new Date();
 			pst.setString(2,sdf.format(d));
 			pst.setString(3,"0");
@@ -2138,7 +2137,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		}
 
 	}
-	public static VerMisuraDTO getStatoMisura(int idMisura) throws Exception {
+	public static VerMisuraDTO getMisura(int idMisura) throws Exception {
 		Connection con=null;
 		PreparedStatement pst=null;
 		ResultSet rs=null;
@@ -2152,30 +2151,19 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			
 			rs=pst.executeQuery();
 			
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-			
-			
-			
 			while(rs.next())
 			{
 				misura= new VerMisuraDTO();
 				misura.setId(idMisura);
 				misura.setIdVerStrumento(rs.getInt("id_ver_strumento"));
-				misura.setDataVerificazione(sdf.parse(rs.getString("data_verificazione")));
-				
-				String dataScadenza=rs.getString("data_scadenza");
-				
-				if(dataScadenza!=null)
-				{
-					misura.setDataScadenza(sdf.parse(dataScadenza));
-				}
-				
+				misura.setDataVerificazione(rs.getString("data_verificazione"));
+				misura.setDataScadenza(rs.getString("data_scadenza"));
 				misura.setNumeroRapporto(rs.getString("numero_rapporto"));
 				misura.setNumeroAttestato(rs.getString("numero_attestato"));
 				misura.setTipo_verifica(rs.getInt("tipo_verifica"));
 				misura.setMotivo_verifica(rs.getInt("motivo_verifica"));
 				misura.setNomeRiparatore(rs.getString("nome_riparatore"));
-				misura.setDataRiparazione(rs.getDate("data_riparazione"));
+				misura.setDataRiparazione(rs.getString("data_riparazione"));
 				misura.setSeqRisposte(rs.getString("seq_risposte"));
 				misura.setIdNonConforme(rs.getInt("id_non_conforme"));
 				misura.setStato(rs.getInt("stato"));
@@ -2788,6 +2776,104 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			con.close();
 		}
 
+		
+	}
+	
+
+	
+	public static void updateMisura(VerMisuraDTO misura) throws Exception {
+		
+		Connection con=null;
+		PreparedStatement pst=null;
+	
+		try
+		{
+			con=getConnection();
+			
+			pst=con.prepareStatement("UPDATE  ver_misura SET data_verificazione=?,data_scadenza=?,tipo_verifica=?,motivo_verifica=?,isDifetti=?,nome_riparatore=?,data_riparazione=?,"
+								  + "seq_risposte=?,campioni_lavoro=? WHERE id=?");
+
+			
+			if(misura.getDataVerificazione()!=null && misura.getDataVerificazione().length()>0) 
+			{
+				pst.setString(1,misura.getDataVerificazione());
+			}
+			else 
+			{
+				pst.setString(1,"");
+			}
+			
+			if(misura.getDataScadenza()!=null && misura.getDataScadenza().length()>0) 
+			{
+				pst.setString(2,misura.getDataScadenza());
+			}
+			else 
+			{
+				pst.setString(2,"");
+			}
+
+			pst.setInt(3,misura.getTipo_verifica());
+			pst.setInt(4,misura.getMotivo_verifica());
+			
+			if(misura.getIs_difetti()!=null && misura.getIs_difetti().length()>0) 
+			{
+				pst.setString(5,misura.getIs_difetti());
+			}
+			else 
+			{
+				pst.setString(5,"");
+			}
+			
+			if(misura.getNomeRiparatore()!=null && misura.getNomeRiparatore().length()>0) 
+			{
+				pst.setString(6,misura.getNomeRiparatore());
+			}
+			else 
+			{
+				pst.setString(6,"");
+			}
+			
+			if(misura.getDataRiparazione()!=null && misura.getDataRiparazione().length()>0) 
+			{
+				pst.setString(7,misura.getDataRiparazione());
+			}
+			else 
+			{
+				pst.setString(7,"");
+			}
+			
+			if(misura.getSeqRisposte()!=null && misura.getSeqRisposte().length()>0) 
+			{
+				pst.setString(8,misura.getSeqRisposte());
+			}
+			else 
+			{
+				pst.setString(8,"");
+			}
+			
+			if(misura.getCampioniLavoro()!=null && misura.getCampioniLavoro().length()>0) 
+			{
+				pst.setString(9,misura.getCampioniLavoro());
+			}
+			else 
+			{
+				pst.setString(9,"");
+			}
+			
+			pst.setInt(10, misura.getId());
+
+
+			pst.execute();		
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}finally
+		{
+			pst.close();
+			con.close();
+		}
+		
 		
 	}
 
