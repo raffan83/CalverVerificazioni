@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
@@ -44,7 +43,6 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
-
 import it.calverDesktopVER.bo.GestioneCampioneBO;
 import it.calverDesktopVER.bo.GestioneMisuraBO;
 import it.calverDesktopVER.bo.GestioneStrumentoVER_BO;
@@ -447,6 +445,10 @@ public class PannelloMisuraMaster extends JPanel
 					String campione= comboBox_lista_campioni.getSelectedItem().toString()+"("+comboBox_listaParametri.getSelectedItem().toString()+")";
 
 					dlm.addElement(campione);
+				}
+				if(comboBox_lista_campioni.getSelectedIndex()>0 && comboBox_listaParametri.getSelectedIndex()==0 ) 
+				{
+					dlm.addElement(comboBox_lista_campioni.getSelectedItem().toString());
 				}
 			}
 		});
@@ -1213,7 +1215,7 @@ public class PannelloMisuraMaster extends JPanel
 
 							BigDecimal err =getE(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),mas);
 							
-							BigDecimal errore=getErrore(mas,ind,err,car);
+							BigDecimal errore=getErrore(mas,ind,err.setScale(5),car);
 							BigDecimal errore_corr=null;
 
 							if(row==0) 
@@ -1451,8 +1453,22 @@ public class PannelloMisuraMaster extends JPanel
 				}
 				else 
 				{
-					BigDecimal eDiv=strumento.getDiv_ver_C1().multiply(BigDecimal.TEN);
-					modelLin.setValueAt(eDiv.toPlainString(), 0, 1);
+					if(comboBox_campo.getSelectedIndex()==0) 
+					{
+						BigDecimal eDiv=strumento.getDiv_ver_C1().multiply(BigDecimal.TEN);
+						modelLin.setValueAt(eDiv.toPlainString(), 0, 1);
+					}
+					if(comboBox_campo.getSelectedIndex()==1) 
+					{
+						BigDecimal eDiv=strumento.getDiv_ver_C2().multiply(BigDecimal.TEN);
+						modelLin.setValueAt(eDiv.toPlainString(), 0, 1);
+					}
+					if(comboBox_campo.getSelectedIndex()==2) 
+					{
+						BigDecimal eDiv=strumento.getDiv_ver_C3().multiply(BigDecimal.TEN);
+						modelLin.setValueAt(eDiv.toPlainString(), 0, 1);
+					}
+					
 				}
 
 			}
@@ -1660,7 +1676,6 @@ public class PannelloMisuraMaster extends JPanel
 					{
 						BigDecimal mas;
 						BigDecimal indSalita;
-						BigDecimal indDiscesa;
 						BigDecimal car_aggSalita;
 						BigDecimal erroreSalita;
 						BigDecimal erroreSalita_cor = null;
@@ -1682,7 +1697,7 @@ public class PannelloMisuraMaster extends JPanel
 								erroreSalita_cor=BigDecimal.ZERO;
 								modelLin.setValueAt(erroreSalita, row, 6);
 								modelLin.setValueAt("0", row, 8);
-								modelLin.setValueAt("0", row, 9);
+							//	modelLin.setValueAt("0", row, 9);
 								modelLin.setValueAt(mpe, row, 10);
 							}
 
@@ -1776,12 +1791,23 @@ public class PannelloMisuraMaster extends JPanel
 										.subtract(car_aggDiscesa).subtract(mas));
 
 								String mpe=getMPE(mas.toPlainString(), campo);
-
+								
+								modelLin.setValueAt(erroreDiscesa.toPlainString(), row, 7);
+								
 								erroreDiscesa_cor=BigDecimal.ZERO;
 							
-							
-								modelLin.setValueAt(erroreDiscesa, row, 7);
-								modelLin.setValueAt("0", row, 8);
+								for (int i = 0; i <modelLin.getRowCount(); i++) 
+								{
+									if(modelLin.getValueAt(i, 7)!=null) 
+									{
+										erroreDiscesa_cor=new BigDecimal(modelLin.getValueAt(i, 7).toString()).subtract(erroreDiscesa);
+										modelLin.setValueAt(erroreDiscesa_cor.toPlainString(), i, 9);
+										int id =Integer.parseInt(modelLin.getValueAt(i, 11).toString());									
+										GestioneMisuraBO.updateErrore_correttoDiscesa(id,erroreDiscesa_cor);	
+									}
+								 	
+									
+								}
 								modelLin.setValueAt("0", row, 9);
 								modelLin.setValueAt(mpe, row, 10);
 							}
@@ -1789,28 +1815,9 @@ public class PannelloMisuraMaster extends JPanel
 							else 
 							{
 							
-
 								erroreDiscesa=indDiscesa.add(err_div.setScale(4).divide(new BigDecimal("2"), RoundingMode.HALF_UP)
 										.subtract(car_aggDiscesa).subtract(mas));
 								
-								if(modelLin.getValueAt(0, 7)!=null) 
-								{
-									BigDecimal pivotErrore=new BigDecimal(modelLin.getValueAt(0, 7).toString());
-									
-									for (int i = 0; i <modelLin.getRowCount(); i++) 
-									{
-										if(modelLin.getValueAt(i, 7)!=null) 
-										{
-											erroreDiscesa_cor=new BigDecimal(modelLin.getValueAt(i, 7).toString()).subtract(pivotErrore);
-											modelLin.setValueAt(erroreDiscesa_cor, row, 9);
-										}
-									 	
-										
-									}
-								}
-
-								
-
 								String mpe=getMPE(mas.toPlainString(), campo);
 								modelLin.setValueAt(erroreDiscesa, row, 7);
 								
@@ -1886,7 +1893,7 @@ public class PannelloMisuraMaster extends JPanel
 					Object err_dis=modelLin.getValueAt(i,7);
 					Object err_cor_sal=modelLin.getValueAt(i,8);
 					Object err_cor_dis=modelLin.getValueAt(i,9);
-					if(i==0 && mpe!=null && err_sal!=null && err_dis!=null) 
+					if(i==0 && mpe!=null && err_sal!=null && err_dis!=null && err_cor_sal!=null && err_dis!=null ) 
 					{
 						if(Math.abs(Double.parseDouble(err_sal.toString())) > Math.abs(Double.parseDouble(mpe.toString())) ||
 								Math.abs(Double.parseDouble(err_dis.toString())) > Math.abs(Double.parseDouble(mpe.toString()))	) 
@@ -1895,7 +1902,7 @@ public class PannelloMisuraMaster extends JPanel
 						} 
 					}
 
-					if(i>0 && mpe!=null && err_sal!=null && err_dis!=null) 
+					if(i>0 && mpe!=null && err_sal!=null && err_dis!=null && err_cor_sal!=null && err_cor_dis!=null) 
 					{
 						if(Math.abs(Double.parseDouble(err_cor_sal.toString())) > Math.abs(Double.parseDouble(mpe.toString())) ||
 								Math.abs(Double.parseDouble(err_cor_dis.toString())) > Math.abs(Double.parseDouble(mpe.toString()))	) 
@@ -1970,11 +1977,22 @@ public class PannelloMisuraMaster extends JPanel
 				else 
 				{
 					
-
+					if(comboBox_campo.getSelectedIndex()==0) 
+					{
 					BigDecimal eDiv=strumento.getDiv_ver_C1().multiply(BigDecimal.TEN);
-
 					modelAccuratezza.setValueAt(eDiv.toPlainString(), 0, 1);
-				}
+					}
+					if(comboBox_campo.getSelectedIndex()==1) 
+					{
+					BigDecimal eDiv=strumento.getDiv_ver_C2().multiply(BigDecimal.TEN);
+					modelAccuratezza.setValueAt(eDiv.toPlainString(), 0, 1);
+					}
+					if(comboBox_campo.getSelectedIndex()==2) 
+					{
+					BigDecimal eDiv=strumento.getDiv_ver_C3().multiply(BigDecimal.TEN);
+					modelAccuratezza.setValueAt(eDiv.toPlainString(), 0, 1);
+					}
+					}
 
 			}
 		});
@@ -1995,7 +2013,11 @@ public class PannelloMisuraMaster extends JPanel
 		if(ver.getMassa()!=null) 
 		{
 			modelAccuratezza.setValueAt(ver.getMassa(), 0, 1);
+		}else 
+		{
+			modelAccuratezza.setValueAt("0", 0, 1);
 		}
+		
 		if(ver.getIndicazione()!=null) 
 		{
 			modelAccuratezza.setValueAt(ver.getIndicazione(),0, 2);
@@ -2352,9 +2374,7 @@ public class PannelloMisuraMaster extends JPanel
 					
 					String mpe=getMPE(strumento.getPortataMinCampo(campo, strumento.getId_tipo_strumento()).toPlainString(),comboBox_campo.getSelectedIndex());
 
-					BigDecimal carr_agg=new BigDecimal(mpe).multiply(new BigDecimal("0.4"));
-					
-					modelMobilita_2.setValueAt(carr_agg.toPlainString(),i,3);
+					modelMobilita_2.setValueAt(mpe,i,3);
 					
 				}
 				if(i==1) 
@@ -2363,9 +2383,7 @@ public class PannelloMisuraMaster extends JPanel
 				
 					String mpe=getMPE(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).setScale(2).divide(new BigDecimal("2"),RoundingMode.HALF_DOWN).setScale(2, RoundingMode.HALF_DOWN).toPlainString(),comboBox_campo.getSelectedIndex());
 
-					BigDecimal carr_agg=new BigDecimal(mpe).multiply(new BigDecimal("0.4"));
-					
-					modelMobilita_2.setValueAt(carr_agg.toPlainString(),i,3);
+					modelMobilita_2.setValueAt(mpe,i,3);
 					
 				}
 				if(i==2) 
@@ -2373,10 +2391,8 @@ public class PannelloMisuraMaster extends JPanel
 					modelMobilita_2.setValueAt(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).toPlainString(),i, 1);
 					
 					String mpe=getMPE(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).toPlainString(),comboBox_campo.getSelectedIndex());
-
-					BigDecimal carr_agg=new BigDecimal(mpe).multiply(new BigDecimal("0.4"));
-					
-					modelMobilita_2.setValueAt(carr_agg.toPlainString(),i,3);
+		
+					modelMobilita_2.setValueAt(mpe,i,3);
 					
 				}
 				
@@ -3220,12 +3236,12 @@ public class PannelloMisuraMaster extends JPanel
 		@Override
 		public boolean isCellEditable(int row, int column) {
 
-			if(column>2 && column<5)
+			if(column==2 || column==3)
 			{
 				return true;
 			}else
 			{
-				return true;
+				return false;
 			}
 		}
 

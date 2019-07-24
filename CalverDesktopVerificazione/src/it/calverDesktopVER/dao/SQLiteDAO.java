@@ -2876,6 +2876,33 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		
 		
 	}
+	public static void updateErrore_correttoDiscesa(int id, BigDecimal erroreDiscesa_cor) throws Exception {
+		
+		Connection con=null;
+		PreparedStatement pst=null;
+	
+		try
+		{
+			con=getConnection();
+			
+			pst=con.prepareStatement("UPDATE  ver_linearita SET errore_cor_discesa=? WHERE id=?");
+
+			
+			pst.setBigDecimal(1, erroreDiscesa_cor);
+			pst.setInt(2, id);
+			
+
+			pst.execute();		
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}finally
+		{
+			pst.close();
+			con.close();
+		}
+	}
 
 
 

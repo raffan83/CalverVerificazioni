@@ -1,6 +1,7 @@
 package it.calverDesktopVER.bo;
 
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import org.sqlite.SQLite;
@@ -146,6 +147,12 @@ public class GestioneMisuraBO
 	public static void updateMisura(VerMisuraDTO misura) throws Exception {
 		
 		SQLiteDAO.updateMisura(misura);
+		
+	}
+
+	public static void updateErrore_correttoDiscesa(int id, BigDecimal erroreDiscesa_cor) throws Exception {
+		
+		SQLiteDAO.updateErrore_correttoDiscesa(id,erroreDiscesa_cor);
 		
 	}
 
