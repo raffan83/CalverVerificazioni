@@ -70,17 +70,20 @@ public class PannelloVisualizzazioneStrumento extends JPanel{
 	 private JTextField textField_numero_divisioni_c3;
 	 private JTextField textField_anno_ce;
 	 private JTextField textField_data_ms;
-	
+	 
+	 VerStrumentoDTO strumento=null;
 	 @SuppressWarnings("unchecked")
-	public PannelloVisualizzazioneStrumento(VerStrumentoDTO strumento) {
+	public PannelloVisualizzazioneStrumento(VerStrumentoDTO _strumento) {
+		 
+		 strumento=_strumento;
 		
 		
 		myFrame=SessionBO.generarFrame;
 		URL imageURL = GeneralGUI.class.getResource("/image/creaStr.png");
 		try {
 			setImage(ImageIO.read(imageURL));
-		} catch (IOException e2) {
-			// TODO Auto-generated catch block
+		} catch (IOException e2) 
+		{
 			e2.printStackTrace();
 		}
 		
@@ -391,7 +394,109 @@ public class PannelloVisualizzazioneStrumento extends JPanel{
 		textField_divisione_reali_c3.setText(strumento.getDiv_rel_C3().toPlainString());
 		textField_numero_divisioni_c3.setText(strumento.getNumero_div_C3().toEngineeringString());
 		
+		JButton btnModifica = new JButton("Modifica");
+		btnModifica.setIcon(new ImageIcon(PannelloVisualizzazioneStrumento.class.getResource("/image/incertezza.png")));
+		btnModifica.setFont(new Font("Arial", Font.BOLD, 16));
+		add(btnModifica, "flowx,cell 0 13 6 1,width :150:,alignx center,height :35:");
 		
+		final JButton btnSalva = new JButton("Salva");
+		btnSalva.setIcon(new ImageIcon(PannelloVisualizzazioneStrumento.class.getResource("/image/save.png")));
+		btnSalva.setFont(new Font("Arial", Font.BOLD, 16));
+		add(btnSalva, "cell 0 13,width :150:,height :35:");
+		
+		btnSalva.setVisible(false);
+		
+		
+		btnModifica.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				btnSalva.setVisible(true);
+				textField_matricola.setEditable(true);
+				textField_anno_ce.setEditable(true);
+				textField_costruttore.setEditable(true);
+				textField_denominazione.setEditable(true);
+				textField_modello.setEditable(true);
+				textField_data_ms.setEditable(true);
+				textField_freqMesi.setEditable(true);
+				
+			}
+		});
+		
+		
+		btnSalva.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				boolean update=true;
+				
+				if(textField_matricola.getText().length()==0) 
+				{
+					update=false;
+				}
+				if(textField_costruttore.getText().length()==0) 
+				{
+					update=false;
+				}
+				if(textField_modello.getText().length()==0) 
+				{
+					update=false;
+				}
+				if(textField_denominazione.getText().length()==0) 
+				{
+					update=false;
+				}
+				if(textField_anno_ce.getText().length()==0 || !Utility.isNumber(textField_anno_ce.getText())) 
+				{
+					update=false;
+				}
+				if(textField_freqMesi.getText().length()==0 || !Utility.isNumber(textField_freqMesi.getText())) 
+				{
+					update=false;
+				}
+				
+				if(textField_data_ms.getText().length()==0 || !Utility.isDate(textField_data_ms.getText())) 
+				{
+					update=false;
+				}
+				
+				
+				if(update)
+				{
+					strumento.setAnno_marcatura_ce(Integer.parseInt(textField_anno_ce.getText()));
+					strumento.setDenominazione(textField_denominazione.getText());
+					strumento.setMatricola(textField_matricola.getText());
+					strumento.setModello(textField_modello.getText());
+					strumento.setData_messa_in_servizio(textField_data_ms.getText());
+					strumento.setCostruttore(textField_costruttore.getText());
+					strumento.setFreq_mesi(Integer.parseInt(textField_freqMesi.getText()));
+					
+					try {
+						GestioneStrumentoVER_BO.updateStrumento(strumento);
+					} catch (Exception e1) {
+						
+						e1.printStackTrace();
+					}
+					
+					btnSalva.setVisible(false);
+					textField_matricola.setEditable(false);
+					textField_anno_ce.setEditable(false);
+					textField_costruttore.setEditable(false);
+					textField_denominazione.setEditable(false);
+					textField_modello.setEditable(false);
+					textField_data_ms.setEditable(false);
+					textField_freqMesi.setEditable(false);
+				
+				}
+				else 
+				{
+					JOptionPane.showMessageDialog(null,"I campi non possone essere vuoti - Anno CE (numero) e Data MS(data) ","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+				}
+			
+				
+			}
+		});
 	}
 	
 	  public void setImage(BufferedImage img){

@@ -2,7 +2,10 @@ package it.calverDesktopVER.bo;
 
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import org.sqlite.SQLite;
 
@@ -139,9 +142,9 @@ public class GestioneMisuraBO
 		
 	}
 
-	public static void terminaMisura(int id) throws Exception {
+	public static void terminaMisura(int id, String dataScadenza) throws Exception {
 
-		SQLiteDAO.terminaMisura(id);
+		SQLiteDAO.terminaMisura(id,dataScadenza);
 	}
 
 	public static void updateMisura(VerMisuraDTO misura) throws Exception {
@@ -153,6 +156,19 @@ public class GestioneMisuraBO
 	public static void updateErrore_correttoDiscesa(int id, BigDecimal erroreDiscesa_cor) throws Exception {
 		
 		SQLiteDAO.updateErrore_correttoDiscesa(id,erroreDiscesa_cor);
+		
+	}
+
+	public static String getDataScadenzaMisura(VerMisuraDTO misura, int freq_mesi) throws ParseException {
+		
+		SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy");
+		
+		Calendar c = Calendar.getInstance(); 
+		c.setTime(sdf.parse(misura.getDataVerificazione())); 
+		c.add(Calendar.MONTH,freq_mesi);
+		c.getTime();
+		
+		return sdf.format(new java.sql.Date(c.getTime().getTime()));
 		
 	}
 

@@ -1641,29 +1641,17 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		
 		try {
 			con =getConnection();
-			pst=con.prepareStatement("UPDATE tblStrumenti set denominazione=?,codice_interno=?,costruttore=?,modello=?," +
-															  "classificazione=?,matricola=?,risoluzione=?,campo_misura=?," +
-															  "freq_verifica_mesi=?,tipoRapporto=?,reparto=?,utilizzatore=?," +
-															  "procedura=?,id_tipo_strumento=?,note=?,strumentoModificato='S',luogo_verifica=? WHERE id=?");
+			pst=con.prepareStatement("UPDATE ver_strumento set denominazione=?,costruttore=?,modello=?,matricola=?,anno_marcatura_CE=?,data_ms=?,freq_mesi=? WHERE id=?");
 		
-//			pst.setString(1,strumento.getDenominazione());
-//			pst.setString(2,strumento.getCodice_interno());
-//			pst.setString(3,strumento.getCostruttore());
-//			pst.setString(4,strumento.getModello());
-//			pst.setInt(5,strumento.getIdClassificazione());
-//			pst.setString(6,strumento.getMatricola());
-//			pst.setString(7,strumento.getRisoluzione());
-//			pst.setString(8,strumento.getCampo_misura());
-//			pst.setInt(9,strumento.getFreq_taratura());
-//			pst.setInt(10, strumento.getIdTipoRappoto());
-//			pst.setString(11,strumento.getReparto());
-//			pst.setString(12,strumento.getUtilizzatore());
-//			pst.setString(13,strumento.getProcedura());
-//			pst.setString(14, strumento.getId_tipoStrumento());
-//			pst.setString(15, strumento.getNote());
-//			pst.setInt(16, strumento.getLuogoVerifica());
-//			pst.setInt(17, strumento.get__id());
-//			
+			pst.setString(1,strumento.getDenominazione());
+			pst.setString(2,strumento.getCostruttore());
+			pst.setString(3,strumento.getModello());
+			pst.setString(4,strumento.getMatricola());
+			pst.setInt(5,strumento.getAnno_marcatura_ce());
+			pst.setString(6,strumento.getData_messa_in_servizio());
+			pst.setInt(7,strumento.getFreq_mesi());
+			pst.setInt(8, strumento.getId());
+			
 			
 			toReturn=pst.executeUpdate();
 			
@@ -2750,7 +2738,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		}
 		
 	}
-	public static void terminaMisura(int id) throws Exception {
+	public static void terminaMisura(int id, String dataScadenza) throws Exception {
 		
 		Connection con=null;
 		PreparedStatement pst=null;
@@ -2759,10 +2747,11 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		{
 			con=getConnection();
 			
-			pst=con.prepareStatement("UPDATE  ver_misura SET stato=1 WHERE id=?");
+			pst=con.prepareStatement("UPDATE  ver_misura SET stato=1, data_scadenza =? WHERE id=?");
 
+			pst.setString(1, dataScadenza);
+			pst.setInt(2, id);
 			
-			pst.setInt(1, id);
 			
 
 			pst.execute();		

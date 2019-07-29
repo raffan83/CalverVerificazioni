@@ -10,7 +10,9 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -2961,7 +2963,10 @@ public class PannelloMisuraMaster extends JPanel
 							 * 
 							 */
 							
-							GestioneMisuraBO.terminaMisura(misura.getId());
+							String dataScadenza=GestioneMisuraBO.getDataScadenzaMisura(misura,strumento.getFreq_mesi());
+							
+							
+							GestioneMisuraBO.terminaMisura(misura.getId(),dataScadenza);
 
 
 							JOptionPane.showMessageDialog(null,"Salvataggio effettuato","Salvataggio",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/confirm.png")));
