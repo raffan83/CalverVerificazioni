@@ -39,7 +39,7 @@ import javax.swing.JCheckBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.SwingConstants;
 
-public class PannelloVisualizzazioneStrumento extends JPanel{
+public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusListener{
 	/**
 	 * 
 	 */
@@ -226,7 +226,16 @@ public class PannelloVisualizzazioneStrumento extends JPanel{
 		lblDivisioniVerifica.setFont(new Font("Arial", Font.BOLD, 14));
 		add(lblDivisioniVerifica, "flowx,cell 3 8,alignx center");
 		
-		JLabel lblCampo1 = new JLabel("Campo 1");
+		JLabel lblCampo1=null;
+		if(strumento.getId_tipo_strumento()!=2) {
+			
+		  lblCampo1 = new JLabel("Campo 1");
+		 }
+		else
+		{
+	     lblCampo1 = new JLabel("Campo Parziale 1");
+		}
+		
 		lblCampo1.setFont(new Font("Arial", Font.BOLD, 18));
 		add(lblCampo1, "cell 0 9,alignx right");
 		
@@ -265,7 +274,16 @@ public class PannelloVisualizzazioneStrumento extends JPanel{
 		textField_numero_divisioni_c1.setColumns(10);
 		add(textField_numero_divisioni_c1, "cell 5 9,growx");
 		
-		JLabel lblCampo2 = new JLabel("Campo 2");
+		JLabel lblCampo2=null;
+		if(strumento.getId_tipo_strumento()!=2) {
+			
+		  lblCampo2 = new JLabel("Campo 2");
+		 }
+		else
+		{
+	     lblCampo2 = new JLabel("Campo Parziale 2");
+		}
+		
 		lblCampo2.setFont(new Font("Arial", Font.BOLD, 18));
 		add(lblCampo2, "cell 0 10,alignx trailing");
 		
@@ -304,7 +322,16 @@ public class PannelloVisualizzazioneStrumento extends JPanel{
 		textField_numero_divisioni_c2.setColumns(10);
 		add(textField_numero_divisioni_c2, "cell 5 10,growx");
 		
-		JLabel lblCampo3 = new JLabel("Campo 3");
+		JLabel lblCampo3=null;
+		if(strumento.getId_tipo_strumento()!=2) {
+			
+		  lblCampo3 = new JLabel("Campo 3");
+		 }
+		else
+		{
+	     lblCampo3 = new JLabel("Campo Parziale 3");
+		}
+		
 		lblCampo3.setFont(new Font("Arial", Font.BOLD, 18));
 		add(lblCampo3, "cell 0 11,alignx trailing");
 		
@@ -376,28 +403,171 @@ public class PannelloVisualizzazioneStrumento extends JPanel{
 			comboBox_um.setSelectedIndex(1);
 		}
 
-		textField_pr_min_c1.setText(strumento.getPortata_min_C1().toPlainString());
-		textField_pr_max_c1.setText(strumento.getPortata_max_C1().toPlainString());
-		textField_divisione_verifica_c1.setText(strumento.getDiv_ver_C1().toPlainString());
-		textField_divisione_reali_c1.setText(strumento.getDiv_rel_C1().toPlainString());
-		textField_numero_divisioni_c1.setText(strumento.getNumero_div_C1().toEngineeringString());
+		if(strumento.getPortata_min_C1()!=null) 
+		{
+			textField_pr_min_c1.setText(strumento.getPortata_min_C1().toPlainString());
+		}
 		
-		textField_pr_min_c2.setText(strumento.getPortata_min_C2().toPlainString());
-		textField_pr_max_c2.setText(strumento.getPortata_max_C2().toPlainString());
-		textField_divisione_verifica_c2.setText(strumento.getDiv_ver_C2().toPlainString());
-		textField_divisione_reali_c2.setText(strumento.getDiv_rel_C2().toPlainString());
-		textField_numero_divisioni_c2.setText(strumento.getNumero_div_C2().toEngineeringString());
+		if(strumento.getPortata_max_C1()!=null) 
+		{
+			textField_pr_max_c1.setText(strumento.getPortata_max_C1().toPlainString());
+		}
 		
-		textField_pr_min_c3.setText(strumento.getPortata_min_C3().toPlainString());
-		textField_pr_max_c3.setText(strumento.getPortata_max_C3().toPlainString());
-		textField_divisione_verifica_c3.setText(strumento.getDiv_ver_C3().toPlainString());
-		textField_divisione_reali_c3.setText(strumento.getDiv_rel_C3().toPlainString());
-		textField_numero_divisioni_c3.setText(strumento.getNumero_div_C3().toEngineeringString());
+		if(strumento.getDiv_ver_C1()!=null) 
+		{
+			textField_divisione_verifica_c1.setText(strumento.getDiv_ver_C1().toPlainString());
+		}
+		
+		if(strumento.getDiv_rel_C1()!=null) 
+		{
+			textField_divisione_reali_c1.setText(strumento.getDiv_rel_C1().toPlainString());
+		}
+		
+		if(strumento.getNumero_div_C1()!=null) 
+		{
+			textField_numero_divisioni_c1.setText(strumento.getNumero_div_C1().toEngineeringString());
+		}
+		
+		if(strumento.getPortata_min_C2()!=null) 
+		{
+			textField_pr_min_c2.setText(strumento.getPortata_min_C2().toPlainString());
+		}
+		if(strumento.getPortata_max_C2()!=null) 
+		{
+			textField_pr_max_c2.setText(strumento.getPortata_max_C2().toPlainString());
+		}
+		if(strumento.getDiv_ver_C2()!=null) 
+		{
+			textField_divisione_verifica_c2.setText(strumento.getDiv_ver_C2().toPlainString());
+		}
+		if(strumento.getDiv_rel_C2()!=null) 
+		{
+			textField_divisione_reali_c2.setText(strumento.getDiv_rel_C2().toPlainString());
+		}
+		if(strumento.getNumero_div_C2()!=null) 
+		{
+			textField_numero_divisioni_c2.setText(strumento.getNumero_div_C2().toEngineeringString());
+		}
+		
+		if(strumento.getPortata_min_C3()!=null) 
+		{
+			textField_pr_min_c3.setText(strumento.getPortata_min_C3().toPlainString());
+		}
+		if(strumento.getPortata_max_C3()!=null) 
+		{
+			textField_pr_max_c3.setText(strumento.getPortata_max_C3().toPlainString());
+		}
+		if(strumento.getDiv_ver_C3()!=null) 
+		{
+			textField_divisione_verifica_c3.setText(strumento.getDiv_ver_C3().toPlainString());
+		}
+		if(strumento.getDiv_rel_C3()!=null) 
+		{
+			textField_divisione_reali_c3.setText(strumento.getDiv_rel_C3().toPlainString());
+		}
+		
+		if(strumento.getNumero_div_C3()!=null) 
+		{
+			textField_numero_divisioni_c3.setText(strumento.getNumero_div_C3().toEngineeringString());
+		}
 		
 		JButton btnModifica = new JButton("Modifica");
 		btnModifica.setIcon(new ImageIcon(PannelloVisualizzazioneStrumento.class.getResource("/image/incertezza.png")));
 		btnModifica.setFont(new Font("Arial", Font.BOLD, 16));
-		add(btnModifica, "flowx,cell 0 13 6 1,width :150:,alignx center,height :35:");
+		
+		try {
+		if(SQLiteDAO.getMisuraByIDStrumento(strumento.getId())==null)
+		
+			add(btnModifica, "flowx,cell 0 13 6 1,width :150:,alignx center,height :35:");
+		}
+		catch (Exception e) 
+		{
+			PannelloConsole.printArea("Errore recupero misura by ID");
+		}
+		
+		
+		textField_pr_min_c1.addFocusListener(this);
+		textField_pr_min_c2.addFocusListener(this);
+		textField_pr_min_c3.addFocusListener(this);
+
+		textField_pr_max_c1.addFocusListener(this);
+		textField_pr_max_c2.addFocusListener(this);
+		textField_pr_max_c3.addFocusListener(this);
+		
+		textField_divisione_reali_c1.addFocusListener(this);
+		textField_divisione_reali_c2.addFocusListener(this);
+		textField_divisione_reali_c3.addFocusListener(this);
+		
+		textField_divisione_verifica_c1.addFocusListener(this);
+		textField_divisione_verifica_c2.addFocusListener(this);
+		textField_divisione_verifica_c3.addFocusListener(this);
+		
+		
+		textField_divisione_verifica_c1.addFocusListener(this);
+		textField_divisione_verifica_c2.addFocusListener(this);
+		textField_divisione_verifica_c3.addFocusListener(this);
+		
+		comboBox_tipo_strumento.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				if(comboBox_tipo_strumento.getSelectedIndex()==0) 
+				{
+					textField_pr_min_c2 .setEnabled(false);
+					textField_pr_max_c2.setEnabled(false);
+					textField_divisione_verifica_c2.setEnabled(false);
+					textField_divisione_reali_c2.setEnabled(false);
+					textField_numero_divisioni_c2.setEnabled(false);
+					
+					textField_pr_min_c3 .setEnabled(false);
+					textField_pr_max_c3.setEnabled(false);
+					textField_divisione_verifica_c3.setEnabled(false);
+					textField_divisione_reali_c3.setEnabled(false);
+					textField_numero_divisioni_c3.setEnabled(false);
+					
+					textField_pr_min_c2 .setEditable(false);
+					textField_pr_max_c2.setEditable(false);
+					textField_divisione_verifica_c2.setEditable(false);
+					textField_divisione_reali_c2.setEditable(false);
+					textField_numero_divisioni_c2.setEditable(false);
+					
+					textField_pr_min_c3 .setEditable(false);
+					textField_pr_max_c3.setEditable(false);
+					textField_divisione_verifica_c3.setEditable(false);
+					textField_divisione_reali_c3.setEditable(false);
+					textField_numero_divisioni_c3.setEditable(false);
+					
+				}
+				else 
+				{
+					textField_pr_min_c2 .setEnabled(true);
+					textField_pr_max_c2.setEnabled(true);
+					textField_divisione_verifica_c2.setEnabled(true);
+					textField_divisione_reali_c2.setEnabled(true);
+					textField_numero_divisioni_c2.setEnabled(true);
+					
+					textField_pr_min_c3 .setEnabled(true);
+					textField_pr_max_c3.setEnabled(true);
+					textField_divisione_verifica_c3.setEnabled(true);
+					textField_divisione_reali_c3.setEnabled(true);
+					textField_numero_divisioni_c3.setEnabled(true);
+					
+					textField_pr_min_c2 .setEditable(true);
+					textField_pr_max_c2.setEditable(true);
+					textField_divisione_verifica_c2.setEditable(true);
+					textField_divisione_reali_c2.setEditable(true);
+					textField_numero_divisioni_c2.setEditable(true);
+					
+					textField_pr_min_c3 .setEditable(true);
+					textField_pr_max_c3.setEditable(true);
+					textField_divisione_verifica_c3.setEditable(true);
+					textField_divisione_reali_c3.setEditable(true);
+					textField_numero_divisioni_c3.setEditable(true);
+				}
+				
+			}
+		});
+		
+		
 		
 		final JButton btnSalva = new JButton("Salva");
 		btnSalva.setIcon(new ImageIcon(PannelloVisualizzazioneStrumento.class.getResource("/image/save.png")));
@@ -420,6 +590,40 @@ public class PannelloVisualizzazioneStrumento extends JPanel{
 				textField_data_ms.setEditable(true);
 				textField_freqMesi.setEditable(true);
 				
+				comboBox_classe.setEnabled(true);
+				comboBox_um.setEnabled(true);
+				comboBox_tipo_strumento.setEnabled(true);
+				comboBox_tipologia.setEnabled(true);
+				
+				
+				if(comboBox_tipo_strumento.getSelectedIndex()==0) 
+				{
+					textField_pr_min_c1.setEditable(true);
+					textField_pr_max_c1.setEditable(true);
+					textField_divisione_reali_c1.setEditable(true);
+					textField_divisione_verifica_c1.setEditable(true);
+					textField_numero_divisioni_c1.setEditable(true);
+				}
+				else 
+				{
+					textField_pr_min_c1.setEditable(true);
+					textField_pr_max_c1.setEditable(true);
+					textField_divisione_reali_c1.setEditable(true);
+					textField_divisione_verifica_c1.setEditable(true);
+					textField_numero_divisioni_c1.setEditable(true);
+					
+					textField_pr_min_c2.setEditable(true);
+					textField_pr_max_c2.setEditable(true);
+					textField_divisione_reali_c2.setEditable(true);
+					textField_divisione_verifica_c2.setEditable(true);
+					textField_numero_divisioni_c2.setEditable(true);
+					
+					textField_pr_min_c3.setEditable(true);
+					textField_pr_max_c3.setEditable(true);
+					textField_divisione_reali_c3.setEditable(true);
+					textField_divisione_verifica_c3.setEditable(true);
+					textField_numero_divisioni_c3.setEditable(true);
+				}
 			}
 		});
 		
@@ -461,6 +665,168 @@ public class PannelloVisualizzazioneStrumento extends JPanel{
 					update=false;
 				}
 				
+				/*Controllo valori*/
+				
+				if(comboBox_tipo_strumento.getSelectedIndex()==0) 
+				{
+					if(!Utility.isDouble(textField_pr_min_c1.getText())) 
+					{
+						update=false;
+					}
+					
+					if(!Utility.isDouble(textField_pr_max_c1.getText())) 
+					{
+						update=false;
+					}
+					
+					if(!Utility.isDouble(textField_divisione_reali_c1.getText())) 
+					{
+						update=false;
+					}
+					
+					if(!Utility.isDouble(textField_divisione_verifica_c1.getText())) 
+					{
+						update=false;
+					}
+					
+					if(!Utility.isDouble(textField_numero_divisioni_c1.getText())) 
+					{
+						update=false;
+					}
+					
+				}
+				
+				if(comboBox_tipo_strumento.getSelectedIndex()==1){
+				
+						if(!Utility.isDouble(textField_pr_min_c1.getText())) 
+						{
+							update=false;
+						}
+						
+						if(!Utility.isDouble(textField_pr_max_c1.getText())) 
+						{
+							update=false;
+						}
+						
+						if(!Utility.isDouble(textField_divisione_reali_c1.getText())) 
+						{
+							update=false;
+						}
+						
+						if(!Utility.isDouble(textField_divisione_verifica_c1.getText())) 
+						{
+							update=false;
+						}
+						
+						if(!Utility.isDouble(textField_numero_divisioni_c1.getText())) 
+						{
+							update=false;
+						}
+						
+						if(!Utility.isDouble(textField_pr_min_c2.getText()) && !Utility.isDouble(textField_pr_min_c3.getText())) 
+						{
+						 update=false;
+						}
+						
+						if(!Utility.isDouble(textField_pr_max_c2.getText()) && !Utility.isDouble(textField_pr_max_c3.getText())) 
+						{
+						 update=false;
+						}
+						
+						if(!Utility.isDouble(textField_divisione_reali_c2.getText()) && !Utility.isDouble(textField_divisione_reali_c3.getText())) 
+						{
+						 update=false;
+						}
+						
+						if(!Utility.isDouble(textField_divisione_verifica_c2.getText()) && !Utility.isDouble(textField_divisione_verifica_c3.getText())) 
+						{
+						 update=false;
+						}
+						
+						if(!Utility.isDouble(textField_numero_divisioni_c2.getText()) && !Utility.isDouble(textField_numero_divisioni_c3.getText())) 
+						{
+						 update=false;
+						}
+					}
+				
+				if(comboBox_tipo_strumento.getSelectedIndex()==2)
+					{
+					
+							if(!Utility.isDouble(textField_pr_min_c1.getText())) 
+							{
+								update=false;
+							}
+							
+							if(!Utility.isDouble(textField_pr_max_c1.getText())) 
+							{
+								update=false;
+							}
+							
+							if(!Utility.isDouble(textField_divisione_reali_c1.getText())) 
+							{
+								update=false;
+							}
+							
+							if(!Utility.isDouble(textField_divisione_verifica_c1.getText())) 
+							{
+								update=false;
+							}
+							
+							if(!Utility.isDouble(textField_numero_divisioni_c1.getText())) 
+							{
+								update=false;
+							}
+							
+							if(!Utility.isDouble(textField_pr_min_c2.getText())) 
+							{
+							 update=false;
+							}
+							
+							if(!Utility.isDouble(textField_pr_max_c2.getText())) 
+							{
+							 update=false;
+							}
+							
+							if(!Utility.isDouble(textField_divisione_reali_c2.getText())) 
+							{
+							 update=false;
+							}
+							
+							if(!Utility.isDouble(textField_divisione_verifica_c2.getText())) 
+							{
+							 update=false;
+							}
+							
+							if(!Utility.isDouble(textField_numero_divisioni_c2.getText())) 
+							{
+							 update=false;
+							}
+							if(!Utility.isDouble(textField_pr_min_c3.getText())) 
+							{
+							 update=false;
+							}
+							
+							if(!Utility.isDouble(textField_pr_max_c3.getText())) 
+							{
+							 update=false;
+							}
+							
+							if(!Utility.isDouble(textField_divisione_reali_c3.getText())) 
+							{
+							 update=false;
+							}
+							
+							if(!Utility.isDouble(textField_divisione_verifica_c3.getText())) 
+							{
+							 update=false;
+							}
+							
+							if(!Utility.isDouble(textField_numero_divisioni_c3.getText())) 
+							{
+							 update=false;
+							}
+						}
+				
 				
 				if(update)
 				{
@@ -471,6 +837,109 @@ public class PannelloVisualizzazioneStrumento extends JPanel{
 					strumento.setData_messa_in_servizio(textField_data_ms.getText());
 					strumento.setCostruttore(textField_costruttore.getText());
 					strumento.setFreq_mesi(Integer.parseInt(textField_freqMesi.getText()));
+					
+					strumento.setClasse(comboBox_classe.getSelectedIndex()+1);
+					strumento.setUm(comboBox_um.getSelectedItem().toString());
+					strumento.setTipologia(comboBox_tipologia.getSelectedIndex()+1);
+					strumento.setId_tipo_strumento(comboBox_tipo_strumento.getSelectedIndex()+1);
+					
+					strumento.setPortata_min_C1(new BigDecimal(textField_pr_min_c1.getText()));
+					strumento.setPortata_max_C1(new BigDecimal(textField_pr_max_c1.getText()));
+					strumento.setDiv_rel_C1(new BigDecimal(textField_divisione_reali_c1.getText()));
+					strumento.setDiv_ver_C1(new BigDecimal(textField_divisione_verifica_c1.getText()));
+					strumento.setNumero_div_C1(new BigDecimal(textField_numero_divisioni_c1.getText()));
+					
+					if(textField_pr_min_c2.getText().length()>0) 
+					{
+						strumento.setPortata_min_C2(new BigDecimal(textField_pr_min_c2.getText()));
+					}
+					else 
+					{
+						strumento.setPortata_min_C2(BigDecimal.ZERO);
+					}
+					
+					if(textField_pr_max_c2.getText().length()>0) 
+					{
+						strumento.setPortata_max_C2(new BigDecimal(textField_pr_max_c2.getText()));
+					}
+					else 
+					{
+						strumento.setPortata_max_C2(BigDecimal.ZERO);
+					}
+					
+					if(textField_divisione_reali_c2.getText().length()>0) 
+					{
+						strumento.setDiv_rel_C2(new BigDecimal(textField_divisione_reali_c2.getText()));
+					}
+					else 
+					{
+						strumento.setDiv_rel_C2(BigDecimal.ZERO);
+					}
+					
+					if(textField_divisione_verifica_c2.getText().length()>0) 
+					{
+						strumento.setDiv_ver_C2(new BigDecimal(textField_divisione_verifica_c2.getText()));
+					}
+					else 
+					{
+						strumento.setDiv_ver_C2(BigDecimal.ZERO);
+					}
+					
+					if(textField_numero_divisioni_c2.getText().length()>0) 
+					{
+						strumento.setNumero_div_C2(new BigDecimal(textField_numero_divisioni_c2.getText()));
+					}
+					else 
+					{
+						strumento.setNumero_div_C2(BigDecimal.ZERO);
+					}
+					
+					/*CAMPO 3*/
+					
+					if(textField_pr_min_c3.getText().length()>0) 
+					{
+						strumento.setPortata_min_C3(new BigDecimal(textField_pr_min_c3.getText()));
+					}
+					else 
+					{
+						strumento.setPortata_min_C3(BigDecimal.ZERO);
+					}
+					
+					if(textField_pr_max_c3.getText().length()>0) 
+					{
+						strumento.setPortata_max_C3(new BigDecimal(textField_pr_max_c3.getText()));
+					}
+					else 
+					{
+						strumento.setPortata_max_C3(BigDecimal.ZERO);
+					}
+					
+					if(textField_divisione_reali_c3.getText().length()>0) 
+					{
+						strumento.setDiv_rel_C3(new BigDecimal(textField_divisione_reali_c3.getText()));
+					}
+					else 
+					{
+						strumento.setDiv_rel_C3(BigDecimal.ZERO);
+					}
+					
+					if(textField_divisione_verifica_c3.getText().length()>0) 
+					{
+						strumento.setDiv_ver_C3(new BigDecimal(textField_divisione_verifica_c3.getText()));
+					}
+					else 
+					{
+						strumento.setDiv_ver_C3(BigDecimal.ZERO);
+					}
+					
+					if(textField_numero_divisioni_c3.getText().length()>0) 
+					{
+						strumento.setNumero_div_C3(new BigDecimal(textField_numero_divisioni_c3.getText()));
+					}
+					else 
+					{
+						strumento.setNumero_div_C3(BigDecimal.ZERO);
+					}
 					
 					try {
 						GestioneStrumentoVER_BO.updateStrumento(strumento);
@@ -487,6 +956,29 @@ public class PannelloVisualizzazioneStrumento extends JPanel{
 					textField_modello.setEditable(false);
 					textField_data_ms.setEditable(false);
 					textField_freqMesi.setEditable(false);
+					comboBox_classe.setEnabled(false);
+					comboBox_um.setEnabled(false);
+					comboBox_tipo_strumento.setEnabled(false);
+					comboBox_tipologia.setEnabled(false);
+					
+					
+					textField_pr_min_c1.setEditable(false);
+					textField_pr_max_c1.setEditable(false);
+					textField_divisione_reali_c1.setEditable(false);
+					textField_divisione_verifica_c1.setEditable(false);
+					textField_numero_divisioni_c1.setEditable(false);
+					
+					textField_pr_min_c2.setEditable(false);
+					textField_pr_max_c2.setEditable(false);
+					textField_divisione_reali_c2.setEditable(false);
+					textField_divisione_verifica_c2.setEditable(false);
+					textField_numero_divisioni_c2.setEditable(false);
+					
+					textField_pr_min_c3.setEditable(false);
+					textField_pr_max_c3.setEditable(false);
+					textField_divisione_reali_c3.setEditable(false);
+					textField_divisione_verifica_c3.setEditable(false);
+					textField_numero_divisioni_c3.setEditable(false);
 				
 				}
 				else 
@@ -513,5 +1005,57 @@ public class PannelloVisualizzazioneStrumento extends JPanel{
 		
 		    
 		  }
+
+		@Override
+		public void focusGained(FocusEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void focusLost(FocusEvent e) {
+		
+			JTextField ex=(JTextField)e.getComponent();
+			
+			if(ex.getText().length()>0) 
+			{	
+				try 
+				{
+					Double.parseDouble(ex.getText());
+					ex.setBackground(Color.WHITE);
+					
+					if(Utility.isDouble(textField_pr_max_c1.getText())&& Utility.isDouble(textField_divisione_verifica_c1.getText())) 
+					{
+						if(Double.parseDouble(textField_divisione_verifica_c1.getText())!=0) 
+						{
+							double divisioni =Double.parseDouble(textField_pr_max_c1.getText())/Double.parseDouble(textField_divisione_verifica_c1.getText());
+							textField_numero_divisioni_c1.setText(""+divisioni);
+						}
+					}
+					
+					if(Utility.isDouble(textField_pr_max_c2.getText())&& Utility.isDouble(textField_divisione_verifica_c2.getText())) 
+					{
+						if(Double.parseDouble(textField_divisione_verifica_c2.getText())!=0) 
+						{
+							double divisioni =Double.parseDouble(textField_pr_max_c2.getText())/Double.parseDouble(textField_divisione_verifica_c2.getText());
+							textField_numero_divisioni_c2.setText(""+divisioni);
+						}
+					}
+					
+					if(Utility.isDouble(textField_pr_max_c3.getText())&& Utility.isDouble(textField_divisione_verifica_c3.getText())) 
+					{
+						if(Double.parseDouble(textField_divisione_verifica_c3.getText())!=0)
+							{
+								double divisioni =Double.parseDouble(textField_pr_max_c3.getText())/Double.parseDouble(textField_divisione_verifica_c3.getText());
+								textField_numero_divisioni_c3.setText(""+divisioni);
+							}
+					}
+				} catch (NumberFormatException e2) {
+					ex.setBackground(Color.RED);
+					ex.requestFocus();
+				}
+			}
+			
+		}
 		  
 }

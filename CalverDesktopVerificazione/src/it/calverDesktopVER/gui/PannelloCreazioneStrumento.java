@@ -111,6 +111,36 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 		textField_matricola.setColumns(10);
 		add(textField_matricola, "cell 4 1 2 1");
 		
+		
+		textField_matricola.addFocusListener(new FocusListener() {
+			
+			@Override
+			public void focusLost(FocusEvent e) {
+			
+			try {	
+				String matricola =textField_matricola.getText();
+				if(matricola.length()>0) 
+				{
+					if(SQLiteDAO.checkMatricola(matricola)) 
+					{
+						JOptionPane.showMessageDialog(null,"La matricola inserita è già assegnata a questo cliente ma non è stata inserita in quest'intervento \nContattare l'amministrazione","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+						textField_matricola.setText("");
+					}
+					System.out.println("text: "+textField_matricola.getText());
+				}
+			}
+			catch (Exception exe) 
+			{
+				PannelloConsole.printArea("Errore recupero matricola, probabile file obsoleto");
+			}
+			}
+			
+			@Override
+			public void focusGained(FocusEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		JLabel lblCostruttore = new JLabel("Costruttore");
 		lblCostruttore.setFont(new Font("Arial", Font.BOLD, 18));
 		add(lblCostruttore, "cell 0 2,alignx right");

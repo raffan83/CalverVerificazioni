@@ -517,6 +517,8 @@ public class PannelloStrumentoMaster extends JPanel implements ActionListener {
 					if(!id.equals(""))	
 					{			
 
+						
+					
 						JPanel panelDB =null;
 						int idMisura=GestioneMisuraBO.isPresent(id);
 
@@ -525,9 +527,17 @@ public class PannelloStrumentoMaster extends JPanel implements ActionListener {
 						{
 							SessionBO.idStrumento=id;
 							VerStrumentoDTO strumento=GestioneStrumentoVER_BO.getStrumento(id);
-							idMisura=GestioneMisuraBO.insertMisura(id,strumento.getId_tipo_strumento());
-							SessionBO.idMisura=idMisura;
-							panelDB =new PannelloMisuraMaster(id);
+							
+							if(GestioneStrumentoVER_BO.valutaStrumento(strumento)) 
+							{
+								idMisura=GestioneMisuraBO.insertMisura(id,strumento.getId_tipo_strumento());
+								SessionBO.idMisura=idMisura;
+								panelDB =new PannelloMisuraMaster(id);
+							}
+							else 
+							{
+								JOptionPane.showMessageDialog(null,"Lo strumento non possiede tutti i dati necessari alla creazione della misura","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));	
+							}
 						}
 						else
 						{
@@ -540,9 +550,11 @@ public class PannelloStrumentoMaster extends JPanel implements ActionListener {
 
 							panelDB =new PannelloMisuraMaster(id);
 						}
-						PannelloConsole.printArea("Apertura Scheda Strumento [ID]: "+id);
-						SystemGUI.callPanel(panelDB, "PMM");
 						
+						if(panelDB!=null) {
+							PannelloConsole.printArea("Apertura Scheda Strumento [ID]: "+id);
+							SystemGUI.callPanel(panelDB, "PMM");
+						}
 
 
 					}else

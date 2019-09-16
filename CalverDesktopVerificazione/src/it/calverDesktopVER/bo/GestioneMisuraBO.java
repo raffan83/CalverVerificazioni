@@ -1,6 +1,7 @@
 package it.calverDesktopVER.bo;
 
 
+import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -169,6 +170,12 @@ public class GestioneMisuraBO
 		c.getTime();
 		
 		return sdf.format(new java.sql.Date(c.getTime().getTime()));
+		
+	}
+
+	public static void saveFoto(int tipo, int idMisura, ByteArrayOutputStream file_att, String name) throws Exception {
+		
+		SQLiteDAO.saveFoto(tipo,idMisura,file_att,name);
 		
 	}
 

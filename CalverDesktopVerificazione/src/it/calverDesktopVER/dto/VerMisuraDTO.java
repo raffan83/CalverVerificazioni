@@ -51,6 +51,15 @@ public class VerMisuraDTO {
 	private String is_difetti;
 	
 	private int stato;
+	
+	private byte[] file_inizio_prova;
+	
+	private String nomeFile_inizio_prova;
+	
+	private byte[] file_fine_prova;
+	
+	private String nomeFile_fine_prova;
+	
 
 		public VerMisuraDTO() {
 	}
@@ -300,6 +309,38 @@ public class VerMisuraDTO {
 
 	public void setIdVerStrumento(int idVerStrumento) {
 		this.idVerStrumento = idVerStrumento;
+	}
+
+	public byte[] getFile_inizio_prova() {
+		return file_inizio_prova;
+	}
+
+	public void setFile_inizio_prova(byte[] file_inizio_prova) {
+		this.file_inizio_prova = file_inizio_prova;
+	}
+
+	public String getNomeFile_inizio_prova() {
+		return nomeFile_inizio_prova;
+	}
+
+	public void setNomeFile_inizio_prova(String nomeFile_inizio_prova) {
+		this.nomeFile_inizio_prova = nomeFile_inizio_prova;
+	}
+
+	public byte[] getFile_fine_prova() {
+		return file_fine_prova;
+	}
+
+	public void setFile_fine_prova(byte[] file_fine_prova) {
+		this.file_fine_prova = file_fine_prova;
+	}
+
+	public String getNomeFile_fine_prova() {
+		return nomeFile_fine_prova;
+	}
+
+	public void setNomeFile_fine_prova(String nomeFile_fine_prova) {
+		this.nomeFile_fine_prova = nomeFile_fine_prova;
 	}
 	
 	

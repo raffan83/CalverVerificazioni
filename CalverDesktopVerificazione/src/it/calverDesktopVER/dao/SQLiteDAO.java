@@ -1641,7 +1641,11 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		
 		try {
 			con =getConnection();
-			pst=con.prepareStatement("UPDATE ver_strumento set denominazione=?,costruttore=?,modello=?,matricola=?,anno_marcatura_CE=?,data_ms=?,freq_mesi=? WHERE id=?");
+			pst=con.prepareStatement("UPDATE ver_strumento set denominazione=?,costruttore=?,modello=?,matricola=?,anno_marcatura_CE=?,data_ms=?,freq_mesi=?, "
+										   +"portata_min_C1=?,portata_max_C1=?,div_ver_C1=?,div_rel_C1=?,numero_div_C1=?,"
+										   +"portata_min_C2=?,portata_max_C2=?,div_ver_C2=?,div_rel_C2=?,numero_div_C2=?,"
+										   +"portata_min_C3=?,portata_max_C3=?,div_ver_C3=?,div_rel_C3=?,numero_div_C3=?, "
+										   +"classe=?,id_ver_tipo_strumento=?,um=?,id_tipologia=? WHERE id=?");
 		
 			pst.setString(1,strumento.getDenominazione());
 			pst.setString(2,strumento.getCostruttore());
@@ -1650,7 +1654,31 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			pst.setInt(5,strumento.getAnno_marcatura_ce());
 			pst.setString(6,strumento.getData_messa_in_servizio());
 			pst.setInt(7,strumento.getFreq_mesi());
-			pst.setInt(8, strumento.getId());
+			
+			pst.setBigDecimal(8, strumento.getPortata_min_C1());
+			pst.setBigDecimal(9, strumento.getPortata_max_C1());
+			pst.setBigDecimal(10, strumento.getDiv_rel_C1());
+			pst.setBigDecimal(11, strumento.getDiv_ver_C1());
+			pst.setBigDecimal(12, strumento.getNumero_div_C1());
+			
+			pst.setBigDecimal(13, strumento.getPortata_min_C2());
+			pst.setBigDecimal(14, strumento.getPortata_max_C2());
+			pst.setBigDecimal(15, strumento.getDiv_rel_C2());
+			pst.setBigDecimal(16, strumento.getDiv_ver_C2());
+			pst.setBigDecimal(17, strumento.getNumero_div_C2());
+			
+			pst.setBigDecimal(18, strumento.getPortata_min_C3());
+			pst.setBigDecimal(19, strumento.getPortata_max_C3());
+			pst.setBigDecimal(20, strumento.getDiv_rel_C3());
+			pst.setBigDecimal(21, strumento.getDiv_ver_C3());
+			pst.setBigDecimal(22, strumento.getNumero_div_C3());
+			
+			pst.setInt(23, strumento.getClasse());
+			pst.setInt(24, strumento.getId_tipo_strumento());
+			pst.setString(25, strumento.getUm());
+			pst.setInt(26, strumento.getTipologia());
+			
+			pst.setInt(27, strumento.getId());
 			
 			
 			toReturn=pst.executeUpdate();
@@ -2157,6 +2185,10 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 				misura.setStato(rs.getInt("stato"));
 				misura.setIs_difetti(rs.getString("isDifetti"));
 				misura.setCampioniLavoro(rs.getString("campioni_lavoro"));
+				misura.setFile_inizio_prova(rs.getBytes("file_inizio_prova"));
+				misura.setFile_fine_prova(rs.getBytes("file_fine_prova"));
+				misura.setNomeFile_inizio_prova(rs.getString("nomefile_inizio_prova"));
+				misura.setNomeFile_fine_prova(rs.getString("nomefile_fine_prova"));
 			}
 			
 		}
@@ -2173,6 +2205,60 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 
 		return misura;
 	}
+	
+	public static VerMisuraDTO getMisuraByIDStrumento(int idStrumento) throws Exception {
+		Connection con=null;
+		PreparedStatement pst=null;
+		ResultSet rs=null;
+		VerMisuraDTO misura=null;
+		
+		try 
+		{
+			con=getConnection();
+			pst=con.prepareStatement("SELECT * FROM ver_misura WHERE id_ver_strumento=?");
+			pst.setInt(1, idStrumento);
+			
+			rs=pst.executeQuery();
+			
+			while(rs.next())
+			{
+				misura= new VerMisuraDTO();
+				misura.setId(rs.getInt("id"));
+				misura.setIdVerStrumento(idStrumento);
+				misura.setDataVerificazione(rs.getString("data_verificazione"));
+				misura.setDataScadenza(rs.getString("data_scadenza"));
+				misura.setNumeroRapporto(rs.getString("numero_rapporto"));
+				misura.setNumeroAttestato(rs.getString("numero_attestato"));
+				misura.setTipo_verifica(rs.getInt("tipo_verifica"));
+				misura.setMotivo_verifica(rs.getInt("motivo_verifica"));
+				misura.setNomeRiparatore(rs.getString("nome_riparatore"));
+				misura.setDataRiparazione(rs.getString("data_riparazione"));
+				misura.setSeqRisposte(rs.getString("seq_risposte"));
+				misura.setIdNonConforme(rs.getInt("id_non_conforme"));
+				misura.setStato(rs.getInt("stato"));
+				misura.setIs_difetti(rs.getString("isDifetti"));
+				misura.setCampioniLavoro(rs.getString("campioni_lavoro"));
+				misura.setFile_inizio_prova(rs.getBytes("file_inizio_prova"));
+				misura.setFile_fine_prova(rs.getBytes("file_fine_prova"));
+				misura.setNomeFile_inizio_prova(rs.getString("nomefile_inizio_prova"));
+				misura.setNomeFile_fine_prova(rs.getString("nomefile_fine_prova"));
+			}
+			
+		}
+		catch (Exception e) 
+		{
+		 e.printStackTrace();	
+		 throw e;
+		}
+		finally
+		{
+			pst.close();
+			con.close();
+		}
+
+		return misura;
+	}
+	
 	public static List<VerRipetibilitaDTO> getListaProvaRipetibilita(int idMisura) throws Exception {
 		Connection con=null;
 		PreparedStatement pst=null;
@@ -2892,6 +2978,81 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			con.close();
 		}
 	}
+	public static void saveFoto(int tipo, int idMisura, ByteArrayOutputStream file_att, String name) throws Exception {
+	
+		Connection con=null;
+		PreparedStatement pst=null;
+		try 
+		{
+			con=getConnection();
+			
+		if(tipo==1) 
+		{
+				pst=con.prepareStatement("UPDATE ver_misura SET file_inizio_prova=?,nomeFile_inizio_prova=? WHERE id=?");
+				pst.setBytes(1, file_att.toByteArray());
+				pst.setString(2,name);
+				pst.setInt(3, idMisura);
+				
+			pst.execute();
+		}
+		if(tipo==2) 
+		{
+				pst=con.prepareStatement("UPDATE ver_misura SET file_fine_prova=?,nomeFile_fine_prova=? WHERE id=?");
+				pst.setBytes(1, file_att.toByteArray());
+				pst.setString(2,name);
+				pst.setInt(3, idMisura);
+				
+			pst.execute();
+		}
+	
+		}
+		catch (Exception e) 
+		{
+		 e.printStackTrace();	
+		 throw e;
+		}
+		finally
+		{
+			pst.close();
+			con.close();
+		}
+	}
+	public static boolean checkMatricola(String matricola) throws Exception {
+		Connection con=null;
+		PreparedStatement pst=null;
+		ResultSet rs=null;
+		try 
+		{
+			con=getConnection();
+			
+			pst=con.prepareStatement("SELECT * FROM ver_lista_matricole WHERE matricola=?");
+			pst.setString(1, matricola);
+			
+			rs=pst.executeQuery();
+			
+			while(rs.next()) 
+			{
+				return true;
+			}
+	
+				
+			pst.execute();
+		
+	
+		}
+		catch (Exception e) 
+		{
+		 e.printStackTrace();	
+		 throw e;
+		}
+		finally
+		{
+			pst.close();
+			con.close();
+		}
+		return false;
+	}
+
 
 
 

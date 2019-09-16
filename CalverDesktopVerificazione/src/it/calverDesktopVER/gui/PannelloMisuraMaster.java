@@ -8,6 +8,11 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
@@ -24,6 +29,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -45,6 +51,10 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+
 import it.calverDesktopVER.bo.GestioneCampioneBO;
 import it.calverDesktopVER.bo.GestioneMisuraBO;
 import it.calverDesktopVER.bo.GestioneStrumentoVER_BO;
@@ -58,6 +68,7 @@ import it.calverDesktopVER.dto.VerMobilitaDTO;
 import it.calverDesktopVER.dto.VerRipetibilitaDTO;
 import it.calverDesktopVER.dto.VerStrumentoDTO;
 import it.calverDesktopVER.utl.Costanti;
+import it.calverDesktopVER.utl.FileTypeFilter;
 import it.calverDesktopVER.utl.Utility;
 import net.miginfocom.swing.MigLayout;
 
@@ -127,6 +138,8 @@ public class PannelloMisuraMaster extends JPanel
 	JCheckBox chckbx;
 	JComboBox comboBox_tipo_verifica=null;
 	JComboBox comboBox_motivo=null;
+	private JTextField textField_foto_inizio;
+	private JTextField textField_foto_fine;
 	
 	public PannelloMisuraMaster(String id) throws Exception
 	{
@@ -249,7 +262,7 @@ public class PannelloMisuraMaster extends JPanel
 		JPanel pannelloDatiGenerali = new JPanel();
 		pannelloDatiGenerali.setBorder(new TitledBorder(new LineBorder(new Color(255, 0, 0), 2, true), "Dati Generali", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		pannelloDatiGenerali.setBackground(Color.WHITE);
-		pannelloDatiGenerali.setLayout(new MigLayout("", "[][9.00][][][][]", "[][][][][][][][38.00][30.00][29.00][grow][]"));
+		pannelloDatiGenerali.setLayout(new MigLayout("", "[][9.00][][][][]", "[10.00][][10.00][][10.00][][10.00][39.00][30.00][31.00][][grow][][][][][]"));
 		
 		JLabel lblTipoVerifica = new JLabel("Tipo Verifica");
 		lblTipoVerifica.setFont(new Font("Arial", Font.BOLD, 14));
@@ -306,7 +319,7 @@ public class PannelloMisuraMaster extends JPanel
 		pannelloDatiGenerali.add(comboBox_listaParametri, "cell 2 9 3 1");
 		
 		JScrollPane scrollPaneListaCMP = new JScrollPane();
-		pannelloDatiGenerali.add(scrollPaneListaCMP, "cell 2 10,grow");
+		pannelloDatiGenerali.add(scrollPaneListaCMP, "cell 2 11,grow");
 		
 		dlm= new DefaultListModel<String>();
 		
@@ -315,15 +328,26 @@ public class PannelloMisuraMaster extends JPanel
 		scrollPaneListaCMP.setViewportView(list_cmp);
 		
 		JButton btnNewButton = new JButton("Aggiungi");
-	
-		btnNewButton.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/add.png")));
-		btnNewButton.setFont(new Font("Arial", Font.BOLD, 12));
-		pannelloDatiGenerali.add(btnNewButton, "flowx,cell 2 11");
 		
-		JButton btnElimina = new JButton("Elimina");
-		btnElimina.setFont(new Font("Arial", Font.BOLD, 12));
-		btnElimina.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/delete.png")));
-		pannelloDatiGenerali.add(btnElimina, "cell 2 11");
+			btnNewButton.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/add.png")));
+			btnNewButton.setFont(new Font("Arial", Font.BOLD, 12));
+			pannelloDatiGenerali.add(btnNewButton, "flowx,cell 4 11,aligny top");
+			
+			btnNewButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					
+					if(comboBox_lista_campioni.getSelectedIndex()>0 && comboBox_listaParametri.getSelectedIndex()>0 ) 
+					{
+						String campione= comboBox_lista_campioni.getSelectedItem().toString()+"("+comboBox_listaParametri.getSelectedItem().toString()+")";
+
+						dlm.addElement(campione);
+					}
+					if(comboBox_lista_campioni.getSelectedIndex()>0 && comboBox_listaParametri.getSelectedIndex()==0 ) 
+					{
+						dlm.addElement(comboBox_lista_campioni.getSelectedItem().toString());
+					}
+				}
+			});
 		
 		final JLabel lblNomeRiparatore = new JLabel("Nome Riparatore");
 		lblNomeRiparatore.setFont(new Font("Arial", Font.BOLD, 12));
@@ -336,6 +360,206 @@ public class PannelloMisuraMaster extends JPanel
 		textField_dataRiparazione = new JTextField();
 		textField_dataRiparazione.setColumns(10);
 		pannelloDatiGenerali.add(textField_dataRiparazione, "cell 4 3,width :120:");
+		
+		JButton btnElimina = new JButton("Elimina");
+		btnElimina.setFont(new Font("Arial", Font.BOLD, 12));
+		btnElimina.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/delete.png")));
+		pannelloDatiGenerali.add(btnElimina, "cell 4 11,aligny top");
+		
+		JLabel lblFotoInizioProva = new JLabel("Foto inizio prova");
+		lblFotoInizioProva.setFont(new Font("Arial", Font.BOLD, 14));
+		pannelloDatiGenerali.add(lblFotoInizioProva, "cell 0 13");
+		
+		textField_foto_inizio = new JTextField();
+		textField_foto_inizio.setEditable(false);
+		pannelloDatiGenerali.add(textField_foto_inizio, "cell 2 13,growx");
+		textField_foto_inizio.setColumns(10);
+		
+		JButton btnCarica_inizio = new JButton("Carica");
+		final JButton btnVisualizza_inizio = new JButton("Visualizza");
+		
+		
+		btnCarica_inizio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				JFileChooser jfc = new JFileChooser();
+
+				javax.swing.filechooser.FileFilter docFilter = new FileTypeFilter(".jpg", "JPG,JPEG");
+				jfc.addChoosableFileFilter(docFilter);
+				jfc.showOpenDialog(GeneralGUI.g);
+				File f= jfc.getSelectedFile();
+				if(f!=null)
+				{
+					String ext1 = FilenameUtils.getExtension(f.getPath()); 
+					if(ext1.equalsIgnoreCase("jpg") || ext1.equalsIgnoreCase("jpeg"))
+					{
+						try {
+
+							FileInputStream fis = new FileInputStream(f);
+							byte[] buffer = new byte[1024];
+							ByteArrayOutputStream file_att = new ByteArrayOutputStream();
+							for (int len; (len = fis.read(buffer)) != -1;) {
+								file_att.write(buffer, 0, len);
+							}
+					
+							textField_foto_inizio.setText(f.getPath());
+							GestioneMisuraBO.saveFoto(1,misura.getId(),file_att,f.getName());
+							fis.close();
+							
+							btnVisualizza_inizio.setEnabled(true);
+							
+							} catch (Exception e2) {
+							System.err.println(e2.getMessage());
+						}
+					}
+					else
+					{
+						JOptionPane.showMessageDialog(null,"Il sistema può caricare solo file in formato JPG","Exstension Error",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/error.png")));
+					}
+
+				}
+			}
+		});
+		btnCarica_inizio.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/attach.png")));
+		btnCarica_inizio.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloDatiGenerali.add(btnCarica_inizio, "flowx,cell 4 13");
+		
+		JLabel lblFotoFineProva = new JLabel("Foto fine prova");
+		lblFotoFineProva.setFont(new Font("Arial", Font.BOLD, 14));
+		pannelloDatiGenerali.add(lblFotoFineProva, "cell 0 15");
+		
+		textField_foto_fine = new JTextField();
+		textField_foto_fine.setEditable(false);
+		textField_foto_fine.setColumns(10);
+		pannelloDatiGenerali.add(textField_foto_fine, "cell 2 15,growx");
+		
+		
+		btnVisualizza_inizio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			
+				try {
+
+						JFileChooser jfc = new JFileChooser();
+						jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+						jfc.showSaveDialog(f);
+
+						File f= jfc.getSelectedFile();
+						if(f!=null)
+						{
+
+							
+							FileUtils.writeByteArrayToFile(new File(f.getAbsoluteFile()+"\\"+misura.getNomeFile_inizio_prova()), misura.getFile_inizio_prova());
+							JOptionPane.showMessageDialog(null, "File salvato con successo ","Salvataggio",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/confirm.png")));
+
+						}
+
+					
+				} catch (Exception ec) {
+
+					PannelloConsole.printException(ec);
+				}
+				
+			}
+		});
+		btnVisualizza_inizio.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/search_24.png")));
+		btnVisualizza_inizio.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloDatiGenerali.add(btnVisualizza_inizio, "cell 4 13");
+		
+		JButton btnCarica_fine = new JButton("Carica");
+		final JButton btnVisualizza_fine = new JButton("Visualizza");
+		
+		btnVisualizza_fine.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/search_24.png")));
+		btnVisualizza_fine.setFont(new Font("Arial", Font.BOLD, 12));
+		
+		btnCarica_fine.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				JFileChooser jfc = new JFileChooser();
+
+				javax.swing.filechooser.FileFilter docFilter = new FileTypeFilter(".jpg", "JPG,JPEG");
+				jfc.addChoosableFileFilter(docFilter);
+				jfc.showOpenDialog(GeneralGUI.g);
+				File f= jfc.getSelectedFile();
+				if(f!=null)
+				{
+					String ext1 = FilenameUtils.getExtension(f.getPath()); 
+					if(ext1.equalsIgnoreCase("jpg") || ext1.equalsIgnoreCase("jpeg"))
+					{
+						try {
+
+							FileInputStream fis = new FileInputStream(f);
+							byte[] buffer = new byte[1024];
+							ByteArrayOutputStream file_att = new ByteArrayOutputStream();
+							for (int len; (len = fis.read(buffer)) != -1;) {
+								file_att.write(buffer, 0, len);
+							}
+					
+							textField_foto_fine.setText(f.getPath());
+							GestioneMisuraBO.saveFoto(2,misura.getId(),file_att,f.getName());
+							fis.close();
+							
+							btnVisualizza_fine.setEnabled(true);
+							
+							} catch (Exception e2) {
+							System.err.println(e2.getMessage());
+						}
+					}
+					else
+					{
+						JOptionPane.showMessageDialog(null,"Il sistema può caricare solo file in formato JPG","Exstension Error",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/error.png")));
+					}
+
+				}
+			}
+		});
+		
+		btnVisualizza_fine.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+
+				try {
+
+						JFileChooser jfc = new JFileChooser();
+						jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+						jfc.showSaveDialog(f);
+
+						File f= jfc.getSelectedFile();
+						if(f!=null)
+						{
+
+							
+							FileUtils.writeByteArrayToFile(new File(f.getAbsoluteFile()+"\\"+misura.getNomeFile_fine_prova()), misura.getFile_fine_prova());
+							JOptionPane.showMessageDialog(null, "File salvato con successo ","Salvataggio",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/confirm.png")));
+
+						}
+
+					
+				} catch (Exception ec) {
+
+					PannelloConsole.printException(ec);
+				}
+				
+			}
+		});
+		
+		btnCarica_fine.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/attach.png")));
+		btnCarica_fine.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloDatiGenerali.add(btnCarica_fine, "flowx,cell 4 15");
+		
+		
+		pannelloDatiGenerali.add(btnVisualizza_fine, "cell 4 15");
+		
+		
+		btnElimina.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				if(dlm.size()>0 && list_cmp.getSelectedIndex()>-1)
+				{
+					dlm.removeElementAt(list_cmp.getSelectedIndex());
+				}
+				
+			}
+		});
 		
 		
 		if(misura.getTipo_verifica()!=0) 
@@ -439,34 +663,25 @@ public class PannelloMisuraMaster extends JPanel
 			}
 		});
 		
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				if(comboBox_lista_campioni.getSelectedIndex()>0 && comboBox_listaParametri.getSelectedIndex()>0 ) 
-				{
-					String campione= comboBox_lista_campioni.getSelectedItem().toString()+"("+comboBox_listaParametri.getSelectedItem().toString()+")";
-
-					dlm.addElement(campione);
-				}
-				if(comboBox_lista_campioni.getSelectedIndex()>0 && comboBox_listaParametri.getSelectedIndex()==0 ) 
-				{
-					dlm.addElement(comboBox_lista_campioni.getSelectedItem().toString());
-				}
-			}
-		});
+		if(misura.getNomeFile_inizio_prova()!=null && misura.getNomeFile_inizio_prova().length()>0) 
+		{
+			textField_foto_inizio.setText(misura.getNomeFile_inizio_prova());
+			btnVisualizza_inizio.setEnabled(true);
+		}
+		else 
+		{
+			btnVisualizza_inizio.setEnabled(false);
+		}
 		
-		
-		btnElimina.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				if(dlm.size()>0 && list_cmp.getSelectedIndex()>-1)
-				{
-					dlm.removeElementAt(list_cmp.getSelectedIndex());
-				}
-				
-			}
-		});
-		
+		if(misura.getNomeFile_fine_prova()!=null && misura.getNomeFile_fine_prova().length()>0) 
+		{
+			textField_foto_fine.setText(misura.getNomeFile_fine_prova());
+			btnVisualizza_fine.setEnabled(true);
+		}
+		else 
+		{
+			btnVisualizza_fine.setEnabled(false);
+		}
 		
 		
 		
@@ -1133,7 +1348,8 @@ public class PannelloMisuraMaster extends JPanel
 				{
 					if(i==0) 
 					{
-						modelDec.setValueAt(err.multiply(BigDecimal.TEN).toPlainString(),i, 1);
+						
+						modelDec.setValueAt(strumento.getDiv_rel_C1().multiply(BigDecimal.TEN).toPlainString(),i, 1);
 					}else 
 					{
 						if(i%2!=0) 
@@ -1710,6 +1926,7 @@ public class PannelloMisuraMaster extends JPanel
 
 							
 								erroreSalita_cor=erroreSalita.subtract(new BigDecimal(modelLin.getValueAt(0, 6).toString()));
+								erroreSalita_cor=erroreSalita_cor.setScale(4,RoundingMode.HALF_UP);
 								String mpe=getMPE(mas.toPlainString(), campo);
 								modelLin.setValueAt(erroreSalita, row, 6);
 								modelLin.setValueAt(erroreSalita_cor, row, 8);
@@ -1803,6 +2020,7 @@ public class PannelloMisuraMaster extends JPanel
 									if(modelLin.getValueAt(i, 7)!=null) 
 									{
 										erroreDiscesa_cor=new BigDecimal(modelLin.getValueAt(i, 7).toString()).subtract(erroreDiscesa);
+										erroreDiscesa_cor=	erroreDiscesa_cor.setScale(4,RoundingMode.HALF_UP);
 										modelLin.setValueAt(erroreDiscesa_cor.toPlainString(), i, 9);
 										int id =Integer.parseInt(modelLin.getValueAt(i, 11).toString());									
 										GestioneMisuraBO.updateErrore_correttoDiscesa(id,erroreDiscesa_cor);	
@@ -2111,9 +2329,9 @@ public class PannelloMisuraMaster extends JPanel
 							indicaz=new BigDecimal(indicazione.toString());
 							car_aggiuntivo=new BigDecimal(car_agg.toString());
 
+							BigDecimal e2=getE(campo,strumento.getId_tipo_strumento(),mas).setScale(5).divide(new BigDecimal(2).setScale(5), RoundingMode.HALF_UP);
 
-							BigDecimal errore=indicaz.add(getE(campo,strumento.getId_tipo_strumento(),mas).divide(new BigDecimal("2"), RoundingMode.HALF_UP)
-									.subtract(car_aggiuntivo).subtract(mas));
+							BigDecimal errore=indicaz.add(e2).subtract(car_aggiuntivo).subtract(mas);
 
 
 							String mpe=getMPE(mas.toPlainString(), campo);
@@ -2436,7 +2654,7 @@ public class PannelloMisuraMaster extends JPanel
 			{
 				textField_esito_mob_2.setBackground(Color.RED);
 			}
-			textField_esito_mob_2.setText(listaMobilita1.get(0).getEsito());
+			textField_esito_mob_2.setText(listaMobilita2.get(0).getEsito());
 		}
 
 
@@ -2957,19 +3175,40 @@ public class PannelloMisuraMaster extends JPanel
 						{
 							//Controllo completamento dati
 							
-							/*
-							 * Data verificicazione =now()
-							 * Data scadenza freq_mesi+ now() se freq_mesi assente=36
-							 * 
-							 */
-							
-							String dataScadenza=GestioneMisuraBO.getDataScadenzaMisura(misura,strumento.getFreq_mesi());
-							
-							
-							GestioneMisuraBO.terminaMisura(misura.getId(),dataScadenza);
+							misura=GestioneMisuraBO.getMisura(misura.getId());
+
+							if(misura.getIs_difetti().equals("S")) 
+							{
+								String dataScadenza=GestioneMisuraBO.getDataScadenzaMisura(misura,strumento.getFreq_mesi());
+								
+								
+								GestioneMisuraBO.terminaMisura(misura.getId(),dataScadenza);
 
 
-							JOptionPane.showMessageDialog(null,"Salvataggio effettuato","Salvataggio",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/confirm.png")));
+								JOptionPane.showMessageDialog(null,"Salvataggio effettuato","Salvataggio",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/confirm.png")));
+							}
+							else 
+							{
+								if(misura.getFile_inizio_prova()!=null && misura.getFile_fine_prova()!=null) 
+								{
+									String dataScadenza=GestioneMisuraBO.getDataScadenzaMisura(misura,strumento.getFreq_mesi());
+									
+									
+									GestioneMisuraBO.terminaMisura(misura.getId(),dataScadenza);
+
+
+									JOptionPane.showMessageDialog(null,"Salvataggio effettuato","Salvataggio",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/confirm.png")));
+									
+								}
+								else 
+								{
+									JOptionPane.showMessageDialog(null,"Per terminare la misura inserire le foto","Salvataggio",JOptionPane.ERROR_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+								}
+								
+							}
+						
+							
+							
 
 
 
@@ -2978,13 +3217,8 @@ public class PannelloMisuraMaster extends JPanel
 						}
 
 
-					}else
-					{
-						JOptionPane.showMessageDialog(null,"Per terminare la misura, tutti i punti devono essere valorizzati","Salvataggio",JOptionPane.ERROR_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
 					}
-				
-
-			}
+				}
 
 		});
 
@@ -3187,7 +3421,7 @@ public class PannelloMisuraMaster extends JPanel
 		@Override
 		public boolean isCellEditable(int row, int column) {
 
-			if(column==2 || column==3 || column==4 || column==5)
+			if(column==1 || column==2 || column==3 || column==4 || column==5)
 			{
 				return true;
 			}else
@@ -3263,7 +3497,7 @@ public class PannelloMisuraMaster extends JPanel
 			addColumn("Indicazione L1 ("+um+")");
 			addColumn("Carico Agg=0,4 . |MPE|  ΔL ("+um+")");
 			addColumn("Indicazione L2 ("+um+")");
-			addColumn("Differneza L2 - L1("+um+")");
+			addColumn("Differenza L2 - L1("+um+")");
 			addColumn("Div. reale strumento d ("+um+")");
 			addColumn("Check |L2-L1|≥ d");
 			addColumn("id");
@@ -3305,7 +3539,7 @@ public class PannelloMisuraMaster extends JPanel
 		@Override
 		public boolean isCellEditable(int row, int column) {
 
-			if(column==2 || column==4)
+			if(column==1 || column==2 || column==4)
 			{
 				return true;
 			}else

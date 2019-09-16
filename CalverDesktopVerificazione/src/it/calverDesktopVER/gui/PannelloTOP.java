@@ -94,8 +94,8 @@ button.addActionListener(new ActionListener() {
  		
 	    		if(execute)
 	    		{
-	    		//	d= new Splash(me);
-	    		//	d.execute();
+	    			d= new Splash(me);
+	    			d.execute();
 	    			
 	    			Thread thread = new Thread(new ValidateThread());
 		 			thread.start();
@@ -278,7 +278,7 @@ button.addActionListener(new ActionListener() {
 				JPanel panelDB =new PannelloStrumentoMaster();
     			SystemGUI.callPanel(panelDB, "PSS");
     			
-    		//	d.close();
+    			d.close();
     			PannelloConsole.printArea("Caricati "+SessionBO.numeroStrumenti+" Strumenti");
 			}
 			catch (Exception er) 

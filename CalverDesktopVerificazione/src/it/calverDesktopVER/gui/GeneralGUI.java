@@ -71,11 +71,11 @@ public  class GeneralGUI extends JFrame implements Serializable{
 	SessionBO.heightFrame=(int)dim.getHeight();
 	
 	
-	if(SessionBO.heightFrame<900) 
-	{
-		JOptionPane.showMessageDialog(null,"Risoluzione troppo bassa (minimo 1400 x 900)","Risoluzione insufficiente",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/error.png")));
-		System.exit(0);
-	}
+//	if(SessionBO.heightFrame<900) 
+//	{
+//		JOptionPane.showMessageDialog(null,"Risoluzione troppo bassa (minimo 1400 x 900)","Risoluzione insufficiente",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/error.png")));
+//		System.exit(0);
+//	}
 	setSize(SessionBO.widthFrame,SessionBO.heightFrame);
 	this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 	
@@ -138,7 +138,7 @@ public  class GeneralGUI extends JFrame implements Serializable{
 	  	itMis.setAccelerator(KeyStroke.getKeyStroke('M', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
 	  	
 	  	menuMis.add(itMis);
-	  	menuMis.add(itMisCh);
+	  //	menuMis.add(itMisCh);
 	  	
 	  	menu1 = new JMenu("DataBase");
 	  	menuBar.add(menu1);
@@ -154,7 +154,7 @@ public  class GeneralGUI extends JFrame implements Serializable{
 	  	menu2 = new JMenu("Impostazioni");
 	  	
 	  	
-	  	menuBar.add(menu2);
+	  //	menuBar.add(menu2);
 	    impost= new JMenuItem("Opzioni");
 	    importazione = new JMenuItem("Importa campioni");
 	    menu2.add(impost);
