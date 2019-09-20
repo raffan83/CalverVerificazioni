@@ -1348,8 +1348,18 @@ public class PannelloMisuraMaster extends JPanel
 				{
 					if(i==0) 
 					{
-						
-						modelDec.setValueAt(strumento.getDiv_rel_C1().multiply(BigDecimal.TEN).toPlainString(),i, 1);
+						if(comboBox_campo.getSelectedIndex()==0) 
+						{
+							modelDec.setValueAt(strumento.getDiv_rel_C1().multiply(BigDecimal.TEN).toPlainString(),i, 1);
+						}
+						if(comboBox_campo.getSelectedIndex()==1) 
+						{
+							modelDec.setValueAt(strumento.getDiv_rel_C2().multiply(BigDecimal.TEN).toPlainString(),i, 1);
+						}
+						if(comboBox_campo.getSelectedIndex()==2) 
+						{
+							modelDec.setValueAt(strumento.getDiv_rel_C3().multiply(BigDecimal.TEN).toPlainString(),i, 1);
+						}
 					}else 
 					{
 						if(i%2!=0) 

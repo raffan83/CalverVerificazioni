@@ -196,7 +196,7 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 		
 		final JComboBox comboBox_um = new JComboBox();
 		comboBox_um.setFont(new Font("Arial", Font.PLAIN, 14));
-		comboBox_um.setModel(new DefaultComboBoxModel(new String[] {"KG", "g"}));
+		comboBox_um.setModel(new DefaultComboBoxModel(new String[] {"Kg", "g"}));
 		add(comboBox_um, "cell 4 4 2 1,width : 50:");
 		
 		JLabel lblAnnoMarcatureCe = new JLabel("Anno Marcature CE");
@@ -264,7 +264,7 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 		lblDivisioniVerifica.setFont(new Font("Arial", Font.BOLD, 14));
 		add(lblDivisioniVerifica, "flowx,cell 3 8,alignx center");
 		
-		JLabel lblCampo1 = new JLabel("Campo 1");
+		JLabel lblCampo1 = new JLabel("Campo 1 / Parziale");
 		lblCampo1.setFont(new Font("Arial", Font.BOLD, 18));
 		add(lblCampo1, "cell 0 9,alignx right");
 		
@@ -299,7 +299,7 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 		textField_numero_divisioni_c1.setColumns(10);
 		add(textField_numero_divisioni_c1, "cell 5 9,growx");
 		
-		JLabel lblCampo2 = new JLabel("Campo 2");
+		JLabel lblCampo2 = new JLabel("Campo 2 / Parziale");
 		lblCampo2.setFont(new Font("Arial", Font.BOLD, 18));
 		add(lblCampo2, "cell 0 10,alignx trailing");
 		
@@ -334,7 +334,7 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 		textField_numero_divisioni_c2.setColumns(10);
 		add(textField_numero_divisioni_c2, "cell 5 10,growx");
 		
-		JLabel lblCampo3 = new JLabel("Campo 3");
+		JLabel lblCampo3 = new JLabel("Campo 3 / Parziale");
 		lblCampo3.setFont(new Font("Arial", Font.BOLD, 18));
 		add(lblCampo3, "cell 0 11,alignx trailing");
 		

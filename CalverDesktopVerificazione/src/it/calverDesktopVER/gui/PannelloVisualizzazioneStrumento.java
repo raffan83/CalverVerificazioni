@@ -177,7 +177,7 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 		final JComboBox comboBox_um = new JComboBox();
 		comboBox_um.setEnabled(false);
 		comboBox_um.setFont(new Font("Arial", Font.PLAIN, 14));
-		comboBox_um.setModel(new DefaultComboBoxModel(new String[] {"KG", "g"}));
+		comboBox_um.setModel(new DefaultComboBoxModel(new String[] {"Kg", "g"}));
 		add(comboBox_um, "cell 4 4 2 1,width : 50:");
 		
 		JLabel lblAnnoMarcatureCe = new JLabel("Anno Marcature CE");
