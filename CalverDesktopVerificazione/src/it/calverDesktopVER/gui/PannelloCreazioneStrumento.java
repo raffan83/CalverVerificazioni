@@ -87,7 +87,7 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 		SessionBO.prevPage="PSS";
 		
 	//	setBackground(Costanti.backgroundGrey);
-		setLayout(new MigLayout("", "[86.00][120px:120:200px,grow][120px:120:200px,grow][120px:120px:200px,grow][120px:120px:200px,grow][120px:120px:200px,grow]", "[][40][40][40][40][40][40][][40][40][40][40][][50][]"));
+		setLayout(new MigLayout("", "[86.00][120px:120:200px,grow][120px:120:200px,grow][120px:120px:200px,grow][120px:120px:200px,grow][120px:120px:200px,grow]", "[][40][40][40][40][40][40][40px][][40][40][40][40][][50][]"));
 		
 		JLabel lblCreazioneStrumentoIn = new JLabel("Creazione Strumento");
 		lblCreazioneStrumentoIn.setFont(new Font("Arial", Font.ITALIC, 22));
@@ -252,135 +252,144 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 		lblSeNonReperibile.setFont(new Font("Arial", Font.BOLD, 11));
 		add(lblSeNonReperibile, "cell 4 6 2 1,alignx left,aligny top");
 		
+		JLabel lblFamigliaStrumento = new JLabel("Famiglia strumento");
+		lblFamigliaStrumento.setFont(new Font("Arial", Font.BOLD, 18));
+		add(lblFamigliaStrumento, "cell 0 7,alignx trailing");
+		
+		final JComboBox comboBox_famiglia = new JComboBox();
+		comboBox_famiglia.setFont(new Font("Arial", Font.PLAIN, 12));
+		comboBox_famiglia.setModel(new DefaultComboBoxModel(new String[] {"Strumenti per pesare a funzionamento NON automatico MECCANICI", "Strumenti per pesare a funzionamento NON automatico ELETTRONICI"}));
+		add(comboBox_famiglia, "cell 1 7 3 1,growx");
+		
 		JLabel lblPortatamin = new JLabel("Portata(min)");
 		lblPortatamin.setFont(new Font("Arial", Font.BOLD, 14));
-		add(lblPortatamin, "cell 1 8,alignx center");
+		add(lblPortatamin, "cell 1 9,alignx center");
 		
 		JLabel lblPortatamax = new JLabel("Portata(max)");
 		lblPortatamax.setFont(new Font("Arial", Font.BOLD, 14));
-		add(lblPortatamax, "flowx,cell 2 8,alignx center");
+		add(lblPortatamax, "flowx,cell 2 9,alignx center");
 		
 		JLabel lblDivisioniVerifica = new JLabel("Divisioni Verifica");
 		lblDivisioniVerifica.setFont(new Font("Arial", Font.BOLD, 14));
-		add(lblDivisioniVerifica, "flowx,cell 3 8,alignx center");
+		add(lblDivisioniVerifica, "flowx,cell 3 9,alignx center");
 		
 		JLabel lblCampo1 = new JLabel("Campo 1 / Parziale");
 		lblCampo1.setFont(new Font("Arial", Font.BOLD, 18));
-		add(lblCampo1, "cell 0 9,alignx right");
+		add(lblCampo1, "cell 0 10,alignx right");
 		
 		textField_pr_min_c1 = new JTextField();
 		textField_pr_min_c1.setHorizontalAlignment(SwingConstants.CENTER);
 		textField_pr_min_c1.setFont(new Font("Arial", Font.BOLD, 14));
 		textField_pr_min_c1.setColumns(10);
-		add(textField_pr_min_c1, "cell 1 9,width :200:");
+		add(textField_pr_min_c1, "cell 1 10,width :200:");
 		
 		
 		textField_pr_max_c1 = new JTextField();
 		textField_pr_max_c1.setHorizontalAlignment(SwingConstants.CENTER);
 		textField_pr_max_c1.setFont(new Font("Arial", Font.BOLD, 14));
 		textField_pr_max_c1.setColumns(10);
-		add(textField_pr_max_c1, "cell 2 9,growx");
+		add(textField_pr_max_c1, "cell 2 10,growx");
 		
 		textField_divisione_verifica_c1 = new JTextField();
 		textField_divisione_verifica_c1.setHorizontalAlignment(SwingConstants.CENTER);
 		textField_divisione_verifica_c1.setFont(new Font("Arial", Font.BOLD, 14));
 		textField_divisione_verifica_c1.setColumns(10);
-		add(textField_divisione_verifica_c1, "cell 3 9,growx");
+		add(textField_divisione_verifica_c1, "cell 3 10,growx");
 		
 		textField_divisione_reali_c1 = new JTextField();
 		textField_divisione_reali_c1.setHorizontalAlignment(SwingConstants.CENTER);
 		textField_divisione_reali_c1.setFont(new Font("Arial", Font.BOLD, 14));
 		textField_divisione_reali_c1.setColumns(10);
-		add(textField_divisione_reali_c1, "cell 4 9,growx");
+		add(textField_divisione_reali_c1, "cell 4 10,growx");
 		
 		textField_numero_divisioni_c1 = new JTextField();
 		textField_numero_divisioni_c1.setEditable(false);
 		textField_numero_divisioni_c1.setFont(new Font("Arial", Font.BOLD, 14));
 		textField_numero_divisioni_c1.setColumns(10);
-		add(textField_numero_divisioni_c1, "cell 5 9,growx");
+		add(textField_numero_divisioni_c1, "cell 5 10,growx");
 		
 		JLabel lblCampo2 = new JLabel("Campo 2 / Parziale");
 		lblCampo2.setFont(new Font("Arial", Font.BOLD, 18));
-		add(lblCampo2, "cell 0 10,alignx trailing");
+		add(lblCampo2, "cell 0 11,alignx trailing");
 		
 		
 		textField_pr_min_c2 = new JTextField();
 		textField_pr_min_c2.setHorizontalAlignment(SwingConstants.CENTER);
 		textField_pr_min_c2.setFont(new Font("Arial", Font.BOLD, 14));
 		textField_pr_min_c2.setColumns(10);
-		add(textField_pr_min_c2, "cell 1 10,growx");
+		add(textField_pr_min_c2, "cell 1 11,growx");
 		
 		textField_pr_max_c2 = new JTextField();
 		textField_pr_max_c2.setHorizontalAlignment(SwingConstants.CENTER);
 		textField_pr_max_c2.setFont(new Font("Arial", Font.BOLD, 14));
 		textField_pr_max_c2.setColumns(10);
-		add(textField_pr_max_c2, "cell 2 10,growx");
+		add(textField_pr_max_c2, "cell 2 11,growx");
 		
 		textField_divisione_verifica_c2 = new JTextField();
 		textField_divisione_verifica_c2.setHorizontalAlignment(SwingConstants.CENTER);
 		textField_divisione_verifica_c2.setFont(new Font("Arial", Font.BOLD, 14));
 		textField_divisione_verifica_c2.setColumns(10);
-		add(textField_divisione_verifica_c2, "cell 3 10,growx");
+		add(textField_divisione_verifica_c2, "cell 3 11,growx");
 		
 		textField_divisione_reali_c2 = new JTextField();
 		textField_divisione_reali_c2.setHorizontalAlignment(SwingConstants.CENTER);
 		textField_divisione_reali_c2.setFont(new Font("Arial", Font.BOLD, 14));
 		textField_divisione_reali_c2.setColumns(10);
-		add(textField_divisione_reali_c2, "cell 4 10,growx");
+		add(textField_divisione_reali_c2, "cell 4 11,growx");
 		
 		textField_numero_divisioni_c2 = new JTextField();
 		textField_numero_divisioni_c2.setFont(new Font("Arial", Font.BOLD, 14));
 		textField_numero_divisioni_c2.setEditable(false);
 		textField_numero_divisioni_c2.setColumns(10);
-		add(textField_numero_divisioni_c2, "cell 5 10,growx");
+		add(textField_numero_divisioni_c2, "cell 5 11,growx");
 		
 		JLabel lblCampo3 = new JLabel("Campo 3 / Parziale");
 		lblCampo3.setFont(new Font("Arial", Font.BOLD, 18));
-		add(lblCampo3, "cell 0 11,alignx trailing");
+		add(lblCampo3, "cell 0 12,alignx trailing");
 		
 		
 		textField_pr_min_c3 = new JTextField();
 		textField_pr_min_c3.setHorizontalAlignment(SwingConstants.CENTER);
 		textField_pr_min_c3.setFont(new Font("Arial", Font.BOLD, 14));
 		textField_pr_min_c3.setColumns(10);
-		add(textField_pr_min_c3, "cell 1 11,growx");
+		add(textField_pr_min_c3, "cell 1 12,growx");
 		
 		textField_pr_max_c3 = new JTextField();
 		textField_pr_max_c3.setHorizontalAlignment(SwingConstants.CENTER);
 		textField_pr_max_c3.setFont(new Font("Arial", Font.BOLD, 14));
 		textField_pr_max_c3.setColumns(10);
-		add(textField_pr_max_c3, "cell 2 11,growx");
+		add(textField_pr_max_c3, "cell 2 12,growx");
 		
 		textField_divisione_verifica_c3 = new JTextField();
 		textField_divisione_verifica_c3.setHorizontalAlignment(SwingConstants.CENTER);
 		textField_divisione_verifica_c3.setFont(new Font("Arial", Font.BOLD, 14));
 		textField_divisione_verifica_c3.setColumns(10);
-		add(textField_divisione_verifica_c3, "cell 3 11,growx");
+		add(textField_divisione_verifica_c3, "cell 3 12,growx");
 		
 		textField_divisione_reali_c3 = new JTextField();
 		textField_divisione_reali_c3.setHorizontalAlignment(SwingConstants.CENTER);
 		textField_divisione_reali_c3.setFont(new Font("Arial", Font.BOLD, 14));
 		textField_divisione_reali_c3.setColumns(10);
-		add(textField_divisione_reali_c3, "cell 4 11,growx");
+		add(textField_divisione_reali_c3, "cell 4 12,growx");
 		
 		textField_numero_divisioni_c3 = new JTextField();
 		textField_numero_divisioni_c3.setFont(new Font("Arial", Font.BOLD, 14));
 		textField_numero_divisioni_c3.setEditable(false);
 		textField_numero_divisioni_c3.setColumns(10);
-		add(textField_numero_divisioni_c3, "cell 5 11,growx");
+		add(textField_numero_divisioni_c3, "cell 5 12,growx");
 		
 		JButton btnInserisci = new JButton("Inserisci");
 		btnInserisci.setFont(new Font("Arial", Font.BOLD, 18));
 		btnInserisci.setIcon(new ImageIcon(PannelloTOP.class.getResource("/image/insert.png")));
-		add(btnInserisci, "cell 0 13 6 1,alignx center,height :50:");
+		add(btnInserisci, "cell 0 14 6 1,alignx center,height :50:");
 		
 		JLabel lblDivisioniReali = new JLabel("Divisioni Reali");
 		lblDivisioniReali.setFont(new Font("Arial", Font.BOLD, 14));
-		add(lblDivisioniReali, "cell 4 8,alignx center");
+		add(lblDivisioniReali, "cell 4 9,alignx center");
 		
 		JLabel lblNumeroDivisioni = new JLabel("Numero Divisioni");
 		lblNumeroDivisioni.setFont(new Font("Arial", Font.BOLD, 14));
-		add(lblNumeroDivisioni, "cell 5 8,alignx center");
+		add(lblNumeroDivisioni, "cell 5 9,alignx center");
 		
 		JLabel lblmesi = new JLabel("(Mesi)");
 		add(lblmesi, "cell 4 2 2 1");
@@ -569,6 +578,16 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 					strumento.setUm(comboBox_um.getSelectedItem().toString());
 					strumento.setTipologia(comboBox_tipologia.getSelectedIndex()+1);
 					strumento.setId_tipo_strumento(comboBox_tipo_strumento.getSelectedIndex()+1);
+					
+					if(comboBox_famiglia.getSelectedIndex()==0) 
+					{
+						strumento.setFamiglia_strumento("0211");
+					}
+					else 
+					{
+						strumento.setFamiglia_strumento("0212");
+					}
+					
 					
 					if(Utility.isNumber(textField_anno_ce.getText())) 
 					{

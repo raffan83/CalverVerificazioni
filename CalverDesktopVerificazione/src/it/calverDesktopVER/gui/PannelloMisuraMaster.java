@@ -11,13 +11,9 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,10 +47,8 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-
 import it.calverDesktopVER.bo.GestioneCampioneBO;
 import it.calverDesktopVER.bo.GestioneMisuraBO;
 import it.calverDesktopVER.bo.GestioneStrumentoVER_BO;
@@ -71,7 +65,6 @@ import it.calverDesktopVER.utl.Costanti;
 import it.calverDesktopVER.utl.FileTypeFilter;
 import it.calverDesktopVER.utl.Utility;
 import net.miginfocom.swing.MigLayout;
-
 
 public class PannelloMisuraMaster extends JPanel 
 {
@@ -1163,7 +1156,7 @@ public class PannelloMisuraMaster extends JPanel
 				}
 			}
 		});
-		comboBox.setModel(new DefaultComboBoxModel(new String[] {"NO\t", "SI"}));
+		comboBox.setModel(new DefaultComboBoxModel(new String[] {"NO", "SI"}));
 		pannelloDecentramento.add(comboBox, "cell 5 4,alignx right");
 		
 		if(listaDecentramento.get(0).getSpeciale().equals("N")) 
@@ -1393,11 +1386,69 @@ public class PannelloMisuraMaster extends JPanel
 		bg.add(rdbtn_cer);
 		bg.add(rdbtn_tri);
 
+		rdbtn_quad.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				try {
+					GestioneMisuraBO.setRicettoreDecentramento(misura.getId(),0);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		
+		rdbtn_cer.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				try {
+					GestioneMisuraBO.setRicettoreDecentramento(misura.getId(),1);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+
+		rdbtn_tri.addActionListener(new ActionListener() {
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		
+		try {
+			GestioneMisuraBO.setRicettoreDecentramento(misura.getId(),2);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+});
+		
+		
+		
 		if(listaDecentramento.get(0).getPuntiAppoggio()!=0) 
 		{
 			textField_punti_appoggio.setText(""+listaDecentramento.get(0).getPuntiAppoggio());
 			BigDecimal caricoDec=getCaricoDecentramento(listaDecentramento.get(0).getPuntiAppoggio(),comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento());
 			textField_carico.setText(caricoDec.toPlainString());
+			
+			
+			if(listaDecentramento.get(0).getTipoRicettore()==0) 
+			{
+				rdbtn_quad.setSelected(true);
+			}
+			if(listaDecentramento.get(0).getTipoRicettore()==1) 
+			{
+				rdbtn_cer.setSelected(true);
+			}
+			if(listaDecentramento.get(0).getTipoRicettore()==2) 
+			{
+				rdbtn_tri.setSelected(true);
+			}
 		}
 
 		comboBox.setSelectedIndex(0);
@@ -1416,6 +1467,7 @@ public class PannelloMisuraMaster extends JPanel
 		}
 
 
+		
 
 		tableDec.getModel().addTableModelListener(new TableModelListener() {
 
@@ -1546,7 +1598,7 @@ public class PannelloMisuraMaster extends JPanel
 
 				int i=0;
 
-				int indice=1;
+				int indice=0;
 				for (Enumeration<AbstractButton> buttons = bg.getElements(); buttons.hasMoreElements();) {
 					AbstractButton button = buttons.nextElement();
 

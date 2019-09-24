@@ -281,6 +281,7 @@ public class SQLiteDAO {
 			strumento.setData_messa_in_servizio(rs.getString("data_ms"));
 			strumento.setTipologia(rs.getInt("id_tipologia"));
 			strumento.setFreq_mesi(rs.getInt("freq_mesi"));
+			strumento.setFamiglia_strumento(rs.getString("famiglia_strumento"));
 			
 		}
 	}catch(Exception ex)
@@ -1347,7 +1348,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 																"portata_min_C1,portata_max_C1,div_ver_C1,div_rel_C1,numero_div_C1," +
 																"portata_min_C2,portata_max_C2,div_ver_C2,div_rel_C2,numero_div_C2," +
 																"portata_min_C3,portata_max_C3,div_ver_C3,div_rel_C3,numero_div_C3," +
-																"anno_marcatura_CE,data_ms,id_tipologia,freq_mesi,creato) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+																"anno_marcatura_CE,data_ms,id_tipologia,freq_mesi,creato,famiglia_strumento) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 																Statement.RETURN_GENERATED_KEYS);
 			
 			
@@ -1383,6 +1384,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			pst.setInt(25, strumento.getTipologia());
 			pst.setInt(26, strumento.getFreq_mesi());
 			pst.setString(27,"S");
+			pst.setString(28, strumento.getFamiglia_strumento());
 	
 			pst.executeUpdate();
 			
@@ -1645,7 +1647,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 										   +"portata_min_C1=?,portata_max_C1=?,div_ver_C1=?,div_rel_C1=?,numero_div_C1=?,"
 										   +"portata_min_C2=?,portata_max_C2=?,div_ver_C2=?,div_rel_C2=?,numero_div_C2=?,"
 										   +"portata_min_C3=?,portata_max_C3=?,div_ver_C3=?,div_rel_C3=?,numero_div_C3=?, "
-										   +"classe=?,id_ver_tipo_strumento=?,um=?,id_tipologia=? WHERE id=?");
+										   +"classe=?,id_ver_tipo_strumento=?,um=?,id_tipologia=?, famiglia_strumento=? WHERE id=?");
 		
 			pst.setString(1,strumento.getDenominazione());
 			pst.setString(2,strumento.getCostruttore());
@@ -1677,8 +1679,10 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			pst.setInt(24, strumento.getId_tipo_strumento());
 			pst.setString(25, strumento.getUm());
 			pst.setInt(26, strumento.getTipologia());
+			pst.setString(27, strumento.getFamiglia_strumento());
 			
-			pst.setInt(27, strumento.getId());
+			pst.setInt(28, strumento.getId());
+			
 			
 			
 			toReturn=pst.executeUpdate();
@@ -3051,6 +3055,36 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			con.close();
 		}
 		return false;
+	}
+	public static void setRicettoreDecentramento(int idMisura, int i) throws Exception {
+		
+
+		Connection con=null;
+		PreparedStatement pst=null;
+		try 
+		{
+			con=getConnection();
+			
+		
+				pst=con.prepareStatement("UPDATE ver_decentramento SET tipo_ricettore=? WHERE id_misura=?");
+				pst.setInt(1, i);
+				pst.setInt(2, idMisura);
+				
+			pst.execute();
+		
+	
+		}
+		catch (Exception e) 
+		{
+		 e.printStackTrace();	
+		 throw e;
+		}
+		finally
+		{
+			pst.close();
+			con.close();
+		}
+		
 	}
 
 

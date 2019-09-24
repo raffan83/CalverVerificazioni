@@ -37,6 +37,7 @@ public class VerStrumentoDTO {
 	private String data_messa_in_servizio;
 	private int tipologia;
 	private int freq_mesi;
+	private String famiglia_strumento;
 
 	public int getId() {
 		return id;
@@ -352,6 +353,12 @@ public class VerStrumentoDTO {
 	}
 	public void setData_messa_in_servizio(String data_messa_in_servizio) {
 		this.data_messa_in_servizio = data_messa_in_servizio;
+	}
+	public String getFamiglia_strumento() {
+		return famiglia_strumento;
+	}
+	public void setFamiglia_strumento(String famiglia_strumento) {
+		this.famiglia_strumento = famiglia_strumento;
 	}
 		
 }

@@ -179,6 +179,12 @@ public class GestioneMisuraBO
 		
 	}
 
+	public static void setRicettoreDecentramento(int id, int i) throws Exception {
+		
+		SQLiteDAO.setRicettoreDecentramento(id,i);
+		
+	}
+
 	
 }
 
