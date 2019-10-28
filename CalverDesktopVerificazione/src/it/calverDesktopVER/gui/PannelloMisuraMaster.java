@@ -3196,8 +3196,24 @@ public class PannelloMisuraMaster extends JPanel
 					}
 					}else 
 					{
-						misura.setIs_difetti("S");
-						GestioneMisuraBO.updateMisura(misura);
+						if(comboBox_tipo_verifica.getSelectedIndex()>0 && comboBox_motivo.getSelectedIndex()>0)
+						{
+							misura.setTipo_verifica(comboBox_tipo_verifica.getSelectedIndex());
+							misura.setMotivo_verifica(comboBox_motivo.getSelectedIndex());
+							misura.setNomeRiparatore(textField_nomeRiparatore.getText());
+							
+							if(Utility.isDate(textField_dataRiparazione.getText())) 
+							{
+								misura.setDataRiparazione(textField_dataRiparazione.getText());
+							}
+							
+							misura.setIs_difetti("S");
+							GestioneMisuraBO.updateMisura(misura);
+						}else 
+						{
+							JOptionPane.showMessageDialog(null,"Selezionare tipo verifica e motivo verifica","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+						}
+						
 					}
 				}	
 				catch (Exception e) 

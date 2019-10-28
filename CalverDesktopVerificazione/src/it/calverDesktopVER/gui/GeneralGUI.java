@@ -70,12 +70,6 @@ public  class GeneralGUI extends JFrame implements Serializable{
 	SessionBO.widthFrame=(int)dim.getWidth();
 	SessionBO.heightFrame=(int)dim.getHeight();
 	
-	
-//	if(SessionBO.heightFrame<900) 
-//	{
-//		JOptionPane.showMessageDialog(null,"Risoluzione troppo bassa (minimo 1400 x 900)","Risoluzione insufficiente",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/error.png")));
-//		System.exit(0);
-//	}
 	setSize(SessionBO.widthFrame,SessionBO.heightFrame);
 	this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 	
