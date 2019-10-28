@@ -559,12 +559,14 @@ public class PannelloMisuraMaster extends JPanel
 		{
 			comboBox_tipo_verifica.setSelectedIndex(misura.getTipo_verifica());
 			
-			if(comboBox_motivo.getSelectedIndex()==2) 
+			if(misura.getMotivo_verifica()==2) 
 			{
 				lblNomeRiparatore.setVisible(true);
 				lblDataRiparazione.setVisible(true);
 				textField_nomeRiparatore.setVisible(true);
 				textField_dataRiparazione.setVisible(true);
+				textField_nomeRiparatore.setText(misura.getNomeRiparatore());
+				textField_dataRiparazione.setText(misura.getDataRiparazione());
 			}
 			else 
 			{
@@ -3172,6 +3174,7 @@ public class PannelloMisuraMaster extends JPanel
 							misura.setSeqRisposte(sequence.substring(0, sequence.length()-1));
 							misura.setTipo_verifica(comboBox_tipo_verifica.getSelectedIndex());
 							misura.setMotivo_verifica(comboBox_motivo.getSelectedIndex());
+							
 							misura.setNomeRiparatore(textField_nomeRiparatore.getText());
 							
 							if(Utility.isDate(textField_dataRiparazione.getText())) 
