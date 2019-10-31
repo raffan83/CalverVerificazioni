@@ -247,7 +247,7 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 		}
 		
 		lblCampo1.setFont(new Font("Arial", Font.BOLD, 18));
-		add(lblCampo1, "cell 0 9,alignx right");
+		add(lblCampo1, "cell 0 10,alignx right");
 		
 		textField_pr_min_c1 = new JTextField();
 		textField_pr_min_c1.setEditable(false);
@@ -295,7 +295,7 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 		}
 		
 		lblCampo2.setFont(new Font("Arial", Font.BOLD, 18));
-		add(lblCampo2, "cell 0 10,alignx trailing");
+		add(lblCampo2, "cell 0 11,alignx trailing");
 		
 		
 		textField_pr_min_c2 = new JTextField();
@@ -343,7 +343,7 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 		}
 		
 		lblCampo3.setFont(new Font("Arial", Font.BOLD, 18));
-		add(lblCampo3, "cell 0 11,alignx trailing");
+		add(lblCampo3, "cell 0 12,alignx trailing");
 		
 		
 		textField_pr_min_c3 = new JTextField();
