@@ -1013,7 +1013,7 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 				}
 				else 
 				{
-					JOptionPane.showMessageDialog(null,"I campi non possone essere vuoti - Anno CE (numero) e Data MS(data) ","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+					JOptionPane.showMessageDialog(null,"Completare tutti i campi","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
 				}
 			
 				

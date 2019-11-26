@@ -440,7 +440,7 @@ public class PannelloMisuraMaster extends JPanel
 						if(f!=null)
 						{
 
-							
+							misura=GestioneMisuraBO.getMisura(SessionBO.idMisura);
 							FileUtils.writeByteArrayToFile(new File(f.getAbsoluteFile()+"\\"+misura.getNomeFile_inizio_prova()), misura.getFile_inizio_prova());
 							JOptionPane.showMessageDialog(null, "File salvato con successo ","Salvataggio",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/confirm.png")));
 
@@ -519,8 +519,8 @@ public class PannelloMisuraMaster extends JPanel
 						File f= jfc.getSelectedFile();
 						if(f!=null)
 						{
-
 							
+							misura=GestioneMisuraBO.getMisura(SessionBO.idMisura);
 							FileUtils.writeByteArrayToFile(new File(f.getAbsoluteFile()+"\\"+misura.getNomeFile_fine_prova()), misura.getFile_fine_prova());
 							JOptionPane.showMessageDialog(null, "File salvato con successo ","Salvataggio",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/confirm.png")));
 
@@ -528,7 +528,7 @@ public class PannelloMisuraMaster extends JPanel
 
 					
 				} catch (Exception ec) {
-
+					ec.printStackTrace();
 					PannelloConsole.printException(ec);
 				}
 				
