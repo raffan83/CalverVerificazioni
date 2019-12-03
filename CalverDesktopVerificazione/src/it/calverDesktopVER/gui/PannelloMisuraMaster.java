@@ -1586,7 +1586,7 @@ public class PannelloMisuraMaster extends JPanel
 
 					if(mpe!=null && err_cor!=null) 
 					{
-						if(Double.parseDouble(err_cor.toString())>Double.parseDouble(mpe.toString())) 
+						if(Math.abs(Double.parseDouble(err_cor.toString()))>Math.abs(Double.parseDouble(mpe.toString()))) 
 						{
 							return "NEGATIVO";
 						}
@@ -2442,7 +2442,7 @@ public class PannelloMisuraMaster extends JPanel
 
 			private String valutaEsitoAccuratezza() {
 
-				if(Double.parseDouble(modelAccuratezza.getValueAt(0, 4).toString())>Double.parseDouble(modelAccuratezza.getValueAt(0, 6).toString())) 
+				if(Math.abs(Double.parseDouble(modelAccuratezza.getValueAt(0, 4).toString()))>Math.abs(Double.parseDouble(modelAccuratezza.getValueAt(0, 6).toString()))) 
 				{
 					return "NEGATIVO";
 				}
@@ -2759,7 +2759,7 @@ public class PannelloMisuraMaster extends JPanel
 							modelMobilita_1.setValueAt(divisione, row, 6);
 
 							String check="";
-							if(diff.doubleValue()>=divisione.doubleValue()) 
+							if(Math.abs(diff.doubleValue())>=Math.abs(divisione.doubleValue())) 
 							{
 								modelMobilita_1.setValueAt("OK", row, 7);
 								check="OK";
