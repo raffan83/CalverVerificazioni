@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.AbstractButton;
@@ -857,11 +858,17 @@ public class PannelloMisuraMaster extends JPanel
 
 							textField_p_p_rip.setText(deltaPortata.toPlainString());
 
-							String esito=controllaEsitoRipetibilita();
+							modelRip.setValueAt(portata.toPlainString(),row, 4);
+							
+							String esito=controllaEsitoRipetibilita(strumento.getClasse());
 
 							if (esito.equals("POSITIVO"))
 							{
 								textField_esito_rip.setBackground(Color.GREEN);
+							}
+							else if(esito.equals("INCOMPLETO")) 
+							{
+								textField_esito_rip.setBackground(Color.YELLOW);
 							}
 							else 
 							{
@@ -882,7 +889,7 @@ public class PannelloMisuraMaster extends JPanel
 							ripetibilita.setCampo(comboBox_campo.getSelectedIndex()+1);
 							GestioneMisuraBO.updateVerRipetibilita(ripetibilita,misura.getId());
 
-							modelRip.setValueAt(portata.toPlainString(),row, 4);
+							
 
 						}
 
@@ -950,8 +957,28 @@ public class PannelloMisuraMaster extends JPanel
 		return deltaPortata;
 	}
 
-	private String controllaEsitoRipetibilita()throws Exception {
+	private String controllaEsitoRipetibilita(int classe)throws Exception {
 
+		int size=0;
+		
+		if(classe<3) 
+		{
+			size=6;
+		}
+		else 
+		{
+			size=3;
+		}
+		for (int i = 0; i <size; i++) {
+			
+			Object p=modelRip.getValueAt(i, 4);
+			
+			if(p==null)
+			{
+				return "INCOMPLETO";
+			}
+		}
+		
 		if(textField_p_p_rip.getText().length()>0 && textField_mpe_rip.getText().length()>0) 
 		{
 
@@ -1368,6 +1395,11 @@ public class PannelloMisuraMaster extends JPanel
 							}else 
 							{
 								modelDec.setValueAt("",i, 1);
+								modelDec.setValueAt("",i, 2);
+								modelDec.setValueAt("",i, 3);
+								modelDec.setValueAt("",i, 4);
+								modelDec.setValueAt("",i, 5);
+								modelDec.setValueAt("",i, 6);
 							}
 						}
 					}
@@ -1528,11 +1560,15 @@ public class PannelloMisuraMaster extends JPanel
 								modelDec.setValueAt(mpe, row, 6);
 							}
 
-							String esito =valutaEsitoDecentramento();
+							String esito =valutaEsitoDecentramento(comboBox.getSelectedIndex());
 
 							if (esito.equals("POSITIVO"))
 							{
 								textField_esito_dec.setBackground(Color.GREEN);
+							}
+							else if(esito.equals("INCOMPLETO")) 
+							{
+								textField_esito_dec.setBackground(Color.YELLOW);
 							}
 							else 
 							{
@@ -1567,7 +1603,12 @@ public class PannelloMisuraMaster extends JPanel
 
 						}
 
-					}catch (Exception ex) {
+					}
+					catch (NumberFormatException ex)
+					{
+						
+					}
+					catch (Exception ex) {
 						ex.printStackTrace();
 					}
 
@@ -1575,9 +1616,32 @@ public class PannelloMisuraMaster extends JPanel
 				}
 			}
 
-			private String valutaEsitoDecentramento() {
+			private String valutaEsitoDecentramento(int speciale) {
 
-
+				if(speciale==0) 
+				{
+					int[] indici= {0,1,3,5,7,9};
+					for (int i = 0; i <indici.length; i++) 
+					{
+						Object mpe= modelDec.getValueAt(indici[i],6);
+						if(mpe==null) 
+						{
+							return "INCOMPLETO";
+						}
+					}
+				}else 
+				{
+					for (int i = 0; i <modelDec.getRowCount(); i++) 
+					{
+						Object mpe= modelDec.getValueAt(i,6);
+						if(mpe==null || mpe.toString().length()==0) 
+						{
+							return "INCOMPLETO";
+						}
+					}
+				} 
+				
+				
 				for (int i = 0; i <modelDec.getRowCount(); i++) 
 
 				{
@@ -2004,6 +2068,10 @@ public class PannelloMisuraMaster extends JPanel
 							{
 								textField_esito_lin.setBackground(Color.GREEN);
 							}
+							else if(esito.equals("INCOMPLETO")) 
+							{
+								textField_esito_lin.setBackground(Color.YELLOW);
+							}
 							else 
 							{
 								textField_esito_lin.setBackground(Color.RED);	
@@ -2115,6 +2183,10 @@ public class PannelloMisuraMaster extends JPanel
 							{
 								textField_esito_lin.setBackground(Color.GREEN);
 							}
+							else if(esito.equals("INCOMPLETO")) 
+							{
+								textField_esito_lin.setBackground(Color.YELLOW);
+							}
 							else 
 							{
 								textField_esito_lin.setBackground(Color.RED);	
@@ -2169,8 +2241,19 @@ public class PannelloMisuraMaster extends JPanel
 
 			private String valutaEsitoLinearita() {
 
+				
 				for (int i = 0; i <modelLin.getRowCount(); i++) 
-
+				{
+					Object mpe= modelLin.getValueAt(i,10);
+					Object err_corr= modelLin.getValueAt(i,9);
+					if(mpe==null || err_corr==null) 
+					{
+						return "INCOMPLETO";
+					}
+				} 
+				
+				
+				for (int i = 0; i <modelLin.getRowCount(); i++) 
 				{
 					Object mpe= modelLin.getValueAt(i,10);
 					Object err_sal=modelLin.getValueAt(i,6);
@@ -2776,6 +2859,10 @@ public class PannelloMisuraMaster extends JPanel
 							{
 								textField_esito_mob_1.setBackground(Color.GREEN);
 							}
+							else if(esito.equals("INCOMPLETO"))
+							{
+								textField_esito_mob_1.setBackground(Color.YELLOW);
+							}
 							else 
 							{
 								textField_esito_mob_1.setBackground(Color.RED);	
@@ -2866,6 +2953,10 @@ public class PannelloMisuraMaster extends JPanel
 							{
 								textField_esito_mob_2.setBackground(Color.GREEN);
 							}
+							else if(esito.equals("INCOMPLETO"))
+							{
+								textField_esito_mob_2.setBackground(Color.YELLOW);
+							}
 							else 
 							{
 								textField_esito_mob_2.setBackground(Color.RED);	
@@ -2912,6 +3003,16 @@ public class PannelloMisuraMaster extends JPanel
 
 		String esito ="POSITIVO";
 
+		for(int i=0;i<modelMobilita.getRowCount(); i++) 
+		{
+			Object o =modelMobilita.getValueAt(i, 7);
+
+			if(o==null ) 
+			{
+				return "INCOMPLETO";
+			}
+		}
+		
 		for (int i = 0; i < modelMobilita.getRowCount(); i++) {
 
 			Object o =modelMobilita.getValueAt(i, 7);
@@ -3192,6 +3293,7 @@ public class PannelloMisuraMaster extends JPanel
 							
 							misura.setCampioniLavoro(componiCampioni(dlm));
 							GestioneMisuraBO.updateMisura(misura);
+							JOptionPane.showMessageDialog(null, "Salvataggio dati completato ","Salvataggio",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/confirm.png")));
 						}else 
 						{
 							JOptionPane.showMessageDialog(null,"Selezionare tipo verifica, motivo verifica e almeno un campione di lavoro","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
@@ -3212,6 +3314,7 @@ public class PannelloMisuraMaster extends JPanel
 							
 							misura.setIs_difetti("S");
 							GestioneMisuraBO.updateMisura(misura);
+							JOptionPane.showMessageDialog(null, "Salvataggio dati completato \n(attenzione:la bilancia presenta difetti)","Salvataggio",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/confirm.png")));
 						}else 
 						{
 							JOptionPane.showMessageDialog(null,"Selezionare tipo verifica e motivo verifica","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
@@ -3257,8 +3360,14 @@ public class PannelloMisuraMaster extends JPanel
 							//Controllo completamento dati
 							
 							misura=GestioneMisuraBO.getMisura(misura.getId());
-
-							if(misura.getIs_difetti().equals("S")) 
+							
+							if(misura.getMotivo_verifica()==0) 
+							{ 
+								JOptionPane.showMessageDialog(null,"Salvare i dati generali","Salvataggio",JOptionPane.ERROR_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+								
+							}
+							
+							if(chckbx.isSelected()) 
 							{
 								String dataScadenza=GestioneMisuraBO.getDataScadenzaMisura(misura,strumento.getFreq_mesi());
 								
@@ -3270,11 +3379,17 @@ public class PannelloMisuraMaster extends JPanel
 							}
 							else 
 							{
-								if(misura.getFile_inizio_prova()!=null && misura.getFile_fine_prova()!=null) 
+								if(misura.getFile_inizio_prova()!=null && misura.getFile_fine_prova()!=null && !misura.getSeqRisposte().equals("0")) 
 								{
 									String dataScadenza=GestioneMisuraBO.getDataScadenzaMisura(misura,strumento.getFreq_mesi());
 									
+									boolean incompleto=controlloCompletezza(misura);
 									
+									if(incompleto==false) 
+									{
+										JOptionPane.showMessageDialog(null,"Risultano prove incomplete","Mancato Salvataggio",JOptionPane.ERROR_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+										return;
+									}
 									GestioneMisuraBO.terminaMisura(misura.getId(),dataScadenza);
 
 
@@ -3283,7 +3398,7 @@ public class PannelloMisuraMaster extends JPanel
 								}
 								else 
 								{
-									JOptionPane.showMessageDialog(null,"Per terminare la misura inserire le foto","Salvataggio",JOptionPane.ERROR_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+									JOptionPane.showMessageDialog(null,"Per terminare la misura inserire le foto e rispondi alle domande del controllo preliminare","Salvataggio",JOptionPane.ERROR_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
 								}
 								
 							}
@@ -3300,6 +3415,90 @@ public class PannelloMisuraMaster extends JPanel
 
 					}
 				}
+
+			private boolean controlloCompletezza(VerMisuraDTO misura) {
+				
+				if(strumento.getTipologia()==1) 
+				{
+					/*Controllo solo su Ripetibilità - Decentramento - Linearità*/
+
+					/*Ripetibilita*/
+						for (VerRipetibilitaDTO ripetibilita : misura.getVerRipetibilitas()) {
+							
+							if(ripetibilita.getEsito()!=null && ripetibilita.getEsito().equals("INCOMPLETO")) 
+							{
+								return false;
+							}
+						}
+						/*Decentramento*/
+						for (VerDecentramentoDTO decentramento : misura.getVerDecentramentos()) {
+							
+							if(decentramento.getEsito()!=null && decentramento.getEsito().equals("INCOMPLETO")) 
+							{
+								return false;
+							}
+						}
+						
+						/*Linearita*/
+						for (VerLinearitaDTO linearita : misura.getVerLinearitas()) {
+							
+							if(linearita.getEsito()!=null && linearita.getEsito().equals("INCOMPLETO")) 
+							{
+								return false;
+							}
+						}
+						
+					
+				}else 
+				{
+					/*Controllo solo su Ripetibilità - Decentramento - Linearità - Accuratezza - Mobilita*/
+
+					/*Ripetibilita*/
+						for (VerRipetibilitaDTO ripetibilita : misura.getVerRipetibilitas()) {
+							
+							if(ripetibilita.getEsito()!=null && ripetibilita.getEsito().equals("INCOMPLETO")) 
+							{
+								return false;
+							}
+						}
+						/*Decentramento*/
+						for (VerDecentramentoDTO decentramento : misura.getVerDecentramentos()) {
+							
+							if(decentramento.getEsito()!=null && decentramento.getEsito().equals("INCOMPLETO")) 
+							{
+								return false;
+							}
+						}
+						
+						/*Linearita*/
+						for (VerLinearitaDTO linearita : misura.getVerLinearitas()) {
+							
+							if(linearita.getEsito()!=null && linearita.getEsito().equals("INCOMPLETO")) 
+							{
+								return false;
+							}
+						}
+						/*Accuratezza*/
+						for (VerAccuratezzaDTO accuratezza : misura.getVerAccuratezzas()) {
+							
+							if(accuratezza.getEsito()!=null && accuratezza.getEsito().equals("INCOMPLETO")) 
+							{
+								return false;
+							}
+						}
+						/*Mobilita*/
+						for (VerMobilitaDTO mobilita : misura.getVerMobilitas()) {
+							
+							if(mobilita.getEsito()!=null && mobilita.getEsito().equals("INCOMPLETO")) 
+							{
+								return false;
+							}
+						}
+				}
+				
+				
+				return true;
+			}
 
 		});
 
