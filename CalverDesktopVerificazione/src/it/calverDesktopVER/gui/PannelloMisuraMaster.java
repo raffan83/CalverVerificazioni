@@ -1521,8 +1521,10 @@ public class PannelloMisuraMaster extends JPanel
 
 					try 
 					{
-						if(indicazione!=null && carico!=null) 
+						if(indicazione!=null && carico!=null && massa!=null && 
+							!indicazione.toString().equals("") && !carico.toString().equals("") && !massa.toString().equals("")) 
 						{	
+							
 							BigDecimal mas=new BigDecimal(massa.toString());
 							BigDecimal ind=new BigDecimal(indicazione.toString());
 							BigDecimal car=new BigDecimal(carico.toString());
@@ -1560,7 +1562,7 @@ public class PannelloMisuraMaster extends JPanel
 								modelDec.setValueAt(mpe, row, 6);
 							}
 
-							String esito =valutaEsitoDecentramento(comboBox.getSelectedIndex());
+							String esito =valutaEsitoDecentramento(comboBox.getSelectedIndex(),textField_punti_appoggio.getText());
 
 							if (esito.equals("POSITIVO"))
 							{
@@ -1606,7 +1608,7 @@ public class PannelloMisuraMaster extends JPanel
 					}
 					catch (NumberFormatException ex)
 					{
-						
+						ex.printStackTrace();
 					}
 					catch (Exception ex) {
 						ex.printStackTrace();
@@ -1616,11 +1618,44 @@ public class PannelloMisuraMaster extends JPanel
 				}
 			}
 
-			private String valutaEsitoDecentramento(int speciale) {
+			private String valutaEsitoDecentramento(int speciale,String numeroAppoggi) {
 
+				int nAppoggi=0;
+				
+				try 
+				{
+					nAppoggi=Integer.parseInt(numeroAppoggi);
+					
+				}
+				catch (NumberFormatException e) {
+					JOptionPane.showMessageDialog(null,"Numero appoggi non valido","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+				}
+				
 				if(speciale==0) 
 				{
-					int[] indici= {0,1,3,5,7,9};
+					Integer[] indici=null;
+					
+					if(nAppoggi==1) 
+					{
+						indici= new Integer[]{0,1};
+					}
+					if(nAppoggi==2) 
+					{
+						indici= new Integer[]{0,1,3};
+					}
+					if(nAppoggi==3) 
+					{
+						indici= new Integer[]{0,1,3,5};
+					}
+					else if(nAppoggi==4) 
+					{
+						indici= new Integer[]{0,1,3,5,7};
+					}
+					else if(nAppoggi==5) 
+					{
+						indici= new Integer[]{0,1,3,5,7,9};
+					} 
+				
 					for (int i = 0; i <indici.length; i++) 
 					{
 						Object mpe= modelDec.getValueAt(indici[i],6);
@@ -1648,7 +1683,7 @@ public class PannelloMisuraMaster extends JPanel
 					Object mpe= modelDec.getValueAt(i,6);
 					Object err_cor=modelDec.getValueAt(i,5);
 
-					if(mpe!=null && err_cor!=null) 
+					if(mpe!=null && err_cor!=null && !mpe.toString().equals("") && !err_cor.toString().equals("")) 
 					{
 						if(Math.abs(Double.parseDouble(err_cor.toString()))>Math.abs(Double.parseDouble(mpe.toString()))) 
 						{
@@ -3417,6 +3452,13 @@ public class PannelloMisuraMaster extends JPanel
 				}
 
 			private boolean controlloCompletezza(VerMisuraDTO misura) {
+				
+				boolean esito = getEsitoControlloPreliminare(misura.getSeqRisposte());
+				
+				if(esito==false) 
+				{
+					return true;
+				}
 				
 				if(strumento.getTipologia()==1) 
 				{
