@@ -1562,7 +1562,7 @@ public class PannelloMisuraMaster extends JPanel
 								modelDec.setValueAt(mpe, row, 6);
 							}
 
-							String esito =valutaEsitoDecentramento(comboBox.getSelectedIndex(),textField_punti_appoggio.getText());
+							String esito =valutaEsitoDecentramento(comboBox.getSelectedIndex());
 
 							if (esito.equals("POSITIVO"))
 							{
@@ -1618,44 +1618,12 @@ public class PannelloMisuraMaster extends JPanel
 				}
 			}
 
-			private String valutaEsitoDecentramento(int speciale,String numeroAppoggi) {
-
-				int nAppoggi=0;
-				
-				try 
-				{
-					nAppoggi=Integer.parseInt(numeroAppoggi);
-					
-				}
-				catch (NumberFormatException e) {
-					JOptionPane.showMessageDialog(null,"Numero appoggi non valido","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
-				}
-				
+			private String valutaEsitoDecentramento(int speciale) {
+						
 				if(speciale==0) 
 				{
-					Integer[] indici=null;
+					Integer[] indici= new Integer[]{0,1,3,5,7,9};
 					
-					if(nAppoggi==1) 
-					{
-						indici= new Integer[]{0,1};
-					}
-					if(nAppoggi==2) 
-					{
-						indici= new Integer[]{0,1,3};
-					}
-					if(nAppoggi==3) 
-					{
-						indici= new Integer[]{0,1,3,5};
-					}
-					else if(nAppoggi==4) 
-					{
-						indici= new Integer[]{0,1,3,5,7};
-					}
-					else if(nAppoggi==5) 
-					{
-						indici= new Integer[]{0,1,3,5,7,9};
-					} 
-				
 					for (int i = 0; i <indici.length; i++) 
 					{
 						Object mpe= modelDec.getValueAt(indici[i],6);
