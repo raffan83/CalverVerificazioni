@@ -31,6 +31,7 @@ public class VerMisuraDTO {
 
 	private String seqRisposte;
 	
+	private Integer numeroSigilli;
 
 	private List<VerDecentramentoDTO> verDecentramentos;
 
@@ -88,6 +89,16 @@ public class VerMisuraDTO {
 
 	public void setDataScadenza(String dataScadenza) {
 		this.dataScadenza = dataScadenza;
+	}
+	
+	
+	
+	public Integer getNumeroSigilli() {
+		return numeroSigilli;
+	}
+
+	public void setNumeroSigilli(Integer numeroSigilli) {
+		this.numeroSigilli = numeroSigilli;
 	}
 
 	public String getDataVerificazione() {

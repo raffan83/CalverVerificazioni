@@ -2193,6 +2193,10 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 				misura.setFile_fine_prova(rs.getBytes("file_fine_prova"));
 				misura.setNomeFile_inizio_prova(rs.getString("nomefile_inizio_prova"));
 				misura.setNomeFile_fine_prova(rs.getString("nomefile_fine_prova"));
+				misura.setNumeroSigilli(rs.getInt("numeroSigilli"));
+				if (rs.wasNull()) {
+					misura.setNumeroSigilli(null);
+			    }
 			}
 			
 		}
@@ -2870,7 +2874,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			con=getConnection();
 			
 			pst=con.prepareStatement("UPDATE  ver_misura SET data_verificazione=?,data_scadenza=?,tipo_verifica=?,motivo_verifica=?,isDifetti=?,nome_riparatore=?,data_riparazione=?,"
-								  + "seq_risposte=?,campioni_lavoro=? WHERE id=?");
+								  + "seq_risposte=?,campioni_lavoro=?,numeroSigilli=? WHERE id=?");
 
 			
 			if(misura.getDataVerificazione()!=null && misura.getDataVerificazione().length()>0) 
@@ -2939,7 +2943,9 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 				pst.setString(9,"");
 			}
 			
-			pst.setInt(10, misura.getId());
+			pst.setInt(10,misura.getNumeroSigilli());
+			
+			pst.setInt(11, misura.getId());
 
 
 			pst.execute();		
