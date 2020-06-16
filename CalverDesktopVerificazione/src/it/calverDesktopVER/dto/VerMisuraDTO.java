@@ -28,6 +28,8 @@ public class VerMisuraDTO {
 	private String numeroAttestato;
 
 	private String numeroRapporto;
+	
+	private Integer tipoRisposte;
 
 	private String seqRisposte;
 	
@@ -95,6 +97,14 @@ public class VerMisuraDTO {
 	
 	public Integer getNumeroSigilli() {
 		return numeroSigilli;
+	}
+
+	public Integer getTipoRisposte() {
+		return tipoRisposte;
+	}
+
+	public void setTipoRisposte(Integer tipoRisposte) {
+		this.tipoRisposte = tipoRisposte;
 	}
 
 	public void setNumeroSigilli(Integer numeroSigilli) {

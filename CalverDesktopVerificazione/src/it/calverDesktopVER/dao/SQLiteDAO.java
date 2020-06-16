@@ -2184,6 +2184,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 				misura.setMotivo_verifica(rs.getInt("motivo_verifica"));
 				misura.setNomeRiparatore(rs.getString("nome_riparatore"));
 				misura.setDataRiparazione(rs.getString("data_riparazione"));
+				misura.setTipoRisposte(rs.getInt("tipo_risposta"));
 				misura.setSeqRisposte(rs.getString("seq_risposte"));
 				misura.setIdNonConforme(rs.getInt("id_non_conforme"));
 				misura.setStato(rs.getInt("stato"));

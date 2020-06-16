@@ -1,6 +1,7 @@
 package it.calverDesktopVER.gui;
 
 
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -15,9 +16,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
@@ -48,8 +49,10 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+
 import it.calverDesktopVER.bo.GestioneCampioneBO;
 import it.calverDesktopVER.bo.GestioneMisuraBO;
 import it.calverDesktopVER.bo.GestioneStrumentoVER_BO;
@@ -88,6 +91,7 @@ public class PannelloMisuraMaster extends JPanel
 	private JPanel panel_prova_linearita;
 	private JPanel panel_prova_accuratezza;
 	private JPanel panel_prova_mobilita;
+	private JPanel cards;
 	JSplitPane splitPane;
 	private static DefaultListModel<String> dlm;
 
@@ -168,10 +172,9 @@ public class PannelloMisuraMaster extends JPanel
 		}
 
 		panel_datiGenarali = costruisciDatiGenerali();
-		
-		panel_tabella = costruisciTabella();
-		
-		
+
+		panel_tabella = costruisciTabella(misura.getTipoRisposte());
+
 		panel_struttura =creaPanelStruttura();
 
 		JLabel lblCampo = new JLabel("Campo");
@@ -185,6 +188,7 @@ public class PannelloMisuraMaster extends JPanel
 
 		
 		tabbedPane.addTab("Dati Generali",panel_datiGenarali);
+		
 		
 		tabbedPane.addTab("Controllo preliminare",panel_tabella);
 		
@@ -212,10 +216,10 @@ public class PannelloMisuraMaster extends JPanel
 
 		double height=(SessionBO.heightFrame*73)/100;
 		double width=(SessionBO.widthFrame*70)/100;
-		masterPanel.setPreferredSize(new Dimension((int)width-50,(int) height/2));
+//		masterPanel.setPreferredSize(new Dimension((int)width-50,(int) height/2));
 
 		JScrollPane scroll= new JScrollPane(masterPanel);
-		this.add(scroll, "cell 0 0,grow");
+		this.add(scroll, "cell 0 0,growx,aligny baseline");
 
 		comboBox_campo.addActionListener(new ActionListener() {
 
@@ -3061,13 +3065,12 @@ public class PannelloMisuraMaster extends JPanel
 
 
 
-	private JPanel costruisciTabella() {
-
-
+	private JPanel costruisciTabella(final Integer tipoDomande) {
+		
 		JPanel panel_tabella = new JPanel();
 		panel_tabella.setBorder(new TitledBorder(new LineBorder(new Color(215, 23, 29), 2, true), "Tabella Misura", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(215, 23, 29)));
 		panel_tabella.setBackground(Color.WHITE);
-		panel_tabella.setLayout(new MigLayout("", "[grow][][]", "[][][400.00][45.00]"));
+		panel_tabella.setLayout(new MigLayout("", "[grow][][]", "[][][][400.00][45.00]"));
 
 
 		JLabel lblNewLabel_1 = new JLabel("CHECK LIST CONTROLLO PRELIMINARE");
@@ -3075,14 +3078,107 @@ public class PannelloMisuraMaster extends JPanel
 		lblNewLabel_1.setFont(new Font("Arial", Font.BOLD, 16));
 		panel_tabella.add(lblNewLabel_1, "cell 0 0,alignx center");
 
+		JLabel lblTipo = new JLabel("Nazionale/Europea");
+		lblTipo.setFont(new Font("Arial", Font.PLAIN, 14));
+		panel_tabella.add(lblTipo, "flowx,cell 0 1");
+		
+		final JComboBox<String> comboBox_nazione = new JComboBox<String>();
+		comboBox_nazione.setFont(new Font("Arial", Font.PLAIN, 12));
+		comboBox_nazione.setModel(new DefaultComboBoxModel(new String[] {"Decreto di ammissione a verifica (per gli strumenti muniti di bolli di verificazione prima nazionale)", " Attestazione/Certificazione di esame CE/UE del tipo o di progetto (per gli strumenti conformi alla normativa europea)"}));
+		
+		comboBox_nazione.setSelectedIndex(tipoDomande);
+	
+		JPanel tipoDom1= getTabelleDomande(0);
+		JPanel tipoDom2 =getTabelleDomande(1);
+		
+		 cards = new JPanel(new CardLayout());
+		
+		if(tipoDomande==0) 
+		{
+			
+		        cards.add(tipoDom1, "T1");
+		        cards.add(tipoDom2, "T2");
+		}else 
+		{
+			 	cards.add(tipoDom2, "T2");
+		        cards.add(tipoDom1, "T1");
+		}
+	       
+
+		JScrollPane scroll = new JScrollPane(cards);
+		panel_tabella.add(scroll,"cell 0 3 3 1,grow");
+
+		JLabel lblControlloPreliminare = new JLabel("Controllo preliminare");
+		lblControlloPreliminare.setForeground(Color.BLACK);
+		lblControlloPreliminare.setFont(new Font("Arial", Font.BOLD, 14));
+		panel_tabella.add(lblControlloPreliminare, "flowx,cell 0 4");
+
+		textField_esito_controllo_preliminare = new JTextField();
+		textField_esito_controllo_preliminare.setEditable(false);
+		textField_esito_controllo_preliminare.setFont(new Font("Arial", Font.BOLD, 14));
+		panel_tabella.add(textField_esito_controllo_preliminare, "cell 0 4");
+		textField_esito_controllo_preliminare.setColumns(10);
+		
+	
+		panel_tabella.add(comboBox_nazione, "cell 0 1");
+
+		if(!misura.getSeqRisposte().equals("0")) 
+		{
+			boolean esito = getEsitoControlloPreliminare(misura.getSeqRisposte());
+
+			if(esito==true) 
+			{
+				textField_esito_controllo_preliminare.setText("SUPERATO");
+				textField_esito_controllo_preliminare.setForeground(Color.green);
+			}
+			else 
+			{
+				textField_esito_controllo_preliminare.setText("NON SUPERATO");
+				textField_esito_controllo_preliminare.setForeground(Color.red);
+			}
+		}
+		
+		comboBox_nazione.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				
+				CardLayout cl = (CardLayout)(cards.getLayout());
+				
+				if(comboBox_nazione.getSelectedIndex()==0) 
+				{
+				     cl.show(cards, "T1");
+				     
+				}else 
+				{
+				     cl.show(cards, "T2");
+				   
+				}
+				
+				
+			}
+			
+		});
+	
+		
+		return panel_tabella;
+
+	}
+
+
+	
+
+
+	private JPanel getTabelleDomande(int tipoDomande) {
 		JPanel pannelloDomande = new JPanel();
 		pannelloDomande.setLayout(null);
 
-		ArrayList<String> listaDomande=GestioneMisuraBO.getListaDomandeControlloPreliminare();
+		ArrayList<String> listaDomande=GestioneMisuraBO.getListaDomandeControlloPreliminare(tipoDomande);
 
-		int y=10;
-
-		pannelloDomande.setPreferredSize(new Dimension(1200,35*listaDomande.size()));
+		int[] y= {10,60,130,180,230,280,330,520,670,720};
+		int[] sY= {40,60,40,40,40,40,180,140,40,40};
+		pannelloDomande.setPreferredSize(new Dimension(1200,770));
 
 		Font f = new Font("Arial",Font.ITALIC, 14);
 
@@ -3092,10 +3188,10 @@ public class PannelloMisuraMaster extends JPanel
 		{
 
 			String domanda =listaDomande.get(i);
-			y=i*30;
+			
 
 			JLabel lab1= new JLabel(domanda);
-			lab1.setBounds(10, y, 900, 25);
+			lab1.setBounds(10, y[i], 1000, sY[i]);
 			lab1.setFont(f);
 
 			JRadioButton si = new JRadioButton("SI");
@@ -3103,9 +3199,9 @@ public class PannelloMisuraMaster extends JPanel
 			JRadioButton na = new JRadioButton("N/A");
 
 
-			si.setBounds(910, y, 50, 25);
-			no.setBounds(960, y, 50, 25);
-			na.setBounds(1010, y, 50, 25);
+			si.setBounds(1010, y[i], 50, sY[i]);
+			no.setBounds(1060, y[i], 50, sY[i]);
+			na.setBounds(1110, y[i], 50, sY[i]);
 
 			si.setFont(f);
 			no.setFont(f);
@@ -3140,7 +3236,7 @@ public class PannelloMisuraMaster extends JPanel
 			}else 
 			{
 
-				if(i>8) 
+				if(i>=5 && i<=7) 
 				{
 					na.setSelected(true);
 				}
@@ -3151,40 +3247,9 @@ public class PannelloMisuraMaster extends JPanel
 			pannelloDomande.add(no);
 			pannelloDomande.add(na);
 		}
-
-		JScrollPane scroll = new JScrollPane(pannelloDomande);
-		panel_tabella.add(scroll,"cell 0 2 3 1,grow");
-
-		JLabel lblControlloPreliminare = new JLabel("Controllo preliminare");
-		lblControlloPreliminare.setForeground(Color.BLACK);
-		lblControlloPreliminare.setFont(new Font("Arial", Font.BOLD, 14));
-		panel_tabella.add(lblControlloPreliminare, "flowx,cell 0 3");
-
-		textField_esito_controllo_preliminare = new JTextField();
-		textField_esito_controllo_preliminare.setEditable(false);
-		textField_esito_controllo_preliminare.setFont(new Font("Arial", Font.BOLD, 14));
-		panel_tabella.add(textField_esito_controllo_preliminare, "cell 0 3");
-		textField_esito_controllo_preliminare.setColumns(10);
-
-		if(!misura.getSeqRisposte().equals("0")) 
-		{
-			boolean esito = getEsitoControlloPreliminare(misura.getSeqRisposte());
-
-			if(esito==true) 
-			{
-				textField_esito_controllo_preliminare.setText("SUPERATO");
-				textField_esito_controllo_preliminare.setForeground(Color.green);
-			}
-			else 
-			{
-				textField_esito_controllo_preliminare.setText("NON SUPERATO");
-				textField_esito_controllo_preliminare.setForeground(Color.red);
-			}
-		}	
-		return panel_tabella;
-
+		
+		return pannelloDomande;
 	}
-
 
 
 
