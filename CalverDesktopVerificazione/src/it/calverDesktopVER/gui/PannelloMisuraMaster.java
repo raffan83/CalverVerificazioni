@@ -45,6 +45,8 @@ import javax.swing.JTree;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
@@ -86,6 +88,7 @@ public class PannelloMisuraMaster extends JPanel
 	JPanel panel_stampa;
 	private JPanel panel_datiGenarali;
 	private JPanel panel_tabella;
+	private JPanel panel_temp_gravita;
 	private JPanel panel_prova_ripetibilita;
 	private JPanel panel_prova_decentramento;
 	private JPanel panel_prova_linearita;
@@ -104,7 +107,8 @@ public class PannelloMisuraMaster extends JPanel
 	JTable table_dati_strumento=null;
 	JTable tabellaSecurTest=null;
 	JFrame f;
-	ArrayList<ButtonGroup> listaRisposte = new ArrayList<>();
+	ArrayList<ButtonGroup> listaRisposte_tipo_1 = new ArrayList<>();
+	ArrayList<ButtonGroup> listaRisposte_tipo_2 = new ArrayList<>();
 	private JTable tableRip,tableDec,tableLin,tableAcc,tabellaMobilita1,tabellaMobilita2;
 	
 	private static String[] listaCampioniCompleta=null;
@@ -139,6 +143,17 @@ public class PannelloMisuraMaster extends JPanel
 	private JTextField textField_foto_inizio;
 	private JTextField textField_foto_fine;
 	private JTextField textField_sigilli;
+	private JComboBox<String> comboBox_nazione;
+	private JTextField textField_t_inizio;
+	private JTextField textField_t_fine;
+	private JTextField textField_temp_esito;
+	private JTextField textField_altezza_org;
+	private JTextField textField_latitudine_org;
+	private JTextField textField_altezza_util;
+	private JTextField textField_latitudine_util;
+	private JTextField textField_res_g_org;
+	private JTextField textField__res_g_util;
+	private JTextField textField_res_gx_gy;
 	
 	public PannelloMisuraMaster(String id) throws Exception
 	{
@@ -175,6 +190,8 @@ public class PannelloMisuraMaster extends JPanel
 
 		panel_tabella = costruisciTabella(misura.getTipoRisposte());
 
+		panel_temp_gravita =costruisciTempGravita();
+		
 		panel_struttura =creaPanelStruttura();
 
 		JLabel lblCampo = new JLabel("Campo");
@@ -191,6 +208,8 @@ public class PannelloMisuraMaster extends JPanel
 		
 		
 		tabbedPane.addTab("Controllo preliminare",panel_tabella);
+		
+		tabbedPane.add("Temperatura & Posizione",panel_temp_gravita);
 		
 		panel_prova_ripetibilita=costruisciPanelloRipetibilita();
 		tabbedPane.addTab("Prova Ripetibilità", panel_prova_ripetibilita);
@@ -255,7 +274,6 @@ public class PannelloMisuraMaster extends JPanel
 	}
 
 
-	
 	private JPanel costruisciDatiGenerali() {
 		
 		JPanel pannelloDatiGenerali = new JPanel();
@@ -708,9 +726,208 @@ public class PannelloMisuraMaster extends JPanel
 		return pannelloDatiGenerali;
 	}
 
-
-
-
+	private JPanel costruisciTempGravita() {
+		JPanel panelGrav = new JPanel();
+		panelGrav.setBorder(new TitledBorder(new LineBorder(new Color(255, 0, 0), 2, true), "Temperatura e Posizione", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panelGrav.setBackground(Color.WHITE);
+		panelGrav.setLayout(new MigLayout("", "[][][][][][][grow]", "[5.00][][][][][][][][5.00][][5.00][][][10.00][][][][grow]"));
+		
+		JLabel lblTemperatura = new JLabel("Temperatura di prova");
+		lblTemperatura.setFont(new Font("Arial", Font.BOLD, 14));
+		panelGrav.add(lblTemperatura, "cell 0 1 4 1");
+		
+		JLabel lblTInizio = new JLabel("T inizio");
+		lblTInizio.setFont(new Font("Arial", Font.PLAIN, 14));
+		panelGrav.add(lblTInizio, "cell 0 3,alignx trailing");
+		
+		textField_t_inizio = new JTextField();
+		textField_t_inizio.setFont(new Font("Arial", Font.PLAIN, 12));
+		panelGrav.add(textField_t_inizio, "cell 1 3,growx");
+		textField_t_inizio.setColumns(10);
+		
+		JLabel lblNewLabel_9 = new JLabel("|Ti - Tf| < 5C°");
+		lblNewLabel_9.setFont(new Font("Arial", Font.PLAIN, 14));
+		panelGrav.add(lblNewLabel_9, "cell 3 3");
+		
+		JLabel lblEsito_1 = new JLabel("Esito");
+		lblEsito_1.setFont(new Font("Arial", Font.PLAIN, 14));
+		panelGrav.add(lblEsito_1, "cell 2 4,alignx trailing");
+		
+		textField_temp_esito = new JTextField();
+		textField_temp_esito.setFont(new Font("Arial", Font.BOLD, 12));
+		textField_temp_esito.setEditable(false);
+		textField_temp_esito.setBackground(Color.YELLOW);
+		panelGrav.add(textField_temp_esito, "cell 3 4,growx");
+		textField_temp_esito.setColumns(10);
+		
+		JLabel lblTFine = new JLabel("T fine");
+		lblTFine.setFont(new Font("Arial", Font.PLAIN, 14));
+		panelGrav.add(lblTFine, "cell 0 5,alignx trailing");
+		
+		textField_t_fine = new JTextField();
+		textField_t_fine.setFont(new Font("Arial", Font.PLAIN, 12));
+		panelGrav.add(textField_t_fine, "cell 1 5,growx");
+		textField_t_fine.setColumns(10);
+		
+		
+		textField_t_inizio.getDocument().addDocumentListener(new DocumentListener() {
+			
+			@Override
+			public void removeUpdate(DocumentEvent e) 
+			{
+				warm();
+			}
+			
+			@Override
+			public void insertUpdate(DocumentEvent e) 
+			{
+				warm();
+			}
+			
+			@Override
+			public void changedUpdate(DocumentEvent e) 
+			{
+				warm();	
+			}
+		
+			public void warm() 
+			{
+				if(Utility.isDouble(textField_t_inizio.getText()) && Utility.isDouble(textField_t_fine.getText()))
+				{
+					double res = Math.abs((Double.parseDouble(textField_t_inizio.getText()) - Double.parseDouble(textField_t_fine.getText())));
+					
+					textField_temp_esito.setText(""+new BigDecimal(res).setScale(2).toPlainString());
+					
+					if(res<=5) 
+					{
+						textField_temp_esito.setBackground(Color.GREEN);
+					}else 
+					{
+						textField_temp_esito.setBackground(Color.RED);
+					}
+				}
+			}
+		});
+		
+		textField_t_fine.getDocument().addDocumentListener(new DocumentListener() {
+			
+			@Override
+			public void removeUpdate(DocumentEvent e) 
+			{
+				warm();
+			}
+			
+			@Override
+			public void insertUpdate(DocumentEvent e) 
+			{
+				warm();
+			}
+			
+			@Override
+			public void changedUpdate(DocumentEvent e) 
+			{
+				warm();	
+			}
+		
+			public void warm() 
+			{
+				if(Utility.isDouble(textField_t_inizio.getText()) && Utility.isDouble(textField_t_fine.getText()))
+				{
+					double res = Math.abs((Double.parseDouble(textField_t_inizio.getText()) - Double.parseDouble(textField_t_fine.getText())));
+					
+					textField_temp_esito.setText(""+new BigDecimal(res).setScale(2,RoundingMode.HALF_UP).toPlainString());
+					
+					if(res<=5) 
+					{
+						textField_temp_esito.setBackground(Color.GREEN);
+					}else 
+					{
+						textField_temp_esito.setBackground(Color.RED);
+					}
+				}
+			}
+		});
+		
+		JLabel lblCompilareLaSezione = new JLabel("Compilare la sezione riguardante la posizione solo se la verifica è condotta in luogo diverso dall'utilizzo");
+		lblCompilareLaSezione.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lblCompilareLaSezione.setForeground(Color.RED);
+		panelGrav.add(lblCompilareLaSezione, "cell 0 7 7 1");
+		
+		JLabel lblPosizione = new JLabel("Posizione");
+		lblPosizione.setFont(new Font("Arial", Font.BOLD, 14));
+		panelGrav.add(lblPosizione, "cell 0 9");
+		
+		JLabel lblAltezzam = new JLabel("Altezza /m");
+		lblAltezzam.setFont(new Font("Arial", Font.PLAIN, 14));
+		panelGrav.add(lblAltezzam, "cell 2 11");
+		
+		JLabel lblNewLabel_8 = new JLabel("Latitudine °");
+		lblNewLabel_8.setFont(new Font("Arial", Font.PLAIN, 14));
+		panelGrav.add(lblNewLabel_8, "cell 3 11");
+		
+		JLabel lblGLoc = new JLabel("g Loc");
+		lblGLoc.setFont(new Font("Arial", Font.PLAIN, 14));
+		panelGrav.add(lblGLoc, "cell 5 11");
+		
+		JLabel lblNewLabel_7 = new JLabel("Posizione organismo (g)");
+		lblNewLabel_7.setFont(new Font("Arial", Font.PLAIN, 14));
+		panelGrav.add(lblNewLabel_7, "cell 0 12");
+		
+		textField_altezza_org = new JTextField();
+		textField_altezza_org.setFont(new Font("Arial", Font.PLAIN, 12));
+		panelGrav.add(textField_altezza_org, "cell 2 12,growx");
+		textField_altezza_org.setColumns(10);
+		
+		textField_latitudine_org = new JTextField();
+		textField_latitudine_org.setFont(new Font("Arial", Font.PLAIN, 12));
+		textField_latitudine_org.setColumns(10);
+		panelGrav.add(textField_latitudine_org, "cell 3 12,growx");
+		
+		textField_res_g_org = new JTextField();
+		textField_res_g_org.setFont(new Font("Arial", Font.BOLD, 12));
+		textField_res_g_org.setEditable(false);
+		panelGrav.add(textField_res_g_org, "cell 5 12,growx");
+		textField_res_g_org.setColumns(10);
+		
+		JLabel lblPosizioneUtilizzog = new JLabel("Posizione utilizzo (g)");
+		lblPosizioneUtilizzog.setFont(new Font("Arial", Font.PLAIN, 14));
+		panelGrav.add(lblPosizioneUtilizzog, "cell 0 14");
+		
+		textField_altezza_util = new JTextField();
+		textField_altezza_util.setFont(new Font("Arial", Font.PLAIN, 12));
+		panelGrav.add(textField_altezza_util, "cell 2 14,growx");
+		textField_altezza_util.setColumns(10);
+		
+		textField_latitudine_util = new JTextField();
+		textField_latitudine_util.setFont(new Font("Arial", Font.PLAIN, 12));
+		panelGrav.add(textField_latitudine_util, "cell 3 14,growx");
+		textField_latitudine_util.setColumns(10);
+		
+		textField__res_g_util = new JTextField();
+		textField__res_g_util.setFont(new Font("Arial", Font.BOLD, 12));
+		textField__res_g_util.setEditable(false);
+		panelGrav.add(textField__res_g_util, "cell 5 14,growx");
+		textField__res_g_util.setColumns(10);
+		
+		JLabel lblFattoreG = new JLabel("Fattore (g)");
+		lblFattoreG.setFont(new Font("Arial", Font.BOLD, 14));
+		panelGrav.add(lblFattoreG, "cell 2 16,alignx trailing");
+		
+		textField_res_gx_gy = new JTextField();
+		textField_res_gx_gy.setFont(new Font("Arial", Font.BOLD, 12));
+		textField_res_gx_gy.setEditable(false);
+		panelGrav.add(textField_res_gx_gy, "cell 3 16,growx");
+		textField_res_gx_gy.setColumns(10);
+		
+		JButton btnCalcola = new JButton("Calcola");
+		btnCalcola.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/calcola.png")));
+		btnCalcola.setFont(new Font("Arial", Font.BOLD, 14));
+		panelGrav.add(btnCalcola, "cell 5 16");
+		
+		
+		return panelGrav;
+	}
+	
 	private JPanel costruisciPanelloRipetibilita() {
 
 		JPanel pannelloRipetibilita= new JPanel();
@@ -3068,7 +3285,7 @@ public class PannelloMisuraMaster extends JPanel
 	private JPanel costruisciTabella(final Integer tipoDomande) {
 		
 		JPanel panel_tabella = new JPanel();
-		panel_tabella.setBorder(new TitledBorder(new LineBorder(new Color(215, 23, 29), 2, true), "Tabella Misura", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(215, 23, 29)));
+		panel_tabella.setBorder(new TitledBorder(new LineBorder(new Color(215, 23, 29), 2, true), "Tabella Misura", TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLACK));
 		panel_tabella.setBackground(Color.WHITE);
 		panel_tabella.setLayout(new MigLayout("", "[grow][][]", "[][][][400.00][45.00]"));
 
@@ -3082,7 +3299,7 @@ public class PannelloMisuraMaster extends JPanel
 		lblTipo.setFont(new Font("Arial", Font.PLAIN, 14));
 		panel_tabella.add(lblTipo, "flowx,cell 0 1");
 		
-		final JComboBox<String> comboBox_nazione = new JComboBox<String>();
+		comboBox_nazione = new JComboBox<String>();
 		comboBox_nazione.setFont(new Font("Arial", Font.PLAIN, 12));
 		comboBox_nazione.setModel(new DefaultComboBoxModel(new String[] {"Decreto di ammissione a verifica (per gli strumenti muniti di bolli di verificazione prima nazionale)", " Attestazione/Certificazione di esame CE/UE del tipo o di progetto (per gli strumenti conformi alla normativa europea)"}));
 		
@@ -3212,7 +3429,15 @@ public class PannelloMisuraMaster extends JPanel
 			bg.add(no);
 			bg.add(na);
 
-			listaRisposte.add(bg);
+			if(tipoDomande==0)
+			{
+				listaRisposte_tipo_1.add(bg);
+			}
+			else 
+			{
+				listaRisposte_tipo_2.add(bg);
+			}
+		
 
 			if(!misura.getSeqRisposte().equals("0")) 
 			{
@@ -3308,6 +3533,15 @@ public class PannelloMisuraMaster extends JPanel
 					
 					if(!chckbx.isSelected()) 
 					{
+					ArrayList<ButtonGroup> listaRisposte;	
+					if(comboBox_nazione.getSelectedIndex()==0) 
+					{
+						listaRisposte=listaRisposte_tipo_1;
+					}else 
+					{
+						listaRisposte=listaRisposte_tipo_2;
+					}	
+					
 					for (ButtonGroup item : listaRisposte) {
 
 						String singleDecision="";
@@ -3392,6 +3626,7 @@ public class PannelloMisuraMaster extends JPanel
 							
 							misura.setCampioniLavoro(componiCampioni(dlm));
 							misura.setNumeroSigilli(Integer.parseInt(textField_sigilli.getText()));
+							misura.setTipoRisposte(comboBox_nazione.getSelectedIndex());
 							
 							GestioneMisuraBO.updateMisura(misura);
 							JOptionPane.showMessageDialog(null, "Salvataggio dati completato ","Salvataggio",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/confirm.png")));

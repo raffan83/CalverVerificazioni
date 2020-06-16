@@ -2875,7 +2875,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			con=getConnection();
 			
 			pst=con.prepareStatement("UPDATE  ver_misura SET data_verificazione=?,data_scadenza=?,tipo_verifica=?,motivo_verifica=?,isDifetti=?,nome_riparatore=?,data_riparazione=?,"
-								  + "seq_risposte=?,campioni_lavoro=?,numeroSigilli=? WHERE id=?");
+								  + "tipo_risposta=?,seq_risposte=?,campioni_lavoro=?,numeroSigilli=? WHERE id=?");
 
 			
 			if(misura.getDataVerificazione()!=null && misura.getDataVerificazione().length()>0) 
@@ -2926,27 +2926,29 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 				pst.setString(7,"");
 			}
 			
+			pst.setInt(8, misura.getTipoRisposte());
+			
 			if(misura.getSeqRisposte()!=null && misura.getSeqRisposte().length()>0) 
 			{
-				pst.setString(8,misura.getSeqRisposte());
-			}
-			else 
-			{
-				pst.setString(8,"");
-			}
-			
-			if(misura.getCampioniLavoro()!=null && misura.getCampioniLavoro().length()>0) 
-			{
-				pst.setString(9,misura.getCampioniLavoro());
+				pst.setString(9,misura.getSeqRisposte());
 			}
 			else 
 			{
 				pst.setString(9,"");
 			}
 			
-			pst.setInt(10,misura.getNumeroSigilli());
+			if(misura.getCampioniLavoro()!=null && misura.getCampioniLavoro().length()>0) 
+			{
+				pst.setString(10,misura.getCampioniLavoro());
+			}
+			else 
+			{
+				pst.setString(10,"");
+			}
 			
-			pst.setInt(11, misura.getId());
+			pst.setInt(11,misura.getNumeroSigilli());
+			
+			pst.setInt(12, misura.getId());
 
 
 			pst.execute();		
