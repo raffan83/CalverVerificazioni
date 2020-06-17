@@ -2,6 +2,7 @@ package it.calverDesktopVER.utl;
 
 import java.awt.Color;
 import java.awt.Paint;
+import java.math.BigDecimal;
 
 public class Costanti {
 	
@@ -34,6 +35,9 @@ public class Costanti {
 	public static final String COD_PRINT = "PRINT_TYPE";
 	public static final Color COLOR_RED = new Color(215,23,29);
 	public static final Paint COLOR_BLUE = new Color(20,55,200);
+	
+	public static BigDecimal gFactor=BigDecimal.ONE;
+//	public static BigDecimal gFactor= new BigDecimal(0.9999984335892054924042932191434654822958868707);
 	
 	
 }

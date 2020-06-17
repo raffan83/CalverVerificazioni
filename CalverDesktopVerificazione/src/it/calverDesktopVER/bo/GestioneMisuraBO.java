@@ -3,6 +3,7 @@ package it.calverDesktopVER.bo;
 
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -215,6 +216,17 @@ public class GestioneMisuraBO
 		
 	}
 
+	public static BigDecimal calcoloG(double a, double lon) {
+		
+		
+		double part1= 1+0.0053024*Math.pow(Math.sin(Math.toRadians(lon)),2);
+	
+		double part2= 0.0000058*Math.pow(Math.sin(2*Math.toRadians(lon)),2);
+		
+		double g= 9.780318*(part1-part2)-0.000003085*a;
+		
+		return new BigDecimal(g);
+	}
 	
 }
 

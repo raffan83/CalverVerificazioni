@@ -924,6 +924,36 @@ public class PannelloMisuraMaster extends JPanel
 		btnCalcola.setFont(new Font("Arial", Font.BOLD, 14));
 		panelGrav.add(btnCalcola, "cell 5 16");
 		
+		btnCalcola.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+			
+				
+				if (Utility.isDouble(textField_altezza_org.getText())==true &&  Utility.isDouble(textField_latitudine_org.getText())==true &&
+					Utility.isDouble(textField_altezza_util.getText())==true &&  Utility.isDouble(textField_latitudine_util.getText())==true)
+				{
+					BigDecimal g_org=GestioneMisuraBO.calcoloG(Double.parseDouble(textField_altezza_org.getText()),Double.parseDouble(textField_latitudine_org.getText()));
+					
+					BigDecimal g_util=GestioneMisuraBO.calcoloG(Double.parseDouble(textField_altezza_util.getText()),Double.parseDouble(textField_latitudine_util.getText()));
+					
+					textField_res_g_org.setText(""+g_org.setScale(5,RoundingMode.HALF_UP).toPlainString());
+					
+					textField__res_g_util.setText(""+g_util.setScale(5,RoundingMode.HALF_UP).toPlainString());
+					
+					BigDecimal res = g_util.divide(g_org,RoundingMode.HALF_UP);
+					
+					textField_res_gx_gy.setText(""+res.setScale(5,RoundingMode.HALF_UP).toPlainString());
+					
+					Costanti.gFactor=res;
+				}
+				else 
+				{
+					JOptionPane.showMessageDialog(null,"Inserire tutti i valori numerici separati con \".\" ","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+				}
+				
+			}
+		});
 		
 		return panelGrav;
 	}
@@ -1337,7 +1367,7 @@ public class PannelloMisuraMaster extends JPanel
 		}
 
 
-		BigDecimal mpe=errore.multiply(e).multiply(new BigDecimal(2));
+		BigDecimal mpe=errore.multiply(e)/*.multiply(new BigDecimal(2))*/;
 
 		return mpe.toPlainString();
 	}
@@ -2123,7 +2153,7 @@ public class PannelloMisuraMaster extends JPanel
 				}
 				if(i==2) 
 				{
-					modelLin.setValueAt(strumento.getPortataMaxCampo(campo,strumento.getId_tipo_strumento()).setScale(2).multiply(new BigDecimal("0.4")).setScale(2,RoundingMode.HALF_UP), i, 1);
+				//	modelLin.setValueAt(strumento.getPortataMaxCampo(getE().setScale(2,RoundingMode.HALF_UP), i, 1);
 				}
 				if(i==3) 
 				{
@@ -2288,7 +2318,8 @@ public class PannelloMisuraMaster extends JPanel
 								modelLin.setValueAt(erroreSalita, row, 6);
 								modelLin.setValueAt("0", row, 8);
 							//	modelLin.setValueAt("0", row, 9);
-								modelLin.setValueAt(mpe, row, 10);
+								BigDecimal mpe_zero=getE(campo,strumento.getId_tipo_strumento(),mas).multiply(new BigDecimal(0.25)).stripTrailingZeros();
+								modelLin.setValueAt(mpe_zero, row, 10);
 							}
 
 							else 
@@ -2337,7 +2368,7 @@ public class PannelloMisuraMaster extends JPanel
 							linearita.setErroreCorSalita(getValue(modelLin.getValueAt(row,8)));
 							linearita.setErroreCorDiscesa(getValue(modelLin.getValueAt(row,9)));
 							linearita.setEsito(esito);
-							linearita.setMpe(new BigDecimal(getMPE(mas.toPlainString(), campo)));
+							linearita.setMpe(getValue(modelLin.getValueAt(row,10)));
 
 							GestioneMisuraBO.updateValoriLinearita(linearita, misura.getId());
 
@@ -2385,7 +2416,8 @@ public class PannelloMisuraMaster extends JPanel
 								erroreDiscesa=indDiscesa.add(err_div.setScale(4).divide(new BigDecimal("2"), RoundingMode.HALF_UP)
 										.subtract(car_aggDiscesa).subtract(mas));
 
-								String mpe=getMPE(mas.toPlainString(), campo);
+					
+								String mpe=getE(campo,strumento.getId_tipo_strumento(),mas).multiply(new BigDecimal(0.25)).stripTrailingZeros().toPlainString();
 								
 								modelLin.setValueAt(erroreDiscesa.toPlainString(), row, 7);
 								
@@ -2454,7 +2486,7 @@ public class PannelloMisuraMaster extends JPanel
 							linearita.setErroreCorDiscesa(getValue(modelLin.getValueAt(row,9)));
 							
 							linearita.setEsito(esito);
-							linearita.setMpe(new BigDecimal(getMPE(mas.toPlainString(), campo)));
+							linearita.setMpe(getValue(modelLin.getValueAt(row,10)));
 
 							GestioneMisuraBO.updateValoriLinearita(linearita, misura.getId());
 
