@@ -439,7 +439,7 @@ public class PannelloMisuraMaster extends JPanel
 					{
 						try {
 
-							if(f.length()>5000000) 
+							if(f.length()<5000000) 
 							{
 								FileInputStream fis = new FileInputStream(f);
 								byte[] buffer = new byte[1024];
@@ -538,7 +538,7 @@ public class PannelloMisuraMaster extends JPanel
 					{
 						try {
 
-							if(f.length()>5000000) 
+							if(f.length()<5000000) 
 							{
 								FileInputStream fis = new FileInputStream(f);
 								byte[] buffer = new byte[1024];
