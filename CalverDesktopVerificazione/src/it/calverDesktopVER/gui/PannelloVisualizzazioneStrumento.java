@@ -165,7 +165,7 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 		comboBox_tipo_strumento.setEnabled(false);
 		
 		comboBox_tipo_strumento.setFont(new Font("Arial", Font.PLAIN, 14));
-		comboBox_tipo_strumento.setModel(new DefaultComboBoxModel(new String[] {"Singolo campo di pesatura", "Divisioni plurime", "Campi plurimi"}));
+		comboBox_tipo_strumento.setModel(new DefaultComboBoxModel(new String[] {"Singolo campo di pesatura", "Campi plurimi"}));
 		add(comboBox_tipo_strumento, "cell 1 4 2 1");
 		
 		
@@ -401,7 +401,15 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 		textField_anno_ce.setText(""+strumento.getAnno_marcatura_ce());
 		textField_data_ms.setText(strumento.getData_messa_in_servizio());
 		
-		comboBox_tipo_strumento.setSelectedIndex(strumento.getId_tipo_strumento()-1);
+		
+		if(strumento.getId_tipo_strumento()==1)
+		{
+			comboBox_tipo_strumento.setSelectedIndex(0);
+		}else 
+		{
+			comboBox_tipo_strumento.setSelectedIndex(1);
+		}
+		
 		comboBox_tipologia.setSelectedIndex(strumento.getTipologia()-1);
 		comboBox_classe.setSelectedIndex(strumento.getClasse()-1);
 		
@@ -715,7 +723,7 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 					
 				}
 				
-				if(comboBox_tipo_strumento.getSelectedIndex()==1){
+			/*	if(comboBox_tipo_strumento.getSelectedIndex()==1){
 				
 						if(!Utility.isDouble(textField_pr_min_c1.getText())) 
 						{
@@ -766,9 +774,9 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 						{
 						 update=false;
 						}
-					}
+					}*/
 				
-				if(comboBox_tipo_strumento.getSelectedIndex()==2)
+				if(comboBox_tipo_strumento.getSelectedIndex()==1)
 					{
 					
 							if(!Utility.isDouble(textField_pr_min_c1.getText())) 
@@ -870,8 +878,14 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 						strumento.setFamiglia_strumento("0212");	
 					}
 					
-					strumento.setId_tipo_strumento(comboBox_tipo_strumento.getSelectedIndex()+1);
-					
+					if(comboBox_tipo_strumento.getSelectedIndex()==0) 
+					{
+						strumento.setId_tipo_strumento(1);
+					}
+					else 
+					{
+						strumento.setId_tipo_strumento(3);
+					}
 					strumento.setPortata_min_C1(new BigDecimal(textField_pr_min_c1.getText()));
 					strumento.setPortata_max_C1(new BigDecimal(textField_pr_max_c1.getText()));
 					strumento.setDiv_rel_C1(new BigDecimal(textField_divisione_reali_c1.getText()));

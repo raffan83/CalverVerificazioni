@@ -8,6 +8,7 @@ import java.awt.Toolkit;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -41,43 +42,25 @@ public class Splash extends SwingWorker<Integer, Integer>
  		y=y+(int)d.getY();
  		
  		g.setLocation(x, y);
+ 		
+ 	//	stop();
     }
 
-   
-    
-   /* public static void main(String[] args) throws InterruptedException {
-    	
-    	JFrame f = new JFrame();
-    	f.setSize(300,200);
-    	
-    	f.getContentPane().setLayout(new BorderLayout());
-    	JButton but = new JButton("Avvia");
-    	f.getContentPane().add(but);
-    	f.pack();
-    	f.setVisible(true);
-    	
-    	
-    	
-    	but.addActionListener(new ActionListener(){
+//	private void stop() {
+//	
+//		double currentTime=System.currentTimeMillis();
+//		
+//		while(true) 
+//		{
+//			if(System.currentTimeMillis()-currentTime>10000) 
+//			{
+//				g.dispose();
+//				break;
+//			}
+//		}
+//	}
 
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				
-				Splash d =	 new Splash();
-				
-				d.execute();
-				
-				
-				Thread thread = new Thread(d.new ValidateThread());
-				thread.start();
-				
 
-				//	d.close();
-			}
-    		
-    	});
-
-	}*/
 
 	public void close() {
 		try {

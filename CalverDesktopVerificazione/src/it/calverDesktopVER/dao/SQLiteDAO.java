@@ -2195,6 +2195,17 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 				misura.setNomeFile_inizio_prova(rs.getString("nomefile_inizio_prova"));
 				misura.setNomeFile_fine_prova(rs.getString("nomefile_fine_prova"));
 				misura.setNumeroSigilli(rs.getInt("numeroSigilli"));
+				
+				misura.settInizio(rs.getDouble("tInizio"));
+				misura.settFine(rs.getDouble("tFine"));
+				misura.setAltezza_org(rs.getDouble("altezza_org"));
+				misura.setAltezza_util(rs.getDouble("altezza_util"));
+				misura.setLatitudine_org(rs.getDouble("latitudine_org"));
+				misura.setLatitudine_util(rs.getDouble("latitudine_util"));
+				misura.setgOrg(rs.getDouble("gOrg"));
+				misura.setgUtil(rs.getDouble("gUtil"));
+				misura.setgFactor(rs.getDouble("gFactor"));
+				
 				if (rs.wasNull()) {
 					misura.setNumeroSigilli(null);
 			    }
@@ -2242,6 +2253,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 				misura.setMotivo_verifica(rs.getInt("motivo_verifica"));
 				misura.setNomeRiparatore(rs.getString("nome_riparatore"));
 				misura.setDataRiparazione(rs.getString("data_riparazione"));
+				misura.setTipoRisposte(rs.getInt("tipo_risposta"));
 				misura.setSeqRisposte(rs.getString("seq_risposte"));
 				misura.setIdNonConforme(rs.getInt("id_non_conforme"));
 				misura.setStato(rs.getInt("stato"));
@@ -2251,6 +2263,16 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 				misura.setFile_fine_prova(rs.getBytes("file_fine_prova"));
 				misura.setNomeFile_inizio_prova(rs.getString("nomefile_inizio_prova"));
 				misura.setNomeFile_fine_prova(rs.getString("nomefile_fine_prova"));
+				
+				misura.settInizio(rs.getDouble("tInizio"));
+				misura.settFine(rs.getDouble("tFine"));
+				misura.setAltezza_org(rs.getDouble("altezza_org"));
+				misura.setAltezza_util(rs.getDouble("altezza_util"));
+				misura.setLatitudine_org(rs.getDouble("latitudine_org"));
+				misura.setLatitudine_util(rs.getDouble("llatitudine_util"));
+				misura.setgOrg(rs.getDouble("gOrg"));
+				misura.setgUtil(rs.getDouble("gUtil"));
+				misura.setgFactor(rs.getDouble("gFactor"));
 			}
 			
 		}
@@ -2875,7 +2897,8 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			con=getConnection();
 			
 			pst=con.prepareStatement("UPDATE  ver_misura SET data_verificazione=?,data_scadenza=?,tipo_verifica=?,motivo_verifica=?,isDifetti=?,nome_riparatore=?,data_riparazione=?,"
-								  + "tipo_risposta=?,seq_risposte=?,campioni_lavoro=?,numeroSigilli=? WHERE id=?");
+								  + "tipo_risposta=?,seq_risposte=?,campioni_lavoro=?,numeroSigilli=? ,tInizio=?, tFine=?, altezza_org=?,altezza_util=?,latitudine_org=?,latitudine_util=?,"
+								  + "gOrg=?,gUtil=?,gFactor=? WHERE id=?");
 
 			
 			if(misura.getDataVerificazione()!=null && misura.getDataVerificazione().length()>0) 
@@ -2947,9 +2970,21 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			}
 			
 			pst.setInt(11,misura.getNumeroSigilli());
-			
-			pst.setInt(12, misura.getId());
 
+			pst.setDouble(12,misura.gettInizio());
+			pst.setDouble(13,misura.gettFine());
+			
+			pst.setDouble(14,misura.getAltezza_org());
+			pst.setDouble(15,misura.getAltezza_util());
+			
+			pst.setDouble(16,misura.getLatitudine_org());
+			pst.setDouble(17,misura.getLatitudine_util());
+			
+			pst.setDouble(18,misura.getgOrg());
+			pst.setDouble(19,misura.getgUtil());
+			pst.setDouble(20,misura.getgFactor());
+
+			pst.setInt(21, misura.getId());
 
 			pst.execute();		
 			

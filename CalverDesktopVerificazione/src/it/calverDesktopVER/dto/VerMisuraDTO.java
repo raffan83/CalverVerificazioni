@@ -63,6 +63,25 @@ public class VerMisuraDTO {
 	
 	private String nomeFile_fine_prova;
 	
+	private double tInizio;
+	
+	private double tFine;
+	
+	private double altezza_org;
+	
+	private double altezza_util;
+	
+	private double latitudine_org;
+	
+	private double latitudine_util;
+	
+	private double gOrg;
+	
+	private double gUtil;
+	
+	private double gFactor;
+	
+	
 
 		public VerMisuraDTO() {
 	}
@@ -362,6 +381,80 @@ public class VerMisuraDTO {
 
 	public void setNomeFile_fine_prova(String nomeFile_fine_prova) {
 		this.nomeFile_fine_prova = nomeFile_fine_prova;
+	}
+
+	public double gettInizio() {
+		return tInizio;
+	}
+
+	public void settInizio(double tInizio) {
+		this.tInizio = tInizio;
+	}
+
+	public double gettFine() {
+		return tFine;
+	}
+
+	public void settFine(double tFine) {
+		this.tFine = tFine;
+	}
+
+	public double getAltezza_org() {
+		return altezza_org;
+	}
+
+	public void setAltezza_org(double altezza_org) {
+		this.altezza_org = altezza_org;
+	}
+
+	public double getAltezza_util() {
+		return altezza_util;
+	}
+
+	public void setAltezza_util(double altezza_util) {
+		this.altezza_util = altezza_util;
+	}
+
+
+
+	public double getLatitudine_org() {
+		return latitudine_org;
+	}
+
+	public void setLatitudine_org(double latitudine_org) {
+		this.latitudine_org = latitudine_org;
+	}
+
+	public double getLatitudine_util() {
+		return latitudine_util;
+	}
+
+	public void setLatitudine_util(double latitudine_util) {
+		this.latitudine_util = latitudine_util;
+	}
+
+	public double getgOrg() {
+		return gOrg;
+	}
+
+	public void setgOrg(double gOrg) {
+		this.gOrg = gOrg;
+	}
+
+	public double getgUtil() {
+		return gUtil;
+	}
+
+	public void setgUtil(double gUtil) {
+		this.gUtil = gUtil;
+	}
+
+	public double getgFactor() {
+		return gFactor;
+	}
+
+	public void setgFactor(double gFactor) {
+		this.gFactor = gFactor;
 	}
 	
 	
