@@ -39,7 +39,7 @@ public class PannelloTOP extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	private Splash d=null;
+	public static Splash d=null;
 	private JPanel me;
 	public PannelloTOP(Color color,String title, JFrame g) {
 			
@@ -92,10 +92,14 @@ button.addActionListener(new ActionListener() {
  			
  		boolean execute=true;//GestioneDB.checkFile(Costanti.PATH_DB);
  		
+ 		if(d!=null) 
+ 		{
+ 			d.close();
+ 		}
 	    		if(execute)
 	    		{
 	    			d= new Splash(me);
-	    			d.execute();
+	    			new Thread(d).start();
 	    			
 	    			Thread thread = new Thread(new ValidateThread());
 		 			thread.start();

@@ -2269,7 +2269,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 				misura.setAltezza_org(rs.getDouble("altezza_org"));
 				misura.setAltezza_util(rs.getDouble("altezza_util"));
 				misura.setLatitudine_org(rs.getDouble("latitudine_org"));
-				misura.setLatitudine_util(rs.getDouble("llatitudine_util"));
+				misura.setLatitudine_util(rs.getDouble("latitudine_util"));
 				misura.setgOrg(rs.getDouble("gOrg"));
 				misura.setgUtil(rs.getDouble("gUtil"));
 				misura.setgFactor(rs.getDouble("gFactor"));

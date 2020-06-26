@@ -16,7 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 import java.awt.Window.Type;
 
-public class Splash extends SwingWorker<Integer, Integer>
+public class Splash implements Runnable
 {
 	private JFrame g ;
 	
@@ -72,11 +72,8 @@ public class Splash extends SwingWorker<Integer, Integer>
 		g.dispose();	
 	}
 	
-
-
 	@Override
-	protected Integer doInBackground() throws Exception {
-		
+	public void run() {
 		try 
 		{
 		URL iconURL = this.getClass().getResource("/image/logo.png");
@@ -108,7 +105,7 @@ public class Splash extends SwingWorker<Integer, Integer>
 		}catch (Exception e) {
 		e.printStackTrace();
 		}
-		return 0;
+		
 	}
 
 

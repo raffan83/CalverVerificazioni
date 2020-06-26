@@ -57,7 +57,7 @@ public class PannelloStrumentoMaster extends JPanel implements ActionListener {
 	JMenuItem jmit;
 	int x;
 	JPanel me;
-	Splash d=null;
+
 	private static ArrayList<VerStrumentoDTO> listaStrumenti=new ArrayList<VerStrumentoDTO>();
 
 	public class RadioButtonCellEditorRenderer extends AbstractCellEditor implements TableCellRenderer, TableCellEditor, ActionListener {
@@ -566,7 +566,7 @@ public class PannelloStrumentoMaster extends JPanel implements ActionListener {
 					PannelloConsole.printException(e1);
 					e1.printStackTrace();
 				}
-				d.close();
+				PannelloTOP.d.close();
 			}
 		}
 
@@ -622,8 +622,8 @@ public class PannelloStrumentoMaster extends JPanel implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				d =	 new Splash(me);
-	 			d.execute();
+				PannelloTOP.d =	 new Splash(me);
+				new Thread(PannelloTOP.d).start();
 	 			
 				Runnable runnable = new ValidateThread();
 				Thread thread = new Thread(runnable);

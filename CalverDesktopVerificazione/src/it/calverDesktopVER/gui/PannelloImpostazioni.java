@@ -29,7 +29,6 @@ public class PannelloImpostazioni extends JPanel {
 
 	JTextField fieldFrameRate=null;
 	JTextField fieldNomePorta=null;
-	Splash d=null;
 	JPanel p =null;
 	JTabbedPane tab=null;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
@@ -125,8 +124,10 @@ public class PannelloImpostazioni extends JPanel {
 				 		
 				 		
 				 	
-				 			d =	 new Splash(p);
-				 			d.execute();
+				 			PannelloTOP.d =	 new Splash(p);
+				 			new Thread(PannelloTOP.d).start();
+				 			
+				 			
 				 			Thread thread = new Thread(new ValidateThread());
 				 			thread.start();
 				 		
@@ -258,31 +259,31 @@ class ValidateThread implements Runnable {
 			            
 			            serialPort.closePort();
 
-				d.close();
+			            PannelloTOP.d.close();
 				JOptionPane.showMessageDialog(null, "Dispositivo connesso","Success",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/confirm.png")));
 			}
 		
 			catch(SerialPortException  se)
 		{
-				d.close();
+				PannelloTOP.d.close();
 				JOptionPane.showMessageDialog(null, "Porta occupata o inesistente","Errore",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/error.png")));
 				
 		}
 			catch(NumberFormatException nfe)
 			{
-				d.close();
+				PannelloTOP.d.close();
 				JOptionPane.showMessageDialog(null, "Frame Rate deve essere di tipo numerico","Errore",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/error.png")));
 				nfe.printStackTrace();
 			}
 			catch (UnsatisfiedLinkError e2) 
 			{
-				d.close();
+				PannelloTOP.d.close();
 				JOptionPane.showMessageDialog(null, "Libreria rxtxSerial.dll mancante o versione errata (32 / 64 bit )","Errore",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/error.png")));
 				e2.printStackTrace();
 			}
 			catch (Exception er) 
 			{
-				d.close();
+				PannelloTOP.d.close();
 				JOptionPane.showMessageDialog(null,er.getMessage(),"Errore",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/error.png")));
 				er.printStackTrace();
 			}
