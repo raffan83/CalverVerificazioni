@@ -775,8 +775,8 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		{
 			con=getConnection();
 			
-			pst=con.prepareStatement("select distinct(codice) from tblCampioni ");
-			
+			pst=con.prepareStatement("select distinct(codice) from tblCampioni where tipoGrandezza=?");
+			pst.setString(1, "Massa");
 
 			
 			rs=pst.executeQuery();

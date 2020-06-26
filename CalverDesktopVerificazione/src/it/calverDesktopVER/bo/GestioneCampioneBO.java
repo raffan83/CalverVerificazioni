@@ -43,7 +43,6 @@ public class GestioneCampioneBO {
 	public static String[] getParametriTaratura(String codiceCampione) throws Exception {
 
 		
-	
 		ArrayList<String> tmp=SQLiteDAO.getListaParametriTaratura(codiceCampione);
 		
 		String[] stockArr = new String[tmp.size()];
