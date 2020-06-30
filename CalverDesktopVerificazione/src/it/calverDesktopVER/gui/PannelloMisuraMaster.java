@@ -2208,17 +2208,17 @@ public class PannelloMisuraMaster extends JPanel
 				}
 				if(i==2) 
 				{
-					BigDecimal primo_punto_variazione=getE(campo,strumento.getId_tipo_strumento(),BigDecimal.ZERO).multiply(new BigDecimal(listaClassi.get(0).getLimiteSuperiore()));
+					BigDecimal primo_punto_variazione=getE(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),BigDecimal.ZERO).multiply(new BigDecimal(listaClassi.get(0).getLimiteSuperiore()));
 					modelLin.setValueAt(primo_punto_variazione.setScale(risoluzioneBilancia,RoundingMode.HALF_UP).stripTrailingZeros().toPlainString(), i, 1);
 				}
 				if(i==3) 
 				{
-					secondo_punto_variazione=getE(campo,strumento.getId_tipo_strumento(),BigDecimal.ZERO).multiply(new BigDecimal(listaClassi.get(1).getLimiteSuperiore()));
+					secondo_punto_variazione=getE(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),BigDecimal.ZERO).multiply(new BigDecimal(listaClassi.get(1).getLimiteSuperiore()));
 					modelLin.setValueAt(secondo_punto_variazione.setScale(risoluzioneBilancia,RoundingMode.HALF_UP).stripTrailingZeros().stripTrailingZeros().toPlainString(), i, 1);
 				}
 				if(i==4) 
 				{
-					secondo_punto_variazione=getE(campo,strumento.getId_tipo_strumento(),BigDecimal.ZERO).multiply(new BigDecimal(listaClassi.get(1).getLimiteSuperiore()));
+					secondo_punto_variazione=getE(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),BigDecimal.ZERO).multiply(new BigDecimal(listaClassi.get(1).getLimiteSuperiore()));
 					BigDecimal terzo_punto_variazione=(strumento.getPortataMaxCampo(campo,strumento.getId_tipo_strumento()).add(secondo_punto_variazione)).divide(new BigDecimal(2),RoundingMode.HALF_UP);
 					modelLin.setValueAt(terzo_punto_variazione.setScale(risoluzioneBilancia,RoundingMode.HALF_UP).stripTrailingZeros().stripTrailingZeros().toPlainString(), i, 1);
 				}
