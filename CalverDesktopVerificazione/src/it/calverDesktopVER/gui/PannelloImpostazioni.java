@@ -19,7 +19,6 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 
-import it.calverDesktopVER.bo.GestioneRegistro;
 import it.calverDesktopVER.utl.Costanti;
 import jssc.SerialPort;
 import jssc.SerialPortException;
@@ -189,7 +188,7 @@ public class PannelloImpostazioni extends JPanel {
 				 
 				 panelPrint.add(rdbtnZebraradiobtn, "cell 1 2");
 				
-				 String printTP=GestioneRegistro.getStringValue(Costanti.COD_PRINT);
+				 String printTP="";
 				 
 				
 				 rdbtnZebraradiobtn.setSelected(true);
@@ -229,7 +228,7 @@ public class PannelloImpostazioni extends JPanel {
 				  			printType="2";
 				  		}
 				  		
-				  		GestioneRegistro.setStringValue(Costanti.COD_PRINT, printType);
+				  	
 				  		JOptionPane.showMessageDialog(null, "Salvataggio effettuato","Salvataggio",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/confirm.png")));
 				  	}
 				  });
