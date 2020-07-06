@@ -170,12 +170,7 @@ public class SQLiteDAO {
 		}
 		if(filter==3)
 		{
-			sql="select a.* FROM ver_strumento a left join ver_misura b on a.id=b.id_ver_strumento where b.id_str is null";
-		}
-		
-		if(filter==4)
-		{
-			sql="select a.* FROM ver_strumento a join ver_misura b on a.id=b.id_ver_strumento where b.stato=2";
+			sql="select a.* FROM ver_strumento a left join ver_misura b on a.id=b.id_ver_strumento where b.id_ver_strumento is null";
 		}
 		
 		pst=con.prepareStatement(sql);
