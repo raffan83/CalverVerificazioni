@@ -331,7 +331,7 @@ public class PannelloMisuraMaster extends JPanel
 		}
 
 	//	final JComboBox<String> comboBox_lista_campioni = new JComboBox<String>();
-		final JComboBox<String> comboBox_lista_campioni = new JComboBox<String>(/*listaCampioniCompleta*/);
+		final JComboBox<String> comboBox_lista_campioni = new JComboBox<String>(listaCampioniCompleta);
 		comboBox_lista_campioni.setFont(new Font("Arial", Font.BOLD, 12));
 		pannelloDatiGenerali.add(comboBox_lista_campioni, "cell 2 7");
 
