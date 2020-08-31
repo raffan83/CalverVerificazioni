@@ -331,7 +331,7 @@ public class PannelloMisuraMaster extends JPanel
 		}
 
 	//	final JComboBox<String> comboBox_lista_campioni = new JComboBox<String>();
-		final JComboBox<String> comboBox_lista_campioni = new JComboBox<String>(listaCampioniCompleta);
+		final JComboBox<String> comboBox_lista_campioni = new JComboBox<String>(/*listaCampioniCompleta*/);
 		comboBox_lista_campioni.setFont(new Font("Arial", Font.BOLD, 12));
 		pannelloDatiGenerali.add(comboBox_lista_campioni, "cell 2 7");
 
@@ -1472,7 +1472,7 @@ public class PannelloMisuraMaster extends JPanel
 
 		pannelloDecentramento.setBorder(new TitledBorder(new LineBorder(new Color(255, 0, 0), 2, true), "Prova Decentramento", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		pannelloDecentramento.setBackground(Color.WHITE);
-		pannelloDecentramento.setLayout(new MigLayout("", "[22.00][][160.00][160][160][]", "[][][][][][][][]"));
+		pannelloDecentramento.setLayout(new MigLayout("", "[22.00][][160.00][160][160][160px][160px]", "[][][][][][][][]"));
 
 		final ArrayList<VerDecentramentoDTO> listaDecentramento=(ArrayList<VerDecentramentoDTO>)misura.getVerDecentramentos(comboBox_campo.getSelectedIndex()+1);
 
@@ -1494,6 +1494,22 @@ public class PannelloMisuraMaster extends JPanel
 				}
 			}
 		});
+		
+		JLabel label_1 = new JLabel("");
+		label_1.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/tipo_3.png")));
+		pannelloDecentramento.add(label_1, "cell 5 2,alignx center");
+		
+		JLabel label_2 = new JLabel("");
+		label_2.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/tipo_4.png")));
+		pannelloDecentramento.add(label_2, "cell 6 2,alignx center");
+		
+		JRadioButton rdbtn_tipo_3 = new JRadioButton("");
+		rdbtn_tipo_3.setBackground(Color.WHITE);
+		pannelloDecentramento.add(rdbtn_tipo_3, "cell 5 3,alignx center");
+		
+		JRadioButton rdbtn_tipo_4 = new JRadioButton("");
+		rdbtn_tipo_4.setBackground(Color.WHITE);
+		pannelloDecentramento.add(rdbtn_tipo_4, "cell 6 3,alignx center");
 		comboBox.setModel(new DefaultComboBoxModel<>(new String[] {"NO", "SI"}));
 		pannelloDecentramento.add(comboBox, "cell 5 4,alignx right");
 
@@ -1598,7 +1614,7 @@ public class PannelloMisuraMaster extends JPanel
 
 		JLabel lblNewLabel_2 = new JLabel("");
 		lblNewLabel_2.setFont(new Font("Calibri", Font.PLAIN, 14));
-		pannelloDecentramento.add(lblNewLabel_2, "cell 0 0");
+		pannelloDecentramento.add(lblNewLabel_2, "cell 0 0 6 1");
 
 		JLabel lblEsempiDiTipici = new JLabel("Esempi di tipici ricettori di carico");
 		lblEsempiDiTipici.setFont(new Font("Arial", Font.BOLD, 12));
@@ -1638,13 +1654,13 @@ public class PannelloMisuraMaster extends JPanel
 
 		JLabel lblStrumentoSpeciale = new JLabel("Strumento speciale");
 		lblStrumentoSpeciale.setFont(new Font("Arial", Font.BOLD, 12));
-		pannelloDecentramento.add(lblStrumentoSpeciale, "flowx,cell 5 4,alignx right");
+		pannelloDecentramento.add(lblStrumentoSpeciale, "flowx,cell 5 4 2 1,alignx right");
 
 
 
 		JScrollPane scrollTab = new JScrollPane(tableDec);
 
-		pannelloDecentramento.add(scrollTab, "cell 1 5 5 1,width :750:,alignx left,height :200:,aligny top");
+		pannelloDecentramento.add(scrollTab, "cell 1 5 6 1,growx,width :750:,height :200:,aligny top");
 
 		JLabel lblEsito = new JLabel("ESITO:");
 		lblEsito.setFont(new Font("Arial", Font.BOLD, 12));
@@ -1657,13 +1673,20 @@ public class PannelloMisuraMaster extends JPanel
 
 
 		textField_punti_appoggio = new JTextField();
-		pannelloDecentramento.add(textField_punti_appoggio, "cell 1 4,width :50:50");
+		pannelloDecentramento.add(textField_punti_appoggio, "cell 1 4 3 1,width :50:50");
 		textField_punti_appoggio.setColumns(10);
 
 		textField_punti_appoggio.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				impostaCarico(listaDecentramento);
+				if(Utility.isNumber(textField_punti_appoggio.getText()) && Integer.parseInt(textField_punti_appoggio.getText())>2) 
+				{
+					impostaCarico(listaDecentramento);
+				}
+				else 
+				{
+					JOptionPane.showMessageDialog(null,"Il campo accetta minimo 3 punti di ancoraggio","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+				}
 			
 			}
 		});
@@ -1680,7 +1703,9 @@ public class PannelloMisuraMaster extends JPanel
 		bg.add(rdbtn_quad);
 		bg.add(rdbtn_cer);
 		bg.add(rdbtn_tri);
-
+		bg.add(rdbtn_tipo_3);
+		bg.add(rdbtn_tipo_4);
+		
 		rdbtn_quad.addActionListener(new ActionListener() {
 
 			@Override
@@ -1722,7 +1747,34 @@ public class PannelloMisuraMaster extends JPanel
 				}
 			}
 		});
+		
+		rdbtn_tipo_3.addActionListener(new ActionListener() {
 
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				try {
+					GestioneMisuraBO.setRicettoreDecentramento(misura.getId(),3);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+
+		rdbtn_tipo_4.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				try {
+					GestioneMisuraBO.setRicettoreDecentramento(misura.getId(),4);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 
 
 		if(listaDecentramento.get(0).getPuntiAppoggio()!=0) 
@@ -1744,6 +1796,14 @@ public class PannelloMisuraMaster extends JPanel
 			if(listaDecentramento.get(0).getTipoRicettore()==2) 
 			{
 				rdbtn_tri.setSelected(true);
+			}
+			if(listaDecentramento.get(0).getTipoRicettore()==3) 
+			{
+				rdbtn_tipo_3.setSelected(true);
+			}
+			if(listaDecentramento.get(0).getTipoRicettore()==4) 
+			{
+				rdbtn_tipo_4.setSelected(true);
 			}
 		}
 
