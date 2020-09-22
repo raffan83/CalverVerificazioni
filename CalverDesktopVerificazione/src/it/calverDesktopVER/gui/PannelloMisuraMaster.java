@@ -1325,14 +1325,17 @@ public class PannelloMisuraMaster extends JPanel
 			if(carico.doubleValue()>=0 && carico.doubleValue() <strumento.getPortata_max_C1().doubleValue()) 
 			{
 				e=strumento.getDiv_ver_C1();
+				return e;
 			}
 			if( strumento.getPortata_min_C2().doubleValue()!=0 && carico.doubleValue()>=strumento.getPortata_min_C2().doubleValue() && carico.doubleValue() <=strumento.getPortata_max_C2().doubleValue()) 
 			{
 				e=strumento.getDiv_ver_C2();
+				return e;
 			}
 			if(strumento.getPortata_min_C3().doubleValue()!=0 && carico.doubleValue()>strumento.getPortata_min_C3().doubleValue() && carico.doubleValue() <=strumento.getPortata_max_C3().doubleValue()) 
 			{
 				e=strumento.getDiv_ver_C3();
+				return e;
 			}
 		}
 

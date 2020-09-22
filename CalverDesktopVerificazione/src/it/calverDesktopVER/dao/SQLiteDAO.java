@@ -1654,20 +1654,20 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			
 			pst.setBigDecimal(8, strumento.getPortata_min_C1());
 			pst.setBigDecimal(9, strumento.getPortata_max_C1());
-			pst.setBigDecimal(10, strumento.getDiv_rel_C1());
-			pst.setBigDecimal(11, strumento.getDiv_ver_C1());
+			pst.setBigDecimal(10, strumento.getDiv_ver_C1());
+			pst.setBigDecimal(11, strumento.getDiv_rel_C1());
 			pst.setBigDecimal(12, strumento.getNumero_div_C1());
 			
 			pst.setBigDecimal(13, strumento.getPortata_min_C2());
 			pst.setBigDecimal(14, strumento.getPortata_max_C2());
-			pst.setBigDecimal(15, strumento.getDiv_rel_C2());
-			pst.setBigDecimal(16, strumento.getDiv_ver_C2());
+			pst.setBigDecimal(15, strumento.getDiv_ver_C2());
+			pst.setBigDecimal(16, strumento.getDiv_rel_C2());
 			pst.setBigDecimal(17, strumento.getNumero_div_C2());
 			
 			pst.setBigDecimal(18, strumento.getPortata_min_C3());
 			pst.setBigDecimal(19, strumento.getPortata_max_C3());
-			pst.setBigDecimal(20, strumento.getDiv_rel_C3());
-			pst.setBigDecimal(21, strumento.getDiv_ver_C3());
+			pst.setBigDecimal(20, strumento.getDiv_ver_C3());
+			pst.setBigDecimal(21, strumento.getDiv_rel_C3());
 			pst.setBigDecimal(22, strumento.getNumero_div_C3());
 			
 			pst.setInt(23, strumento.getClasse());
