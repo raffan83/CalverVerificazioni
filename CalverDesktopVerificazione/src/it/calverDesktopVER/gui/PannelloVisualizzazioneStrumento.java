@@ -165,7 +165,7 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 		comboBox_tipo_strumento.setEnabled(false);
 		
 		comboBox_tipo_strumento.setFont(new Font("Arial", Font.PLAIN, 14));
-		comboBox_tipo_strumento.setModel(new DefaultComboBoxModel(new String[] {"Singolo campo di pesatura", "Campi plurimi"}));
+		comboBox_tipo_strumento.setModel(new DefaultComboBoxModel(new String[] {"Singolo campo di pesatura","Divisioni Plurime","Campi plurimi"}));
 		add(comboBox_tipo_strumento, "cell 1 4 2 1");
 		
 		
@@ -405,9 +405,14 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 		if(strumento.getId_tipo_strumento()==1)
 		{
 			comboBox_tipo_strumento.setSelectedIndex(0);
-		}else 
+		}
+		else if(strumento.getId_tipo_strumento()==2)
 		{
 			comboBox_tipo_strumento.setSelectedIndex(1);
+		}
+		else
+		{
+			comboBox_tipo_strumento.setSelectedIndex(2);
 		}
 		
 		comboBox_tipologia.setSelectedIndex(strumento.getTipologia()-1);
@@ -723,7 +728,7 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 					
 				}
 				
-			/*	if(comboBox_tipo_strumento.getSelectedIndex()==1){
+				if(comboBox_tipo_strumento.getSelectedIndex()==1){
 				
 						if(!Utility.isDouble(textField_pr_min_c1.getText())) 
 						{
@@ -774,9 +779,9 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 						{
 						 update=false;
 						}
-					}*/
+					}
 				
-				if(comboBox_tipo_strumento.getSelectedIndex()==1)
+				if(comboBox_tipo_strumento.getSelectedIndex()==2)
 					{
 					
 							if(!Utility.isDouble(textField_pr_min_c1.getText())) 
@@ -881,6 +886,11 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 					if(comboBox_tipo_strumento.getSelectedIndex()==0) 
 					{
 						strumento.setId_tipo_strumento(1);
+					}
+					
+					else if(comboBox_tipo_strumento.getSelectedIndex()==1)
+					{
+						strumento.setId_tipo_strumento(2);
 					}
 					else 
 					{

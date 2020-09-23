@@ -212,7 +212,7 @@ public class VerStrumentoDTO {
 	}	
 	
 	
-	if(tipoStrumento==2) 
+	/*if(tipoStrumento==2) 
 	{
 		if(carico>=0 && carico <portata_max_C1.doubleValue()) 
 		{
@@ -228,9 +228,9 @@ public class VerStrumentoDTO {
 			return div_rel_C3;
 		}
 		
-	}
+	}*/
 	
-	if(tipoStrumento==3) 
+	if(tipoStrumento==2 || tipoStrumento==3) 
 	{	
 	if(campo==1) 
 		{
@@ -256,7 +256,7 @@ public class VerStrumentoDTO {
 			return getPortata_max_C1();
 		}
 		
-		if(idTipoStrumento==2) 
+	/*	if(idTipoStrumento==2) 
 		{
 			if(portata_max_C3.doubleValue()!=0) 
 			{
@@ -270,9 +270,9 @@ public class VerStrumentoDTO {
 			{
 				return portata_max_C1;
 			}
-		}
+		}*/
 	
-	if(idTipoStrumento==3) 
+	if(idTipoStrumento==2 || idTipoStrumento==3) 
 	{	
 		if(campo==1) 
 		{
@@ -297,7 +297,7 @@ public class VerStrumentoDTO {
 			return getPortata_min_C1();
 		}
 		
-		if(idTipoStrumento==2) 
+		/*if(idTipoStrumento==2) 
 		{
 			if(portata_min_C1.doubleValue()!=0) 
 			{
@@ -311,9 +311,9 @@ public class VerStrumentoDTO {
 			{
 				return portata_min_C3;
 			}
-		}
+		}*/
 	
-	if(idTipoStrumento==3) 
+	if(idTipoStrumento==2 || idTipoStrumento==3) 
 	{	
 		if(campo==1) 
 		{

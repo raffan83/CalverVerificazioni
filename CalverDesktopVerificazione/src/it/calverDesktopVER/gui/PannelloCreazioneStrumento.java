@@ -185,7 +185,7 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 		final JComboBox comboBox_tipo_strumento = new JComboBox();
 		
 		comboBox_tipo_strumento.setFont(new Font("Arial", Font.PLAIN, 14));
-		comboBox_tipo_strumento.setModel(new DefaultComboBoxModel(new String[] {"Singolo campo di pesatura", "Campi plurimi"}));
+		comboBox_tipo_strumento.setModel(new DefaultComboBoxModel(new String[] {"Singolo campo di pesatura","Divisioni Plurime", "Campi plurimi"}));
 		add(comboBox_tipo_strumento, "cell 1 4 2 1");
 		
 		
@@ -581,7 +581,12 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 					if(comboBox_tipo_strumento.getSelectedIndex()==0) 
 					{
 						strumento.setId_tipo_strumento(1);
-					}else 
+					}
+					else if (comboBox_tipo_strumento.getSelectedIndex()==1)
+					{
+						strumento.setId_tipo_strumento(2);
+					}
+					else
 					{
 						strumento.setId_tipo_strumento(3);
 					}

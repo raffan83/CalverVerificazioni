@@ -180,7 +180,7 @@ public class PannelloMisuraMaster extends JPanel
 		comboBox_campo = new JComboBox<String>();
 		comboBox_campo.setFont(new Font("Arial", Font.BOLD, 14));
 
-		if(strumento.getId_tipo_strumento()==3) 
+		if(strumento.getId_tipo_strumento()==3 || strumento.getId_tipo_strumento()==2) 
 		{
 			if(strumento.getDiv_ver_C3().doubleValue()!=0) 
 			{
@@ -1320,9 +1320,9 @@ public class PannelloMisuraMaster extends JPanel
 		}
 
 
-		if(id_tipo_strumento==2 || id_tipo_strumento==3) 
+		if(id_tipo_strumento==2 ) 
 		{
-			if(carico.doubleValue()>=0 && carico.doubleValue() <strumento.getPortata_max_C1().doubleValue()) 
+			if(carico.doubleValue()>=0 && carico.doubleValue() <=strumento.getPortata_max_C1().doubleValue()) 
 			{
 				e=strumento.getDiv_ver_C1();
 				return e;
@@ -1339,7 +1339,7 @@ public class PannelloMisuraMaster extends JPanel
 			}
 		}
 
-	/*	if(id_tipo_strumento==0) 
+		if(id_tipo_strumento==3) 
 		{
 			if(campo==0) 
 			{
@@ -1353,7 +1353,7 @@ public class PannelloMisuraMaster extends JPanel
 			{
 				e=strumento.getDiv_ver_C3();
 			}
-		}*/
+		}
 
 
 		return e;
@@ -1423,7 +1423,7 @@ public class PannelloMisuraMaster extends JPanel
 
 		} 	
 
-		if(tipoStrumento==2) {
+/*		if(tipoStrumento==2) {
 
 			BigDecimal max = null;
 
@@ -1446,9 +1446,9 @@ public class PannelloMisuraMaster extends JPanel
 			BigDecimal z8=new BigDecimal("0.8");
 			return max.setScale(risoluzioneBilancia,RoundingMode.HALF_UP).multiply(z8).setScale(risoluzioneBilancia,RoundingMode.HALF_UP);
 
-		}	
+		}	*/
 
-		if(tipoStrumento==3) 
+		if(tipoStrumento==2 || tipoStrumento==3) 
 		{
 			if(campo==0) 
 			{
@@ -2116,38 +2116,38 @@ public class PannelloMisuraMaster extends JPanel
 			}
 		}
 
-		if(idTipoStrumento==2) 
-		{
-			BigDecimal max=null;
+//		if(idTipoStrumento==2) 
+//		{
+//			BigDecimal max=null;
+//
+//			if(strumento.getPortata_max_C1().doubleValue()!=0) 
+//			{
+//				max=strumento.getPortata_max_C1();
+//			}
+//
+//			if(strumento.getPortata_max_C2().doubleValue()!=0) 
+//			{
+//				max=strumento.getPortata_max_C2();
+//			}
+//
+//			if(strumento.getPortata_max_C3().doubleValue()!=0) 
+//			{
+//				max=strumento.getPortata_max_C3();
+//			}
+//
+//			if(punti_appoggio<=4) 
+//			{
+//				return new BigDecimal(max.doubleValue()/3).setScale(risoluzioneBilancia, RoundingMode.HALF_UP);
+//			}
+//			else 
+//			{
+//				return new BigDecimal(max.doubleValue()/(punti_appoggio-1)).setScale(risoluzioneBilancia, RoundingMode.HALF_UP);
+//			}
+//
+//		}
 
-			if(strumento.getPortata_max_C1().doubleValue()!=0) 
-			{
-				max=strumento.getPortata_max_C1();
-			}
 
-			if(strumento.getPortata_max_C2().doubleValue()!=0) 
-			{
-				max=strumento.getPortata_max_C2();
-			}
-
-			if(strumento.getPortata_max_C3().doubleValue()!=0) 
-			{
-				max=strumento.getPortata_max_C3();
-			}
-
-			if(punti_appoggio<=4) 
-			{
-				return new BigDecimal(max.doubleValue()/3).setScale(risoluzioneBilancia, RoundingMode.HALF_UP);
-			}
-			else 
-			{
-				return new BigDecimal(max.doubleValue()/(punti_appoggio-1)).setScale(risoluzioneBilancia, RoundingMode.HALF_UP);
-			}
-
-		}
-
-
-		if(idTipoStrumento==3) 
+		if(idTipoStrumento==2 || idTipoStrumento==3) 
 		{	
 			if(campo==0) 
 			{

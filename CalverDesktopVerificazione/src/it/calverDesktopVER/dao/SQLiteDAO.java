@@ -1855,7 +1855,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			pst=con.prepareStatement("INSERT INTO ver_linearita(id_misura,campo,riferimento) VALUES(?,?,?)");
 
 
-			if(tipoStrumento!=3) 
+			if(tipoStrumento!=3 && tipoStrumento!=2) 
 			{
 				for (int i = 0; i < 6; i++) 
 
@@ -1909,7 +1909,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			pst=con.prepareStatement("INSERT INTO ver_ripetibilita(id_misura,campo,numero_ripetizione) VALUES(?,?,?)");
 
 
-			if(tipoStrumento!=3) 
+			if(tipoStrumento!=3 && tipoStrumento!=2) 
 			{
 				for (int i = 0; i < 6; i++) 
 
@@ -1963,7 +1963,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			pst=con.prepareStatement("INSERT INTO ver_accuratezza(id_misura,campo,posizione) VALUES(?,?,?)");
 
 
-			if(tipoStrumento!=3) 
+			if(tipoStrumento!=3 && tipoStrumento!=2) 
 			{
 				
 					pst.setInt(1,idMisura);		
@@ -2013,7 +2013,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			pst=con.prepareStatement("INSERT INTO ver_mobilita(id_misura,campo,caso,carico) VALUES(?,?,?,?)");
 
 
-			if(tipoStrumento!=3) 
+			if(tipoStrumento!=3 && tipoStrumento!=2) 
 			{
 			
 			for (int z = 1; z <=2; z++) {
@@ -2077,7 +2077,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			pst=con.prepareStatement("INSERT INTO ver_decentramento(id_misura,campo,posizione,speciale) VALUES(?,?,?,?)");
 
 
-			if(tipoStrumento!=3) 
+			if(tipoStrumento!=3 && tipoStrumento!=2) 
 			{
 				for (int i = 0; i < 10; i++) 
 
