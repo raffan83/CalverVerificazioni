@@ -2559,7 +2559,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		try 
 		{
 			con=getConnection();
-			pst=con.prepareStatement("SELECT * FROM ver_classi WHERE classe=?");
+			pst=con.prepareStatement("SELECT * FROM ver_classi WHERE classe=? ORDER BY errore ASC");
 			pst.setInt(1, _classe);
 			
 			rs=pst.executeQuery();

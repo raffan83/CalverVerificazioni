@@ -157,6 +157,9 @@ public class PannelloMisuraMaster extends JPanel
 
 	private int risoluzioneBilancia;
 
+	private boolean chk_btn_decentramento=false;
+	private boolean chk_btn_linearita=false;
+	
 	public PannelloMisuraMaster(String id) throws Exception
 	{
 		SessionBO.prevPage="PSS";
@@ -1657,7 +1660,41 @@ public class PannelloMisuraMaster extends JPanel
 
 		JLabel lblStrumentoSpeciale = new JLabel("Strumento speciale");
 		lblStrumentoSpeciale.setFont(new Font("Arial", Font.BOLD, 12));
-		pannelloDecentramento.add(lblStrumentoSpeciale, "flowx,cell 5 4 2 1,alignx right");
+		pannelloDecentramento.add(lblStrumentoSpeciale, "flowx,cell 5 4,alignx right");
+		
+		JButton btnRicalcola = new JButton("Ricalcola");
+		btnRicalcola.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				for(int i =0; i<tableDec.getRowCount();i++) 
+				{
+					int column=1;
+					if(modelDec.getValueAt(i, column)!=null && modelDec.getValueAt(i, column).toString().length()>0)
+					{
+						System.out.println("update dec "+column+" * "+i);
+						modelDec.setValueAt(modelDec.getValueAt(i, column),i, column);
+					}
+
+					column=2;
+					if(modelDec.getValueAt(i, column)!=null && modelDec.getValueAt(i, column).toString().length()>0)
+					{
+						System.out.println("update dec "+column+" * "+i);
+						modelDec.setValueAt(modelDec.getValueAt(i, column),i, column);
+					}
+					
+					column=3;
+					if(modelDec.getValueAt(i, column)!=null && modelDec.getValueAt(i, column).toString().length()>0)
+					{
+						System.out.println("update dec "+column+" * "+i);
+						modelDec.setValueAt(modelDec.getValueAt(i, column),i, column);
+					}
+					
+				}
+				chk_btn_decentramento=true;
+			}
+		});
+		btnRicalcola.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloDecentramento.add(btnRicalcola, "cell 6 4,alignx center");
 
 
 
@@ -1939,8 +1976,8 @@ public class PannelloMisuraMaster extends JPanel
 							}
 							decentramento.setCarico(new BigDecimal(textField_carico.getText()));
 							GestioneMisuraBO.updateValoriDecentramento(decentramento,misura.getId());
-
-
+							
+							
 						}
 
 					}
@@ -2192,7 +2229,7 @@ public class PannelloMisuraMaster extends JPanel
 
 		pannelloLinearita.setBorder(new TitledBorder(new LineBorder(new Color(255, 0, 0), 2, true), "Prova Linearità", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		pannelloLinearita.setBackground(Color.WHITE);
-		pannelloLinearita.setLayout(new MigLayout("", "[22.00][][grow]", "[][][][][][][][][13.00][][13.00][]"));
+		pannelloLinearita.setLayout(new MigLayout("", "[22.00][][grow]", "[][][][][][][][]"));
 
 		final JComboBox<String> comboBox_tipo_azzeramento = new JComboBox<String>();
 		comboBox_tipo_azzeramento.setModel(new DefaultComboBoxModel<String>(new String[] {"Non automatico o semiautomatico","Automatico"}));
@@ -2374,7 +2411,7 @@ public class PannelloMisuraMaster extends JPanel
 		pannelloLinearita.add(lblTipoDispositivoDi, "cell 1 2,alignx trailing");
 
 
-		pannelloLinearita.add(comboBox_tipo_azzeramento, "cell 2 2");
+		pannelloLinearita.add(comboBox_tipo_azzeramento, "flowx,cell 2 2");
 
 
 		if(listaLinearita.get(0).getTipoAzzeramento()!=0) 
@@ -2406,6 +2443,55 @@ public class PannelloMisuraMaster extends JPanel
 		textField_esito_lin.setFont(new Font("Arial", Font.PLAIN, 12));
 		textField_esito_lin.setColumns(10);
 		pannelloLinearita.add(textField_esito_lin, "cell 1 6,width :100:");
+		
+		final JButton btnRicalcola_1 = new JButton("Ricalcola");
+		
+		btnRicalcola_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			
+				for(int i =0; i<tableLin.getRowCount();i++) 
+				{
+					int column=1;
+					
+					if(modelLin.getValueAt(i, column)!=null && modelLin.getValueAt(i, column).toString().length()>0)
+					{
+						System.out.println("UPD [ROW]"+i+" - [COL]"+column);
+						modelLin.setValueAt(modelLin.getValueAt(i, column),i, column);
+					}
+
+					column=2;
+					if(modelLin.getValueAt(i, column)!=null && modelLin.getValueAt(i, column).toString().length()>0)
+					{
+						System.out.println("UPD [ROW]"+i+" - [COL]"+column);
+						modelLin.setValueAt(modelLin.getValueAt(i, column),i, column);
+					}
+					
+					column=3;
+					if(modelLin.getValueAt(i, column)!=null && modelLin.getValueAt(i, column).toString().length()>0)
+					{
+						System.out.println("UPD [ROW]"+i+" - [COL]"+column);
+						modelLin.setValueAt(modelLin.getValueAt(i, column),i, column);
+					}
+					column=4;
+					if(modelLin.getValueAt(i, column)!=null && modelLin.getValueAt(i, column).toString().length()>0)
+					{
+						System.out.println("UPD [ROW]"+i+" - [COL]"+column);
+						modelLin.setValueAt(modelLin.getValueAt(i, column),i, column);
+					}
+					column=5;
+					if(modelLin.getValueAt(i, column)!=null && modelLin.getValueAt(i, column).toString().length()>0)
+					{
+						System.out.println("UPD [ROW]"+i+" - [COL]"+column);
+						modelLin.setValueAt(modelLin.getValueAt(i, column),i, column);
+					}
+					
+				}
+				chk_btn_linearita=true;
+			}
+		});
+		btnRicalcola_1.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloLinearita.add(btnRicalcola_1, "cell 2 2");
 
 		if(listaLinearita.get(0).getEsito()!=null) 
 		{
@@ -3919,6 +4005,15 @@ public class PannelloMisuraMaster extends JPanel
 
 					try 
 					{
+						//Controllo tasti ricalcola
+						
+						if(chk_btn_decentramento==false || chk_btn_linearita==false) 
+						{
+							JOptionPane.showMessageDialog(null,"Cliccare tasto Ricalcola nei tab Decentramento e Linearità","Mancato Salvataggio",JOptionPane.ERROR_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+							return;
+						}
+						
+						
 						//Controllo completamento dati
 
 						misura=GestioneMisuraBO.getMisura(misura.getId());
