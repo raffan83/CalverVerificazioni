@@ -153,7 +153,7 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 		final JComboBox comboBox_classe = new JComboBox();
 		comboBox_classe.setEnabled(false);
 		comboBox_classe.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		comboBox_classe.setModel(new DefaultComboBoxModel(new String[] {"I", "II", "III", "IIII"}));
+		comboBox_classe.setModel(new DefaultComboBoxModel(new String[] {"I", "II", "III", "IIII","I - lettura fine"}));
 		comboBox_classe.setMaximumRowCount(4);
 		add(comboBox_classe, "cell 4 3 2 1,width :50:");
 		

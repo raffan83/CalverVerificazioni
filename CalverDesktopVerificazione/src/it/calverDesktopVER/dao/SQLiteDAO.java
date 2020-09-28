@@ -326,14 +326,15 @@ public class SQLiteDAO {
 
 		try{
 			con=getConnection();
-			pst=con.prepareStatement("INSERT INTO ver_misura(id_ver_strumento,data_verificazione,seq_risposte,stato) VALUES(?,?,?,?)",pst.RETURN_GENERATED_KEYS);
+			pst=con.prepareStatement("INSERT INTO ver_misura(id_ver_strumento,data_verificazione,tipo_risposta,seq_risposte,stato) VALUES(?,?,?,?,?)",pst.RETURN_GENERATED_KEYS);
 			
 			pst.setInt(1,Integer.parseInt(id));
 			SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy");
 			Date d = new Date();
 			pst.setString(2,sdf.format(d));
-			pst.setString(3,"0");
+			pst.setString(3,"1");
 			pst.setString(4,"0");
+			pst.setString(5,"0");
 			pst.execute();
 		
 		    ResultSet generatedKeys = pst.getGeneratedKeys(); 
@@ -2555,6 +2556,8 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		ArrayList<VerClassiDTO> listaClassi = new ArrayList<>();
 		
 		VerClassiDTO classe;
+		
+		if(_classe==5) _classe=1;
 		
 		try 
 		{
