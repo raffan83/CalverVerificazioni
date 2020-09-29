@@ -334,8 +334,8 @@ public class PannelloMisuraMaster extends JPanel
 			e1.printStackTrace();
 		}
 
-	//	final JComboBox<String> comboBox_lista_campioni = new JComboBox<String>();
-		final JComboBox<String> comboBox_lista_campioni = new JComboBox<String>(listaCampioniCompleta);
+		final JComboBox<String> comboBox_lista_campioni = new JComboBox<String>();
+	//	final JComboBox<String> comboBox_lista_campioni = new JComboBox<String>(listaCampioniCompleta);
 		comboBox_lista_campioni.setFont(new Font("Arial", Font.BOLD, 12));
 		pannelloDatiGenerali.add(comboBox_lista_campioni, "cell 2 7");
 
@@ -1649,11 +1649,11 @@ public class PannelloMisuraMaster extends JPanel
 		pannelloDecentramento.add(lblEsempiDiTipici, "cell 0 1 5 1,alignx center");
 
 		JLabel lblNewLabel_4 = new JLabel("");
-		lblNewLabel_4.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/bil_qua.png")));
+		lblNewLabel_4.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/bil_cer.png")));
 		pannelloDecentramento.add(lblNewLabel_4, "cell 2 2,alignx center");
 
 		JLabel lblNewLabel_5 = new JLabel("");
-		lblNewLabel_5.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/bil_cer.png")));
+		lblNewLabel_5.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/bil_qua.png")));
 		pannelloDecentramento.add(lblNewLabel_5, "cell 3 2,alignx center");
 
 		JLabel label = new JLabel("");
@@ -2546,6 +2546,12 @@ public class PannelloMisuraMaster extends JPanel
 		lbl_lettura_fine.setFont(new Font("Arial", Font.BOLD, 12));
 		pannelloLinearita.add(lbl_lettura_fine, "cell 1 7 2 1");
 
+		if(strumento.getClasse()==5) 
+		{
+			BigDecimal sugg=new BigDecimal(listaClassi.get(0).getLimiteSuperiore()).multiply(getE(campo, strumento.getId_tipo_strumento(), BigDecimal.ZERO));
+			lbl_lettura_fine.setText("*Si consiglia di eseguire almeno un punto a "+sugg.stripTrailingZeros().toPlainString()+" "+strumento.getUm());
+		}
+		
 		if(listaLinearita.get(0).getEsito()!=null) 
 		{
 			if(listaLinearita.get(0).getEsito().equals("POSITIVO")) 
