@@ -317,6 +317,10 @@ public class PannelloMisuraMaster extends JPanel
 		final JLabel lblDataRiparazione = new JLabel("Data riparazione");
 		lblDataRiparazione.setFont(new Font("Arial", Font.BOLD, 12));
 		pannelloDatiGenerali.add(lblDataRiparazione, "flowx,cell 4 3,alignx trailing");
+		
+		final JLabel lbl_format_data = new JLabel("(gg/mm/aaaa)");
+		lbl_format_data.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloDatiGenerali.add(lbl_format_data, "cell 5 3");
 
 		chckbx = new JCheckBox("Lo strumento presenta difetti tali da pregiudicare l'affidabilità metrologica");
 		chckbx.setFont(new Font("Arial", Font.BOLD, 14));
@@ -625,6 +629,7 @@ public class PannelloMisuraMaster extends JPanel
 			{
 				lblNomeRiparatore.setVisible(true);
 				lblDataRiparazione.setVisible(true);
+				lbl_format_data.setVisible(true);
 				textField_nomeRiparatore.setVisible(true);
 				textField_dataRiparazione.setVisible(true);
 				textField_nomeRiparatore.setText(misura.getNomeRiparatore());
@@ -636,6 +641,7 @@ public class PannelloMisuraMaster extends JPanel
 				lblDataRiparazione.setVisible(false);
 				textField_nomeRiparatore.setVisible(false);
 				textField_dataRiparazione.setVisible(false);
+				lbl_format_data.setVisible(false);
 
 			}
 
@@ -676,6 +682,7 @@ public class PannelloMisuraMaster extends JPanel
 					lblDataRiparazione.setVisible(true);
 					textField_nomeRiparatore.setVisible(true);
 					textField_dataRiparazione.setVisible(true);
+					lbl_format_data.setVisible(true);
 				}
 				else 
 				{
@@ -683,6 +690,7 @@ public class PannelloMisuraMaster extends JPanel
 					lblDataRiparazione.setVisible(false);
 					textField_nomeRiparatore.setVisible(false);
 					textField_dataRiparazione.setVisible(false);
+					lbl_format_data.setVisible(false);
 
 				}
 
@@ -1917,13 +1925,15 @@ public class PannelloMisuraMaster extends JPanel
 							
 							BigDecimal mpe=getMPE(mas.toPlainString(), comboBox_campo.getSelectedIndex(),2);
 							
+							BigDecimal mpe_zero=getE(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),mas).multiply(new BigDecimal(0.25)).stripTrailingZeros();
+							
 							if(row==0) 
 							{
 								errore_corr=BigDecimal.ZERO.setScale(risoluzioneBilancia);
 								
-								if(mpe!=null) 
+								if(mpe_zero!=null) 
 								{
-									modelDec.setValueAt(eRis.multiply(new BigDecimal(0.25)).setScale(risoluzioneBilancia,RoundingMode.HALF_UP).toPlainString(), row, 6);
+									modelDec.setValueAt(mpe_zero.toPlainString(), row, 6);
 								}
 								
 								
@@ -1940,7 +1950,7 @@ public class PannelloMisuraMaster extends JPanel
 									modelDec.setValueAt(mpe, row, 6);
 								}else 
 								{
-									modelDec.setValueAt(eRis.multiply(new BigDecimal(0.25)).setScale(risoluzioneBilancia,RoundingMode.HALF_UP).toPlainString(), row, 6);
+									modelDec.setValueAt(mpe_zero.toPlainString(), row, 6);
 								}
 
 							}
@@ -2120,15 +2130,15 @@ public class PannelloMisuraMaster extends JPanel
 			{
 				if(comboBox_campo.getSelectedIndex()==0) 
 				{
-					modelDec.setValueAt(strumento.getDiv_rel_C1().multiply(BigDecimal.TEN).setScale(risoluzioneBilancia,RoundingMode.HALF_UP).toPlainString(),i, 1);
+					modelDec.setValueAt(strumento.getDiv_ver_C1().multiply(BigDecimal.TEN).setScale(risoluzioneBilancia,RoundingMode.HALF_UP).toPlainString(),i, 1);
 				}
 				if(comboBox_campo.getSelectedIndex()==1) 
 				{
-					modelDec.setValueAt(strumento.getDiv_rel_C2().multiply(BigDecimal.TEN).setScale(risoluzioneBilancia,RoundingMode.HALF_UP).toPlainString(),i, 1);
+					modelDec.setValueAt(strumento.getDiv_ver_C2().multiply(BigDecimal.TEN).setScale(risoluzioneBilancia,RoundingMode.HALF_UP).toPlainString(),i, 1);
 				}
 				if(comboBox_campo.getSelectedIndex()==2) 
 				{
-					modelDec.setValueAt(strumento.getDiv_rel_C3().multiply(BigDecimal.TEN).setScale(risoluzioneBilancia,RoundingMode.HALF_UP).toPlainString(),i, 1);
+					modelDec.setValueAt(strumento.getDiv_ver_C3().multiply(BigDecimal.TEN).setScale(risoluzioneBilancia,RoundingMode.HALF_UP).toPlainString(),i, 1);
 				}
 			}else 
 			{
@@ -2549,7 +2559,7 @@ public class PannelloMisuraMaster extends JPanel
 		if(strumento.getClasse()==5) 
 		{
 			BigDecimal sugg=new BigDecimal(listaClassi.get(0).getLimiteSuperiore()).multiply(getE(campo, strumento.getId_tipo_strumento(), BigDecimal.ZERO));
-			lbl_lettura_fine.setText("*Si consiglia di eseguire almeno un punto a "+sugg.stripTrailingZeros().toPlainString()+" "+strumento.getUm());
+			lbl_lettura_fine.setText("Tenendo in considerazione il punto di variazione calcolato pari a: "+sugg.stripTrailingZeros().toPlainString()+" "+strumento.getUm()+", se non diversamente specificato equi spaziare gli ulteriori due punti previsti tra il minimo e il massimo.");
 		}
 		
 		if(listaLinearita.get(0).getEsito()!=null) 
@@ -3969,6 +3979,11 @@ public class PannelloMisuraMaster extends JPanel
 							}
 						}
 
+						if(comboBox_tipo_verifica.getSelectedIndex()==1 && (textField_nomeRiparatore.getText().length()==0 || textField_dataRiparazione.getText().length()==0)) 
+						{
+							JOptionPane.showMessageDialog(null,"Inserire nome riparatore e data riparazione","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+							return;
+						}
 						if(save) {
 							boolean esito = getEsitoControlloPreliminare(sequence.substring(0, sequence.length()-1));
 
