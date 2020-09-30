@@ -3128,10 +3128,10 @@ public class PannelloMisuraMaster extends JPanel
 
 							if(strumento.getFamiglia_strumento().equals("0212")) 
 							{
-								mpe=e1.multiply(new BigDecimal(0.25)).setScale(risoluzioneBilancia,RoundingMode.HALF_UP).toPlainString();
+								mpe=e1.multiply(new BigDecimal(0.25)).stripTrailingZeros().toPlainString();
 							}else 
 							{
-								mpe=e1.multiply(new BigDecimal(0.5)).setScale(risoluzioneBilancia,RoundingMode.HALF_UP).toPlainString();
+								mpe=e1.multiply(new BigDecimal(0.5)).stripTrailingZeros().toPlainString();
 							}
 
 							modelAccuratezza.setValueAt(errore.setScale(risoluzioneBilancia,RoundingMode.HALF_UP).toPlainString(), 0, 4);
