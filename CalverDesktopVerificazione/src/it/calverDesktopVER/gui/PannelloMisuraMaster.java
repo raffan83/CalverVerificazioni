@@ -1643,9 +1643,9 @@ public class PannelloMisuraMaster extends JPanel
 			{
 				modelDec.setValueAt(ver.getMassa().stripTrailingZeros(), i, 1);
 				
-				 risoluzioneBilanciaE0=getE(comboBox.getSelectedIndex(), strumento.getId_tipo_strumento(), BigDecimal.ZERO).scale()+1;
-				 risoluzioneBilancia=getE(comboBox.getSelectedIndex(), strumento.getId_tipo_strumento(), ver.getMassa()).scale()+1;
-				 risoluzioneIndicazione=getE(comboBox.getSelectedIndex(), strumento.getId_tipo_strumento(),ver.getMassa()).scale();
+				 risoluzioneBilanciaE0=getE(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(), BigDecimal.ZERO).scale()+1;
+				 risoluzioneBilancia=getE(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(), ver.getMassa()).scale()+1;
+				 risoluzioneIndicazione=getE(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),ver.getMassa()).scale();
 				
 			}
 			if(ver.getIndicazione()!=null) 
@@ -1676,9 +1676,9 @@ public class PannelloMisuraMaster extends JPanel
 			ver=listaDecentramento.get(i+1);
 			if(ver.getMassa()!=null) 
 			{
-				 risoluzioneBilanciaE0=getE(comboBox.getSelectedIndex(), strumento.getId_tipo_strumento(), BigDecimal.ZERO).scale()+1;
-				 risoluzioneBilancia=getE(comboBox.getSelectedIndex(), strumento.getId_tipo_strumento(), ver.getMassa()).scale()+1;
-				 risoluzioneIndicazione=getE(comboBox.getSelectedIndex(), strumento.getId_tipo_strumento(),ver.getMassa()).scale();
+				 risoluzioneBilanciaE0=getE(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(), BigDecimal.ZERO).scale()+1;
+				 risoluzioneBilancia=getE(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(), ver.getMassa()).scale()+1;
+				 risoluzioneIndicazione=getE(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),ver.getMassa()).scale();
 				 
 				modelDec.setValueAt(ver.getMassa().stripTrailingZeros(), i+1, 1);
 			}
@@ -4247,7 +4247,7 @@ public class PannelloMisuraMaster extends JPanel
 							}
 						}
 
-						if(comboBox_tipo_verifica.getSelectedIndex()==1 && (textField_nomeRiparatore.getText().length()==0 || textField_dataRiparazione.getText().length()==0)) 
+						if(comboBox_motivo.getSelectedIndex()==2 && (textField_nomeRiparatore.getText().length()==0 || textField_dataRiparazione.getText().length()==0)) 
 						{
 							JOptionPane.showMessageDialog(null,"Inserire nome riparatore e data riparazione","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
 							return;
