@@ -424,6 +424,11 @@ public class PannelloMisuraMaster extends JPanel
 		JButton btnCarica_inizio = new JButton("Carica");
 		final JButton btnVisualizza_inizio = new JButton("Visualizza");
 
+		lblNomeRiparatore.setVisible(false);
+		lblDataRiparazione.setVisible(false);
+		textField_nomeRiparatore.setVisible(false);
+		textField_dataRiparazione.setVisible(false);
+		lbl_format_data.setVisible(false);
 
 		btnCarica_inizio.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -1050,7 +1055,8 @@ public class PannelloMisuraMaster extends JPanel
 		ArrayList<VerRipetibilitaDTO> lista=(ArrayList<VerRipetibilitaDTO>)misura.getVerRipetibilitas(comboBox_campo.getSelectedIndex()+1);
 
 		int risoluzioneBilancia=0;
-		
+		int risoluzioneBilanciaE0=0;
+		int risoluzioneIndicazione=0;
 		for (int i = 0; i < 3; i++) {
 
 			VerRipetibilitaDTO ver=lista.get(i);
@@ -1059,8 +1065,7 @@ public class PannelloMisuraMaster extends JPanel
 
 			massa =getMassa(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento()).stripTrailingZeros();
 
-			int risoluzioneBilanciaE0=0;
-			int risoluzioneIndicazione=0;
+			
 			
 			
 			if(ver.getMassa()!=null) 
@@ -1157,7 +1162,7 @@ public class PannelloMisuraMaster extends JPanel
 		
 		if(lista.get(0).getDeltaPortata()!=null) 
 		{
-			textField_p_p_rip.setText(lista.get(0).getDeltaPortata().setScale(risoluzioneBilancia,RoundingMode.HALF_UP).toPlainString());
+			textField_p_p_rip.setText(lista.get(0).getDeltaPortata().setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP).toPlainString());
 		}
 		if(lista.get(0).getMpe()!=null) 
 		{
@@ -1250,7 +1255,7 @@ public class PannelloMisuraMaster extends JPanel
 							{
 								portata= ind;
 							}
-							BigDecimal deltaPortata=getDeltaPorta(portata,row).setScale(risoluzioneBilancia, RoundingMode.HALF_UP);
+							BigDecimal deltaPortata=getDeltaPorta(portata,row).setScale(risoluzioneBilanciaE0, RoundingMode.HALF_UP);
 
 							textField_p_p_rip.setText(deltaPortata.toPlainString());
 
