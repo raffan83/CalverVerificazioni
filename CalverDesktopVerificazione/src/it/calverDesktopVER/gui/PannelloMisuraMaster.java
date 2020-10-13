@@ -2485,27 +2485,60 @@ public class PannelloMisuraMaster extends JPanel
 				}
 				if(i==2) 
 				{
+					
 					if(strumento.getClasse()!=5) 
 					{
-						BigDecimal primo_punto_variazione=getEVariazione(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),BigDecimal.ZERO).multiply(new BigDecimal(listaClassi.get(0).getLimiteSuperiore()));
-						modelLin.setValueAt(primo_punto_variazione.stripTrailingZeros().toPlainString(), i, 1);
+						if(strumento.getId_tipo_strumento()==2 && comboBox_campo.getSelectedIndex()>0)							
+						{	
+							BigDecimal campoMaxPrec=strumento.getPortataMaxCampo(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento());
+							modelLin.setValueAt(campoMaxPrec.add(BigDecimal.ONE).stripTrailingZeros().stripTrailingZeros().toPlainString(), i, 1);
+						}
+						else 
+						{
+							BigDecimal primo_punto_variazione=getEVariazione(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),BigDecimal.ZERO).multiply(new BigDecimal(listaClassi.get(0).getLimiteSuperiore()));
+							modelLin.setValueAt(primo_punto_variazione.stripTrailingZeros().toPlainString(), i, 1);
+						}
 					}
 				}
 				if(i==3) 
 				{
 					if(strumento.getClasse()!=5) 
 					{
-						secondo_punto_variazione=getEVariazione(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),BigDecimal.ZERO).multiply(new BigDecimal(listaClassi.get(1).getLimiteSuperiore()));
-						modelLin.setValueAt(secondo_punto_variazione.stripTrailingZeros().stripTrailingZeros().toPlainString(), i, 1);
+						if(strumento.getId_tipo_strumento()==2 && comboBox_campo.getSelectedIndex()>0)							
+						{	
+							BigDecimal campoMaxPrec=strumento.getPortataMaxCampo(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento());
+							
+							BigDecimal campoMax=strumento.getPortataMaxCampo(comboBox_campo.getSelectedIndex()+1, strumento.getId_tipo_strumento());
+							
+							BigDecimal factor=(campoMax.subtract(campoMaxPrec)).divide(new BigDecimal(3),RoundingMode.HALF_UP);
+							modelLin.setValueAt(campoMaxPrec.add(factor).stripTrailingZeros().stripTrailingZeros().toPlainString(), i, 1);
+						}
+						else 
+						{
+							secondo_punto_variazione=getEVariazione(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),BigDecimal.ZERO).multiply(new BigDecimal(listaClassi.get(1).getLimiteSuperiore()));
+							modelLin.setValueAt(secondo_punto_variazione.stripTrailingZeros().stripTrailingZeros().toPlainString(), i, 1);
+						}
 					}
 				}
 				if(i==4) 
 				{
 					if(strumento.getClasse()!=5) 
 					{
-						secondo_punto_variazione=getEVariazione(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),BigDecimal.ZERO).multiply(new BigDecimal(listaClassi.get(1).getLimiteSuperiore()));
-						BigDecimal terzo_punto_variazione=(strumento.getPortataMaxCampo(campo,strumento.getId_tipo_strumento()).add(secondo_punto_variazione)).divide(new BigDecimal(2),RoundingMode.HALF_UP);
-						modelLin.setValueAt(terzo_punto_variazione.stripTrailingZeros().stripTrailingZeros().toPlainString(), i, 1);
+						if(strumento.getId_tipo_strumento()==2 && comboBox_campo.getSelectedIndex()>0)							
+						{	
+							BigDecimal campoMaxPrec=strumento.getPortataMaxCampo(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento());
+							
+							BigDecimal campoMax=strumento.getPortataMaxCampo(comboBox_campo.getSelectedIndex()+1, strumento.getId_tipo_strumento());
+							
+							BigDecimal factor=(campoMax.subtract(campoMaxPrec)).divide(new BigDecimal(3),RoundingMode.HALF_UP);
+							factor=factor.multiply(new BigDecimal(2));
+							modelLin.setValueAt(campoMaxPrec.add(factor).stripTrailingZeros().stripTrailingZeros().toPlainString(), i, 1);
+						}else 
+						{
+							secondo_punto_variazione=getEVariazione(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),BigDecimal.ZERO).multiply(new BigDecimal(listaClassi.get(1).getLimiteSuperiore()));
+							BigDecimal terzo_punto_variazione=(strumento.getPortataMaxCampo(campo,strumento.getId_tipo_strumento()).add(secondo_punto_variazione)).divide(new BigDecimal(2),RoundingMode.HALF_UP);
+							modelLin.setValueAt(terzo_punto_variazione.stripTrailingZeros().stripTrailingZeros().toPlainString(), i, 1);
+						}
 					}
 				}
 				if(i==5) 
