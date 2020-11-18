@@ -2559,6 +2559,8 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		
 		if(_classe==5) _classe=1;
 		
+		if(_classe==6) _classe=2;
+		
 		try 
 		{
 			con=getConnection();

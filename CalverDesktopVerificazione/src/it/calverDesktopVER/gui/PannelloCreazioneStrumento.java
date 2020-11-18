@@ -174,7 +174,7 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 		
 		final JComboBox comboBox_classe = new JComboBox();
 		comboBox_classe.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		comboBox_classe.setModel(new DefaultComboBoxModel(new String[] {"I", "II", "III", "IIII","I - lettura fine"}));
+		comboBox_classe.setModel(new DefaultComboBoxModel(new String[] {"I", "II", "III", "IIII","I - lettura fine","II - lettura fine"}));
 		comboBox_classe.setMaximumRowCount(4);
 		add(comboBox_classe, "cell 4 3 2 1,width :50:");
 		
