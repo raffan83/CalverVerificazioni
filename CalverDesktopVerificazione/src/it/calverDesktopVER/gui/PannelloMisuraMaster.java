@@ -2260,7 +2260,7 @@ public class PannelloMisuraMaster extends JPanel
 
 			private BigDecimal getErrore(BigDecimal mas, BigDecimal ind, BigDecimal err, BigDecimal car, int classe) {
 
-				if(classe!=5) 
+				if(classe<5) 
 				{
 					return ind.multiply(Costanti.gFactor).add(err.divide(new BigDecimal(2),RoundingMode.HALF_UP)).subtract(car).subtract(mas);
 				}
