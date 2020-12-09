@@ -1504,7 +1504,7 @@ public class PannelloMisuraMaster extends JPanel
 
 		int pivot=massa.divide(e,RoundingMode.HALF_UP).intValue();
 
-		BigDecimal errore=null;
+		BigDecimal errore=new BigDecimal(1.5);
 
 		for (int y=0;y<listaClassi.size();y++) 
 		{
@@ -5093,7 +5093,7 @@ public class PannelloMisuraMaster extends JPanel
 		
 						}
 						
-						if(classe!=5) 
+						if(classe<5) 
 						{
 							if(column==2 ||  column==3)
 							{
@@ -5134,7 +5134,7 @@ public class PannelloMisuraMaster extends JPanel
 		
 						}
 						
-						if(classe!=5) 
+						if(classe<5) 
 						{
 							if(column==2 ||  column==3 ||column==4||column==5)
 							{
@@ -5209,7 +5209,7 @@ public class PannelloMisuraMaster extends JPanel
 			cellComponent.setBackground(Color.white);
 
 			
-			if(classe!=5) 
+			if(classe<5) 
 			{
 				if(column==2 ||  column==3 )
 				{
@@ -5268,7 +5268,7 @@ public class PannelloMisuraMaster extends JPanel
 				cellComponent.setForeground(Color.black);
 				cellComponent.setBackground(Color.white);
 				
-				if(classe!=5) 
+				if(classe<5) 
 				{
 					if(column==2 ||  column==3 )
 					{
