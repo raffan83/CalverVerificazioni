@@ -1528,7 +1528,7 @@ public class PannelloMisuraMaster extends JPanel
 
 			if(classe.getErrore().compareTo(new BigDecimal("1.5"))==0) 
 			{
-				if(strumento.getClasse()==1) 
+				if(strumento.getClasse()==1 || strumento.getClasse()==5) 
 				{
 					if(pivot>classe.getLimiteInferiore()) 
 					{
