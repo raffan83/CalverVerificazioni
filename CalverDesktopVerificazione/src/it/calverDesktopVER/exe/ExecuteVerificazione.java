@@ -1,23 +1,17 @@
 package it.calverDesktopVER.exe;
 
-import static com.sun.jna.platform.win32.WinReg.HKEY_CURRENT_USER;
-
 import java.awt.image.BufferedImage;
 import java.net.URL;
-import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import com.sun.jna.platform.win32.Advapi32Util;
-
-import it.calverDesktopVER.bo.SessionBO;
-
+import it.calverDesktopVER.bo.VersionHTTPBO;
 import it.calverDesktopVER.gui.GeneralGUI;
 import it.calverDesktopVER.gui.InitSplash;
-import it.calverDesktopVER.utl.Costanti;
+import it.calverDesktopVER.gui.PannelloTOP;
 
 public class ExecuteVerificazione {
 
@@ -65,6 +59,25 @@ public class ExecuteVerificazione {
 						Thread.sleep(500);
 						fr.dispose();
 
+				  	      Thread th = new Thread(){
+			      	    	  
+				      	    	 public void run() {
+				      	           try {
+				      	        	  if(VersionHTTPBO.checkVersion()!=null)
+				    	      	      {
+				    	      	    	if (!VersionHTTPBO.checkVersion().equals("OK_VER")) 
+				    	      	    	{
+				    	      	    		JOptionPane.showMessageDialog(null,"Disponibile nuova versione \n"+VersionHTTPBO.checkVersion(),"Aggiornamenti disponibili",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+				    	      	    	} 
+
+				    	      	      }
+				      	           } catch(Exception v) {
+				      	               System.out.println(v);
+				      	           }
+				      	       }  
+				      	    	  
+				      	      };   
+				      	    th.start();
 					}
 
 					catch(Exception ex)
