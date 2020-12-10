@@ -53,7 +53,7 @@ public class VersionHTTPBO {
 	    	        JSONParser parser = new JSONParser(); 
 	    			Object obj = parser.parse(output);
 	    			JSONObject jsonObj = (JSONObject) obj;
-	    			String version = (String) jsonObj.get("DASMTAR");
+	    			String version = (String) jsonObj.get("DASMTARVER");
 	    	        
 	    			if(!version.equals(Costanti.VERSION))
 	    			
