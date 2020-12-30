@@ -171,6 +171,7 @@ public class PannelloMisuraMaster extends JPanel
 		strumento=GestioneStrumentoVER_BO.getStrumento(SessionBO.idStrumento);
 		misura=GestioneMisuraBO.getMisura(SessionBO.idMisura);
 
+		
 		listaClassi=GestioneMisuraBO.getListaClassi(strumento.getClasse());
 
 		myFrame=SessionBO.generarFrame;
@@ -1035,11 +1036,11 @@ public class PannelloMisuraMaster extends JPanel
 
 		tableRip = new JTable();
 		
-		modelRip = new ModelRipetibilita(strumento.getUm(),strumento.getClasse());
+		modelRip = new ModelRipetibilita(strumento.getUm(),strumento.getClasse(),strumento.getTipologia());
 
 		tableRip.setModel(modelRip);
 
-		tableRip.setDefaultRenderer(Object.class, new RenderTable(1,strumento.getClasse()));
+		tableRip.setDefaultRenderer(Object.class, new RenderTable(1,strumento.getClasse(),strumento.getTipologia()));
 		
 		tableRip.setRowHeight(25);
 		tableRip.setFont(new Font("Arial", Font.PLAIN, 12));
@@ -1098,7 +1099,7 @@ public class PannelloMisuraMaster extends JPanel
 				modelRip.setValueAt(ver.getCaricoAgg().setScale(risoluzioneBilancia,RoundingMode.HALF_UP), i, 3);
 			}
 			
-			if(ver.getCaricoAgg()==null && strumento.getClasse()>=5)
+			if(ver.getCaricoAgg()==null && (strumento.getClasse()>=5 || strumento.getTipologia()==2))
 			{
 				modelRip.setValueAt("0", i, 3);
 			}
@@ -1248,7 +1249,7 @@ public class PannelloMisuraMaster extends JPanel
 
 							BigDecimal portata=null;
 							
-							if(strumento.getClasse()<5) 
+							if(strumento.getClasse()<5 && strumento.getTipologia()!=2) 
 							{
 								portata=(ind.add(err.divide(new BigDecimal(2).setScale(risoluzioneBilanciaE0, RoundingMode.HALF_UP)).subtract(car))).multiply(Costanti.gFactor);
 							}
@@ -1623,12 +1624,12 @@ public class PannelloMisuraMaster extends JPanel
 
 				if(comboBox.getSelectedItem().toString().equals("SI")) 
 				{
-					tableDec.setDefaultRenderer(Object.class, new MyRendererDecentramentoSpecial(strumento.getClasse()));
+					tableDec.setDefaultRenderer(Object.class, new MyRendererDecentramentoSpecial(strumento.getClasse(),strumento.getTipologia()));
 					flag=true;
 					repaint();
 				}else 
 				{
-					tableDec.setDefaultRenderer(Object.class, new MyRendererDecentramentoNormal(strumento.getClasse()));
+					tableDec.setDefaultRenderer(Object.class, new MyRendererDecentramentoNormal(strumento.getClasse(),strumento.getTipologia()));
 					flag=false;
 					repaint();
 				}
@@ -1656,13 +1657,13 @@ public class PannelloMisuraMaster extends JPanel
 		if(listaDecentramento.get(0).getSpeciale().equals("N")) 
 		{
 			comboBox.setSelectedIndex(0);
-			tableDec.setDefaultRenderer(Object.class, new MyRendererDecentramentoNormal(strumento.getClasse()));
+			tableDec.setDefaultRenderer(Object.class, new MyRendererDecentramentoNormal(strumento.getClasse(),strumento.getTipologia()));
 			repaint();
 			flag=false;
 		}else 
 		{
 			comboBox.setSelectedIndex(1);
-			tableDec.setDefaultRenderer(Object.class, new MyRendererDecentramentoSpecial(strumento.getClasse()));
+			tableDec.setDefaultRenderer(Object.class, new MyRendererDecentramentoSpecial(strumento.getClasse(),strumento.getTipologia()));
 			repaint();
 			flag=true;
 		}
@@ -1712,7 +1713,7 @@ public class PannelloMisuraMaster extends JPanel
 			{
 				modelDec.setValueAt(ver.getCaricoAgg().setScale(risoluzioneBilancia,RoundingMode.HALF_UP), i, 3);
 			}
-			if(ver.getCaricoAgg()==null && strumento.getClasse()>=5) 
+			if(ver.getCaricoAgg()==null && (strumento.getClasse()>=5 ||strumento.getTipologia()==2)) 
 			{
 				modelDec.setValueAt("0", i, 3);
 			}
@@ -1746,7 +1747,7 @@ public class PannelloMisuraMaster extends JPanel
 			{
 				modelDec.setValueAt(ver.getCaricoAgg().setScale(risoluzioneBilancia,RoundingMode.HALF_UP), i+1, 3);
 			}
-			if(ver.getCaricoAgg()==null && strumento.getClasse()>=5) 
+			if(ver.getCaricoAgg()==null && strumento.getClasse()>=5||strumento.getTipologia()==2) 
 			{
 				modelDec.setValueAt("0", i+1, 3);
 			}
@@ -2078,7 +2079,7 @@ public class PannelloMisuraMaster extends JPanel
 
 							BigDecimal eRis =getE(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),mas);
 
-							BigDecimal errore=getErrore(mas,ind,eRis.setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP),car,strumento.getClasse());
+							BigDecimal errore=getErrore(mas,ind,eRis.setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP),car,strumento.getClasse(),strumento.getTipologia());
 							BigDecimal errore_corr=null;
 							
 							BigDecimal mpe=getMPE(mas.toPlainString(), comboBox_campo.getSelectedIndex(),2);
@@ -2258,9 +2259,9 @@ public class PannelloMisuraMaster extends JPanel
 				return i;
 			}
 
-			private BigDecimal getErrore(BigDecimal mas, BigDecimal ind, BigDecimal err, BigDecimal car, int classe) {
+			private BigDecimal getErrore(BigDecimal mas, BigDecimal ind, BigDecimal err, BigDecimal car, int classe,int tipologia) {
 
-				if(classe<5) 
+				if(classe<5 && tipologia!=2) 
 				{
 					return ind.multiply(Costanti.gFactor).add(err.divide(new BigDecimal(2),RoundingMode.HALF_UP)).subtract(car).subtract(mas);
 				}
@@ -2484,7 +2485,7 @@ public class PannelloMisuraMaster extends JPanel
 		tableLin.setFont(new Font("Arial", Font.PLAIN, 12));
 		tableLin.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
 
-		tableLin.setDefaultRenderer(Object.class, new RenderTable(2,strumento.getClasse()));
+		tableLin.setDefaultRenderer(Object.class, new RenderTable(2,strumento.getClasse(),strumento.getTipologia()));
 
 		TableColumn column = tableLin.getColumnModel().getColumn(tableLin.getColumnModel().getColumnIndex("id"));
 		tableLin.removeColumn(column);
@@ -3227,7 +3228,7 @@ public class PannelloMisuraMaster extends JPanel
 		tableAcc.setFont(new Font("Arial", Font.PLAIN, 12));
 		tableAcc.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
 
-		tableAcc.setDefaultRenderer(Object.class, new RenderTable(1,strumento.getClasse()));
+		tableAcc.setDefaultRenderer(Object.class, new RenderTable(1,strumento.getClasse(),strumento.getTipologia()));
 
 
 		TableColumn column = tableAcc.getColumnModel().getColumn(tableAcc.getColumnModel().getColumnIndex("id"));
@@ -3549,7 +3550,7 @@ public class PannelloMisuraMaster extends JPanel
 		tabellaMobilita2.setRowHeight(25);
 		tabellaMobilita2.setFont(new Font("Arial", Font.PLAIN, 12));
 		tabellaMobilita2.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
-		tabellaMobilita2.setDefaultRenderer(Object.class, new RenderTable(3,strumento.getClasse()));
+		tabellaMobilita2.setDefaultRenderer(Object.class, new RenderTable(3,strumento.getClasse(),strumento.getTipologia()));
 
 
 		TableColumn column = tabellaMobilita1.getColumnModel().getColumn(tabellaMobilita1.getColumnModel().getColumnIndex("id"));
@@ -4655,8 +4656,9 @@ public class PannelloMisuraMaster extends JPanel
 		private static final long serialVersionUID = 1L;
 
 		private int classe=0;
+		private int tipologia=0;
 		
-		public ModelRipetibilita(String um, int _classe) 
+		public ModelRipetibilita(String um, int _classe, int _tipologia) 
 		{
 			addColumn("N° Ripetizioni");
 			addColumn("Massa L ("+um+")");
@@ -4665,7 +4667,7 @@ public class PannelloMisuraMaster extends JPanel
 			addColumn("P ("+um+")");
 			addColumn("id");
 			classe=_classe;
-
+			tipologia=_tipologia;
 		}
 		@Override
 		public Class<?> getColumnClass(int column) {
@@ -4690,7 +4692,7 @@ public class PannelloMisuraMaster extends JPanel
 		@Override
 		public boolean isCellEditable(int row, int column) {
 
-			if(classe!=5) 
+			if(classe!=5 && tipologia!=2) 
 			{
 				if( column==1 || column==2 || column==3)
 				{
@@ -5064,10 +5066,13 @@ public class PannelloMisuraMaster extends JPanel
 		
 		private int classe=0;
 		
-		public RenderTable(int _tipoTabella,int _classe) 
+		private int tipologia=0;
+		
+		public RenderTable(int _tipoTabella,int _classe,int _tipologia) 
 		{
 			tipoTabella=_tipoTabella;
 			classe=_classe;
+			tipologia=_tipologia;
 		}
 		
 		public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, java.lang.Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -5093,7 +5098,7 @@ public class PannelloMisuraMaster extends JPanel
 		
 						}
 						
-						if(classe<5) 
+						if(classe<5 && tipologia!=2) 
 						{
 							if(column==2 ||  column==3)
 							{
@@ -5134,7 +5139,7 @@ public class PannelloMisuraMaster extends JPanel
 		
 						}
 						
-						if(classe<5) 
+						if(classe<5 && tipologia!=2 ) 
 						{
 							if(column==2 ||  column==3 ||column==4||column==5)
 							{
@@ -5194,9 +5199,13 @@ public class PannelloMisuraMaster extends JPanel
 		
 		private int classe=0;
 		
-		public MyRendererDecentramentoSpecial(int _classe) 
+		private int tipologia=0;
+		
+		public MyRendererDecentramentoSpecial(int _classe,int _tipologia) 
 		{
 			classe=_classe;
+			
+			tipologia=_tipologia;
 		}
 		
 		public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, java.lang.Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -5209,7 +5218,7 @@ public class PannelloMisuraMaster extends JPanel
 			cellComponent.setBackground(Color.white);
 
 			
-			if(classe<5) 
+			if(classe<5 && tipologia!=2) 
 			{
 				if(column==2 ||  column==3 )
 				{
@@ -5246,9 +5255,13 @@ public class PannelloMisuraMaster extends JPanel
 		
 		private int classe;
 		
-		public MyRendererDecentramentoNormal(int _classe) 
+		private int tipologia=0;
+		
+		public MyRendererDecentramentoNormal(int _classe,int _tipologia) 
 		{
 			classe=_classe;
+			
+			tipologia=_tipologia;
 		}
 		public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, java.lang.Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 
@@ -5268,7 +5281,7 @@ public class PannelloMisuraMaster extends JPanel
 				cellComponent.setForeground(Color.black);
 				cellComponent.setBackground(Color.white);
 				
-				if(classe<5) 
+				if(classe<5 && tipologia!=2) 
 				{
 					if(column==2 ||  column==3 )
 					{
