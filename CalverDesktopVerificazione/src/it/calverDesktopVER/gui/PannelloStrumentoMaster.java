@@ -527,14 +527,22 @@ public class PannelloStrumentoMaster extends JPanel implements ActionListener {
 						{
 							SessionBO.idStrumento=id;
 							VerStrumentoDTO strumento=GestioneStrumentoVER_BO.getStrumento(id);
-							
+
 							if(GestioneStrumentoVER_BO.valutaStrumento(strumento)) 
 							{
-								idMisura=GestioneMisuraBO.insertMisura(id,strumento.getId_tipo_strumento());
-								SessionBO.idMisura=idMisura;
-								panelDB =new PannelloMisuraMaster(id);
-							}
-							else 
+								if (controllaDataStrumento(strumento.getData_messa_in_servizio())) 
+								{
+									idMisura=GestioneMisuraBO.insertMisura(id,strumento.getId_tipo_strumento());
+									SessionBO.idMisura=idMisura;
+									panelDB =new PannelloMisuraMaster(id);
+
+
+								} else 
+								{
+									JOptionPane.showMessageDialog(null,"Indicare la data di messa in servizio correttamente","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+								}
+
+							}else 
 							{
 								JOptionPane.showMessageDialog(null,"Lo strumento non possiede tutti i dati necessari alla creazione della misura","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));	
 							}
@@ -546,11 +554,11 @@ public class PannelloStrumentoMaster extends JPanel implements ActionListener {
 							SessionBO.idMisura=idMisura;
 
 
-						//	ProvaMisuraDTO lista =GestioneMisuraBO.getProvaMisura(id);
+							//	ProvaMisuraDTO lista =GestioneMisuraBO.getProvaMisura(id);
 
 							panelDB =new PannelloMisuraMaster(id);
 						}
-						
+
 						if(panelDB!=null) {
 							PannelloConsole.printArea("Apertura Scheda Strumento [ID]: "+id);
 							SystemGUI.callPanel(panelDB, "PMM");
@@ -567,6 +575,15 @@ public class PannelloStrumentoMaster extends JPanel implements ActionListener {
 					e1.printStackTrace();
 				}
 				PannelloTOP.d.close();
+			}
+
+			private boolean controllaDataStrumento(String data_messa_in_servizio) {
+			
+				if(data_messa_in_servizio.equals("01/01/1900")) 
+				{
+					return false;
+				}
+				return true;
 			}
 		}
 

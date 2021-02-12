@@ -1669,7 +1669,7 @@ public class PannelloMisuraMaster extends JPanel
 		}
 
 
-		modelDec = new ModelDecentramento(strumento.getUm(),strumento.getClasse());
+		modelDec = new ModelDecentramento(strumento.getUm(),strumento.getClasse(),strumento.getTipologia());
 
 		tableDec.setModel(modelDec);
 
@@ -2477,7 +2477,7 @@ public class PannelloMisuraMaster extends JPanel
 
 		tableLin = new JTable();
 
-		modelLin = new ModelLinearita(strumento.getUm(),strumento.getClasse());
+		modelLin = new ModelLinearita(strumento.getUm(),strumento.getClasse(),strumento.getTipologia());
 
 		tableLin.setModel(modelLin);
 
@@ -2627,7 +2627,7 @@ public class PannelloMisuraMaster extends JPanel
 			{
 				modelLin.setValueAt(lin.getCaricoAggSalita().setScale(risoluzioneBilancia,RoundingMode.HALF_UP), i, 4);	
 			}
-			if(strumento.getClasse()>=5) 
+			if(strumento.getClasse()>=5 ||strumento.getTipologia()==2) 
 			{
 				modelLin.setValueAt("0", i, 4);	
 			}
@@ -2636,7 +2636,7 @@ public class PannelloMisuraMaster extends JPanel
 			{
 				modelLin.setValueAt(lin.getCaricoAggDiscesa().setScale(risoluzioneBilancia,RoundingMode.HALF_UP), i, 5);	
 			}
-			if(strumento.getClasse()>=5) 
+			if(strumento.getClasse()>=5 ||strumento.getTipologia()==2) 
 			{
 				modelLin.setValueAt("0", i, 5);	
 			}
@@ -2769,7 +2769,7 @@ public class PannelloMisuraMaster extends JPanel
 		lbl_lettura_fine.setFont(new Font("Arial", Font.BOLD, 12));
 		pannelloLinearita.add(lbl_lettura_fine, "cell 1 7 2 1");
 
-		if(strumento.getClasse()>=5) 
+		if(strumento.getClasse()>=5 || strumento.getTipologia()==2) 
 		{
 			BigDecimal sugg=new BigDecimal(listaClassi.get(0).getLimiteSuperiore()).multiply(getE(campo, strumento.getId_tipo_strumento(), BigDecimal.ZERO));
 			lbl_lettura_fine.setText("Tenendo in considerazione il punto di variazione calcolato pari a: "+sugg.stripTrailingZeros().toPlainString()+" "+strumento.getUm()+", se non diversamente specificato equi spaziare gli ulteriori due punti previsti tra il minimo e il massimo.");
@@ -2853,7 +2853,7 @@ public class PannelloMisuraMaster extends JPanel
 
 							if(row==0) 
 							{
-								if(strumento.getClasse()<5) 
+								if(strumento.getClasse()<5 && strumento.getTipologia()!=2) 
 								{
 									erroreSalita=indSalita.multiply(Costanti.gFactor).add(err_div.setScale(risoluzioneBilancia).divide(new BigDecimal("2").setScale(risoluzioneBilanciaE0), RoundingMode.HALF_UP)
 										.subtract(car_aggSalita).subtract(mas)).setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
@@ -2872,7 +2872,7 @@ public class PannelloMisuraMaster extends JPanel
 
 							else 
 							{
-								if(strumento.getClasse()<5) 
+								if(strumento.getClasse()<5 && strumento.getTipologia()!=2) 
 								{
 								erroreSalita=indSalita.multiply(Costanti.gFactor).add(err_div.setScale(4).divide(new BigDecimal("2"), RoundingMode.HALF_UP)
 										.subtract(car_aggSalita).subtract(mas));
@@ -3002,7 +3002,7 @@ public class PannelloMisuraMaster extends JPanel
 							if(row==0) 
 							{
 
-								if(strumento.getClasse()<5) 
+								if(strumento.getClasse()<5 && strumento.getTipologia()!=2) 
 								{
 									erroreDiscesa=indDiscesa.multiply(Costanti.gFactor).add(err_div.setScale(risoluzioneBilanciaE0).divide(new BigDecimal("2").setScale(risoluzioneBilanciaE0), RoundingMode.HALF_UP)
 										.subtract(car_aggDiscesa).subtract(mas));
@@ -3036,7 +3036,7 @@ public class PannelloMisuraMaster extends JPanel
 							else 
 							{
 								
-								if(strumento.getClasse()<5) 
+								if(strumento.getClasse()<5 && strumento.getTipologia()!=2 ) 
 								{
 									erroreDiscesa=indDiscesa.multiply(Costanti.gFactor).add(err_div.setScale(4).divide(new BigDecimal("2"), RoundingMode.HALF_UP)
 										.subtract(car_aggDiscesa).subtract(mas));
@@ -3438,7 +3438,9 @@ public class PannelloMisuraMaster extends JPanel
 							
 							BigDecimal e2=getE(campo,strumento.getId_tipo_strumento(),mas).setScale(5).divide(new BigDecimal(2).setScale(5), RoundingMode.HALF_UP);
 
-							BigDecimal errore=(indicaz.multiply(Costanti.gFactor).add(e2).subtract(car_aggiuntivo).subtract(mas)).setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
+			//				BigDecimal errore=(indicaz.multiply(Costanti.gFactor).add(e2).subtract(car_aggiuntivo).subtract(mas)).setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
+							
+							BigDecimal errore=(indicaz.multiply(Costanti.gFactor).subtract(mas)).setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
 
 							String mpe="";
 
@@ -4730,8 +4732,9 @@ public class PannelloMisuraMaster extends JPanel
 		 */
 		private static final long serialVersionUID = 1L;
 		private int classe;
+		private int tipologia=0;
 
-		public ModelDecentramento(String um,int _classe) 
+		public ModelDecentramento(String um,int _classe,int _tipologia) 
 		{
 			addColumn("Posizione n°");
 			addColumn("Massa L ("+um+")");
@@ -4741,7 +4744,8 @@ public class PannelloMisuraMaster extends JPanel
 			addColumn("Er. corretto Ec ("+um+")");
 			addColumn("MPE(±) ("+um+")");
 			addColumn("id");
-			 classe = _classe;
+			classe = _classe;
+			tipologia=_tipologia;
 
 		}
 		@Override
@@ -4773,7 +4777,7 @@ public class PannelloMisuraMaster extends JPanel
 
 			if(flag==true) 
 			{
-				if(classe!=5) 
+				if(classe!=5 && tipologia!=2) 
 				{
 					if(column==1 || column==2 || column==3)
 					{
@@ -4800,7 +4804,7 @@ public class PannelloMisuraMaster extends JPanel
 					return false;
 				}else 
 				{
-					if(classe!=5) 
+					if(classe!=5 && tipologia!=2) 
 					{
 						if(column==1 || column==2 || column==3)
 						{
@@ -4830,8 +4834,9 @@ public class PannelloMisuraMaster extends JPanel
 	class ModelLinearita extends DefaultTableModel {
 		private static final long serialVersionUID = 1L;
 		private int classe;
+		private int tipologia;
 
-		public ModelLinearita(String um,int _classe) 
+		public ModelLinearita(String um,int _classe,int _tipologia) 
 		{
 			addColumn("Rif. n°");
 			addColumn("Massa L ("+um+")");
@@ -4846,6 +4851,7 @@ public class PannelloMisuraMaster extends JPanel
 			addColumn("MPE(±) ("+um+")");
 			addColumn("id");
 			classe=_classe;
+			tipologia=_tipologia;
 
 		}
 		@Override
@@ -4883,7 +4889,7 @@ public class PannelloMisuraMaster extends JPanel
 		@Override
 		public boolean isCellEditable(int row, int column) {
 
-		if(classe!=5)
+		if(classe!=5 && tipologia!=2)
 		{
 			
 		
