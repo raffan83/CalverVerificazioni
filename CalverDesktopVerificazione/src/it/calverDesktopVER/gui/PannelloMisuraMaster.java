@@ -1286,8 +1286,8 @@ public class PannelloMisuraMaster extends JPanel
 							ripetibilita.setMassa(new BigDecimal(modelRip.getValueAt(row, 1).toString()));
 							ripetibilita.setIndicazione(new BigDecimal(modelRip.getValueAt(row, 2).toString()).setScale(risoluzioneIndicazione));
 							ripetibilita.setCaricoAgg(new BigDecimal(modelRip.getValueAt(row, 3).toString()).setScale(risoluzioneBilancia));
-							ripetibilita.setPortata(portata.setScale(risoluzioneBilanciaE0));
-							ripetibilita.setDeltaPortata(deltaPortata.setScale(risoluzioneBilanciaE0));
+							ripetibilita.setPortata(portata.setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP));
+							ripetibilita.setDeltaPortata(deltaPortata.setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP));
 							ripetibilita.setMpe(new BigDecimal(textField_mpe_rip.getText()).stripTrailingZeros());
 							ripetibilita.setEsito(esito);
 
@@ -4546,81 +4546,176 @@ public class PannelloMisuraMaster extends JPanel
 				{
 					/*Controllo solo su Ripetibilità - Decentramento - Linearità*/
 
+				for (int i = 1; i <= comboBox_campo.getItemCount(); i++) {
+					
+					
 					/*Ripetibilita*/
 					for (VerRipetibilitaDTO ripetibilita : misura.getVerRipetibilitas()) {
 
-						if(ripetibilita.getEsito()!=null && ripetibilita.getEsito().equals("INCOMPLETO")) 
+						
+					if(ripetibilita.getCampo()==i) 
+					{
+						if(ripetibilita.getEsito()==null)
 						{
+							System.out.println("Valori assenti ripetibilità campo "+ripetibilita.getCampo());
 							return false;
 						}
+						
+						if(ripetibilita.getEsito().equals("INCOMPLETO")) 
+						{
+							System.out.println("Valori INCOMPLETI ripetibilita campo "+ripetibilita.getCampo());
+							return false;
+						}
+					
+					}
+					
 					}
 					/*Decentramento*/
 					for (VerDecentramentoDTO decentramento : misura.getVerDecentramentos()) {
 
-						if(decentramento.getEsito()!=null && decentramento.getEsito().equals("INCOMPLETO")) 
+					if(decentramento.getCampo()==i) 
+					{	
+						
+						if(decentramento.getEsito()==null)
 						{
+							System.out.println("Valori assenti decentramento campo "+decentramento.getCampo());
 							return false;
 						}
+						
+						if(decentramento.getEsito().equals("INCOMPLETO")) 
+						{
+							System.out.println("Valori INCOMPLETI decentramento campo "+decentramento.getCampo());
+							return false;
+						}
+					}
+					
 					}
 
 					/*Linearita*/
 					for (VerLinearitaDTO linearita : misura.getVerLinearitas()) {
 
-						if(linearita.getEsito()!=null && linearita.getEsito().equals("INCOMPLETO")) 
+					if(linearita.getCampo()==i) 
+					{	
+						if(linearita.getEsito()==null)
 						{
+							System.out.println("Valori assenti linearità campo "+linearita.getCampo());
+							return false;
+						}
+						
+						if(linearita.getEsito().equals("INCOMPLETO")) 
+						{
+							System.out.println("Valori INCOMPLETI linearita campo "+linearita.getCampo());
 							return false;
 						}
 					}
+					
+					}
+				}
 
-
-				}else 
+				}
+				else 
 				{
 					/*Controllo solo su Ripetibilità - Decentramento - Linearità - Accuratezza - Mobilita*/
-
+					
+					for (int j = 1; j <= comboBox_campo.getItemCount(); j++) {
 					/*Ripetibilita*/
 					for (VerRipetibilitaDTO ripetibilita : misura.getVerRipetibilitas()) {
 
-						if(ripetibilita.getEsito()!=null && ripetibilita.getEsito().equals("INCOMPLETO")) 
+						if(ripetibilita.getCampo()==j) 
 						{
-							return false;
+							if(ripetibilita.getEsito()==null)
+							{
+								System.out.println("Valori assenti ripetibilità campo "+ripetibilita.getCampo());
+								return false;
+							}
+							
+							if(ripetibilita.getEsito().equals("INCOMPLETO")) 
+							{
+								System.out.println("Valori INCOMPLETI ripetibilita campo "+ripetibilita.getCampo());
+								return false;
+							}
+						
 						}
 					}
 					/*Decentramento*/
 					for (VerDecentramentoDTO decentramento : misura.getVerDecentramentos()) {
 
-						if(decentramento.getEsito()!=null && decentramento.getEsito().equals("INCOMPLETO")) 
-						{
-							return false;
+						if(decentramento.getCampo()==j) 
+						{	
+							
+							if(decentramento.getEsito()==null)
+							{
+								System.out.println("Valori assenti decentramento campo "+decentramento.getCampo());
+								return false;
+							}
+							
+							if(decentramento.getEsito().equals("INCOMPLETO")) 
+							{
+								System.out.println("Valori INCOMPLETI decentramento campo "+decentramento.getCampo());
+								return false;
+							}
 						}
 					}
 
 					/*Linearita*/
 					for (VerLinearitaDTO linearita : misura.getVerLinearitas()) {
-
-						if(linearita.getEsito()!=null && linearita.getEsito().equals("INCOMPLETO")) 
-						{
-							return false;
+						if(linearita.getCampo()==j) 
+						{	
+							if(linearita.getEsito()==null)
+							{
+								System.out.println("Valori assenti linearità campo "+linearita.getCampo());
+								return false;
+							}
+							
+							if(linearita.getEsito().equals("INCOMPLETO")) 
+							{
+								System.out.println("Valori INCOMPLETI linearità campo "+linearita.getCampo());
+								return false;
+							}
 						}
 					}
 					/*Accuratezza*/
 					for (VerAccuratezzaDTO accuratezza : misura.getVerAccuratezzas()) {
 
-						if(accuratezza.getEsito()!=null && accuratezza.getEsito().equals("INCOMPLETO")) 
+					if(accuratezza.getCampo()==j) 
+					{	
+					
+						if(accuratezza.getEsito()==null)
 						{
+							System.out.println("Valori assenti accuratezza campo "+accuratezza.getCampo());
+							return false;
+						}
+						
+						if(accuratezza.getEsito().equals("INCOMPLETO")) 
+						{
+							System.out.println("Valori INCOMPLETI accuratezza campo "+accuratezza.getCampo());
 							return false;
 						}
 					}
+					}
 					/*Mobilita*/
-					for (int i=3;i<misura.getVerMobilitas().size();i++) {
+					
 						
-						VerMobilitaDTO mobilita=misura.getVerMobilitas().get(i);
-						if(mobilita.getEsito()!=null && mobilita.getEsito().equals("INCOMPLETO")) 
+					for (VerMobilitaDTO mobilita : misura.getVerMobilitas()) {
+						
+						if(mobilita.getCampo()==j && mobilita.getCaso()==2) 
 						{
-							return false;
+							
+							if(mobilita.getEsito()==null )
+							{
+								System.out.println("Valori assenti mobilita campo "+mobilita.getCampo());
+								return false;
+							}
+							
+							if(mobilita.getEsito().equals("INCOMPLETO")) 
+							{
+								System.out.println("Valori INCOMPLETI mobilita campo "+mobilita.getCampo());
+								return false;
+							}
 						}
 					}
 				}
-
+				}
 
 				return true;
 			}
