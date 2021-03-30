@@ -5,10 +5,13 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import it.calverDesktopVER.bo.GestioneRegistro;
 import it.calverDesktopVER.bo.VersionHTTPBO;
+import it.calverDesktopVER.gui.FirstAccess;
 import it.calverDesktopVER.gui.GeneralGUI;
 import it.calverDesktopVER.gui.InitSplash;
 import it.calverDesktopVER.gui.PannelloTOP;
@@ -30,7 +33,8 @@ public class ExecuteVerificazione {
 					{
 
 						final InitSplash fr= new InitSplash();
-
+						
+						final URL iconURL = this.getClass().getResource("/image/logo.png");
 						fr.setVisible(true);
 
 						InitSplash.setMessage("Inizzializzazione applicazione...", 0);
@@ -38,13 +42,46 @@ public class ExecuteVerificazione {
 
 						InitSplash.setMessage("Caricamento chiavi di registro...", 1);
 
+						
+						
+						if(!GestioneRegistro.isConfig()) 
+	            		 { 
+	            				SwingUtilities.invokeLater(new Runnable(){
+	            		            public void run() 
+	            		            {
+	            		            	try
+	            		            	{
+	            		            	JFrame f=new FirstAccess();
+	            		            	
+	            		            	
+	            		            	
+	            		            	
+	            		            	ImageIcon img = new ImageIcon(iconURL);
+	            		            	f.setIconImage(img.getImage());
+	            		      	        
+	            		            	
+	            		            	f.setDefaultCloseOperation(1);
+	            		      	        f.setVisible(true);
+	            		      	        
+	            		      	        }
+	            		            	catch(Exception ex)
+	            		      	        {
+	            						//	GeneralGUI.printException(ex);
+	            		      	        	ex.printStackTrace();
+	            		      	        }
+	            		            }
+
+	            		        });
+	            		 }
+	            		 else 
+	            		{
 						InitSplash.setMessage("Creazione interfaccia utente...", 30);
 
 						GeneralGUI g1 = new GeneralGUI();
 
 						//	g1.setResizable(false);
 
-						URL iconURL = this.getClass().getResource("/image/logo.png");
+						
 
 						BufferedImage imgB = ImageIO.read(iconURL);
 
@@ -80,6 +117,7 @@ public class ExecuteVerificazione {
 				      	    th.start();
 					}
 
+					}
 					catch(Exception ex)
 					{
 						//	GeneralGUI.printException(ex);
