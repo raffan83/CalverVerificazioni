@@ -2858,7 +2858,7 @@ public class PannelloMisuraMaster extends JPanel
 									erroreSalita=indSalita.multiply(Costanti.gFactor).add(err_div.setScale(risoluzioneBilancia).divide(new BigDecimal("2").setScale(risoluzioneBilanciaE0), RoundingMode.HALF_UP)
 										.subtract(car_aggSalita).subtract(mas)).setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
 								}
-								
+								else
 								{
 									erroreSalita=(indSalita.multiply(Costanti.gFactor)).subtract(mas).setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
 								}
