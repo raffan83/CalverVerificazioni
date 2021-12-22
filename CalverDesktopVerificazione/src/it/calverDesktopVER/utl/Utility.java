@@ -192,6 +192,15 @@ public class Utility {
 		{
 			return "Bilancia a campi multipli";
 		}
+		if(id_tipo_strumento==4) 
+		{
+			return "Semiautomatiche con masse a corredo esterno";
+		}
+		if(id_tipo_strumento==5) 
+		{
+			return "Semiautomatiche con masse a corredo interno";
+		}
+		
 		
 		return "NON DEFINITO";
 	}

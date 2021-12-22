@@ -72,6 +72,10 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 	 private JTextField textField_data_ms;
 	 
 	 VerStrumentoDTO strumento=null;
+	 private JTextField textField_limite_pos1;
+	 private JTextField textField_limite_pos2;
+	 private JTextField textField_limite_pos3;
+	 private JTextField textField_limite_pos4;
 	 @SuppressWarnings("unchecked")
 	public PannelloVisualizzazioneStrumento(VerStrumentoDTO _strumento) {
 		 
@@ -90,7 +94,7 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 		SessionBO.prevPage="PSS";
 		
 	//	setBackground(Costanti.backgroundGrey);
-		setLayout(new MigLayout("", "[86.00][120px:120:200px,grow][120px:120:200px,grow][120px:120px:200px,grow][120px:120px:200px,grow][120px:120px:200px,grow]", "[][40][40][40][40][40][40][40px][][40][40][40][40][][50][]"));
+		setLayout(new MigLayout("", "[86.00][120px:120:200px,grow][120px:120:200px,grow][120px:120px:200px,grow][120px:120px:200px,grow][120px:120px:200px,grow]", "[][40][40][40][40][40][40][40px][][40][40][40][40][][40][][][50][]"));
 		
 		JLabel lblCreazioneStrumentoIn = new JLabel("Visualizza Strumento");
 		lblCreazioneStrumentoIn.setFont(new Font("Arial", Font.ITALIC, 22));
@@ -165,7 +169,7 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 		comboBox_tipo_strumento.setEnabled(false);
 		
 		comboBox_tipo_strumento.setFont(new Font("Arial", Font.PLAIN, 14));
-		comboBox_tipo_strumento.setModel(new DefaultComboBoxModel(new String[] {"Singolo campo di pesatura","Divisioni Plurime","Campi plurimi"}));
+		comboBox_tipo_strumento.setModel(new DefaultComboBoxModel(new String[] {"Singolo campo di pesatura","Divisioni Plurime","Campi plurimi","Semiautomatiche con masse a corredo esterno","Semiautomatiche con masse a corredo interno"}));
 		add(comboBox_tipo_strumento, "cell 1 4 2 1");
 		
 		
@@ -410,9 +414,17 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 		{
 			comboBox_tipo_strumento.setSelectedIndex(1);
 		}
-		else
+		else if(strumento.getId_tipo_strumento()==3)
 		{
 			comboBox_tipo_strumento.setSelectedIndex(2);
+		}
+		else if(strumento.getId_tipo_strumento()==4)
+		{
+			comboBox_tipo_strumento.setSelectedIndex(3);
+		}
+		else 
+		{
+			comboBox_tipo_strumento.setSelectedIndex(4);
 		}
 		
 		comboBox_tipologia.setSelectedIndex(strumento.getTipologia()-1);
@@ -502,6 +514,55 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 			textField_numero_divisioni_c3.setText(strumento.getNumero_div_C3().toEngineeringString());
 		}
 		
+		JLabel lblLimitePosizioneCambio = new JLabel("Limite posizione cambio");
+		lblLimitePosizioneCambio.setFont(new Font("Arial", Font.BOLD, 14));
+		add(lblLimitePosizioneCambio, "cell 0 14,alignx trailing");
+		
+		textField_limite_pos1 = new JTextField();
+		textField_limite_pos1.setHorizontalAlignment(SwingConstants.CENTER);
+		textField_limite_pos1.setFont(new Font("Arial", Font.BOLD, 14));
+		textField_limite_pos1.setEditable(false);
+		textField_limite_pos1.setColumns(10);
+		add(textField_limite_pos1, "cell 1 14,growx");
+		
+		textField_limite_pos2 = new JTextField();
+		textField_limite_pos2.setHorizontalAlignment(SwingConstants.CENTER);
+		textField_limite_pos2.setFont(new Font("Arial", Font.BOLD, 14));
+		textField_limite_pos2.setEditable(false);
+		textField_limite_pos2.setColumns(10);
+		add(textField_limite_pos2, "cell 2 14,growx");
+		
+		textField_limite_pos3 = new JTextField();
+		textField_limite_pos3.setHorizontalAlignment(SwingConstants.CENTER);
+		textField_limite_pos3.setFont(new Font("Arial", Font.BOLD, 14));
+		textField_limite_pos3.setEditable(false);
+		textField_limite_pos3.setColumns(10);
+		add(textField_limite_pos3, "cell 3 14,growx");
+		
+		textField_limite_pos4 = new JTextField();
+		textField_limite_pos4.setHorizontalAlignment(SwingConstants.CENTER);
+		textField_limite_pos4.setFont(new Font("Arial", Font.BOLD, 14));
+		textField_limite_pos4.setEditable(false);
+		textField_limite_pos4.setColumns(10);
+		add(textField_limite_pos4, "cell 4 14,growx");
+		
+		if(strumento.getLimite_pos_1()!=null) 
+		{
+			textField_limite_pos1.setText(strumento.getLimite_pos_1().toEngineeringString());
+		}
+		if(strumento.getLimite_pos_2()!=null) 
+		{
+			textField_limite_pos2.setText(strumento.getLimite_pos_2().toEngineeringString());
+		}
+		if(strumento.getLimite_pos_3()!=null) 
+		{
+			textField_limite_pos3.setText(strumento.getLimite_pos_3().toEngineeringString());
+		}
+		if(strumento.getLimite_pos_4()!=null) 
+		{
+			textField_limite_pos4.setText(strumento.getLimite_pos_4().toEngineeringString());
+		}
+		
 		JButton btnModifica = new JButton("Modifica");
 		btnModifica.setIcon(new ImageIcon(PannelloVisualizzazioneStrumento.class.getResource("/image/incertezza.png")));
 		btnModifica.setFont(new Font("Arial", Font.BOLD, 16));
@@ -509,7 +570,7 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 		try {
 		if(SQLiteDAO.getMisuraByIDStrumento(strumento.getId())==null)
 		
-			add(btnModifica, "flowx,cell 0 13 6 1,width :150:,alignx center,height :35:");
+			add(btnModifica, "flowx,cell 0 15 6 1,width :150:,alignx center,height :35:");
 		}
 		catch (Exception e) 
 		{
@@ -598,12 +659,15 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 			}
 		});
 		
+	
+		
 		
 		
 		final JButton btnSalva = new JButton("Salva");
 		btnSalva.setIcon(new ImageIcon(PannelloVisualizzazioneStrumento.class.getResource("/image/save.png")));
 		btnSalva.setFont(new Font("Arial", Font.BOLD, 16));
-		add(btnSalva, "cell 0 13,width :150:,height :35:");
+		//add(btnSalva, "cell 0 16,width :150:,height :35:");
+		add(btnSalva, "flowx,cell 0 15 6 1,width :150:,alignx center,height :35:");
 		
 		btnSalva.setVisible(false);
 		
@@ -656,6 +720,19 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 					textField_divisione_verifica_c3.setEditable(true);
 					textField_numero_divisioni_c3.setEditable(true);
 				}
+				if(comboBox_tipo_strumento.getSelectedIndex()==4) 
+				{
+				  textField_limite_pos1.setEditable(true);
+				  textField_limite_pos2.setEditable(true);
+				  textField_limite_pos3.setEditable(true);
+				  textField_limite_pos4.setEditable(true);
+				}else 
+				{
+					  textField_limite_pos1.setEditable(false);
+					  textField_limite_pos2.setEditable(false);
+					  textField_limite_pos3.setEditable(false);
+					  textField_limite_pos4.setEditable(false);
+				} 
 			}
 		});
 		
@@ -859,7 +936,25 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 							}
 						}
 				
-				
+				if(comboBox_tipo_strumento.getSelectedIndex()==4) 
+				{
+					if(!Utility.isDouble(textField_limite_pos1.getText())) 
+					{
+						update=false;
+					}
+					if(!Utility.isDouble(textField_limite_pos2.getText())) 
+					{
+						update=false;
+					}
+					if(!Utility.isDouble(textField_limite_pos3.getText())) 
+					{
+						update=false;
+					}
+					if(!Utility.isDouble(textField_limite_pos4.getText())) 
+					{
+						update=false;
+					}
+				}
 				if(update)
 				{
 					strumento.setAnno_marcatura_ce(Integer.parseInt(textField_anno_ce.getText()));
@@ -892,9 +987,17 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 					{
 						strumento.setId_tipo_strumento(2);
 					}
-					else 
+					else if(comboBox_tipo_strumento.getSelectedIndex()==2) 
 					{
 						strumento.setId_tipo_strumento(3);
+					}
+					else if(comboBox_tipo_strumento.getSelectedIndex()==3) 
+					{
+						strumento.setId_tipo_strumento(4);
+					}
+					else 
+					{
+						strumento.setId_tipo_strumento(5);
 					}
 					strumento.setPortata_min_C1(new BigDecimal(textField_pr_min_c1.getText()));
 					strumento.setPortata_max_C1(new BigDecimal(textField_pr_max_c1.getText()));
@@ -992,6 +1095,23 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 					else 
 					{
 						strumento.setNumero_div_C3(BigDecimal.ZERO);
+					}
+					
+					if(textField_limite_pos1.getText().length()>0) 
+					{
+						strumento.setLimite_pos_1(new BigDecimal(textField_limite_pos1.getText()));
+					}
+					if(textField_limite_pos2.getText().length()>0) 
+					{
+						strumento.setLimite_pos_2(new BigDecimal(textField_limite_pos2.getText()));
+					}
+					if(textField_limite_pos3.getText().length()>0) 
+					{
+						strumento.setLimite_pos_3(new BigDecimal(textField_limite_pos3.getText()));
+					}
+					if(textField_limite_pos4.getText().length()>0) 
+					{
+						strumento.setLimite_pos_4(new BigDecimal(textField_limite_pos4.getText()));
 					}
 					
 					try {

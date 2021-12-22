@@ -38,6 +38,10 @@ public class VerStrumentoDTO {
 	private int tipologia;
 	private int freq_mesi;
 	private String famiglia_strumento;
+	private BigDecimal limite_pos_1;
+	private BigDecimal limite_pos_2;
+	private BigDecimal limite_pos_3;
+	private BigDecimal limite_pos_4;
 
 	public int getId() {
 		return id;
@@ -251,7 +255,7 @@ public class VerStrumentoDTO {
 	
 	public BigDecimal getPortataMaxCampo(int campo, int idTipoStrumento) {
 
-		if(idTipoStrumento==1) 
+		if(idTipoStrumento==1 || idTipoStrumento==4 ||idTipoStrumento==5) 
 		{
 			return getPortata_max_C1();
 		}
@@ -292,7 +296,7 @@ public class VerStrumentoDTO {
 	
 	public BigDecimal getPortataMinCampo(int campo, int idTipoStrumento) {
 
-		if(idTipoStrumento==1) 
+		if(idTipoStrumento==1 || idTipoStrumento==4 || idTipoStrumento==5) 
 		{
 			return getPortata_min_C1();
 		}
@@ -360,5 +364,30 @@ public class VerStrumentoDTO {
 	public void setFamiglia_strumento(String famiglia_strumento) {
 		this.famiglia_strumento = famiglia_strumento;
 	}
+	public BigDecimal getLimite_pos_1() {
+		return limite_pos_1;
+	}
+	public void setLimite_pos_1(BigDecimal limite_pos_1) {
+		this.limite_pos_1 = limite_pos_1;
+	}
+	public BigDecimal getLimite_pos_2() {
+		return limite_pos_2;
+	}
+	public void setLimite_pos_2(BigDecimal limite_pos_2) {
+		this.limite_pos_2 = limite_pos_2;
+	}
+	public BigDecimal getLimite_pos_3() {
+		return limite_pos_3;
+	}
+	public void setLimite_pos_3(BigDecimal limite_pos_3) {
+		this.limite_pos_3 = limite_pos_3;
+	}
+	public BigDecimal getLimite_pos_4() {
+		return limite_pos_4;
+	}
+	public void setLimite_pos_4(BigDecimal limite_pos_4) {
+		this.limite_pos_4 = limite_pos_4;
+	}
+	
 		
 }

@@ -81,6 +81,8 @@ public class VerMisuraDTO {
 	
 	private double gFactor;
 	
+	private String noteCombinazioni;
+	
 	
 
 		public VerMisuraDTO() {
@@ -455,6 +457,14 @@ public class VerMisuraDTO {
 
 	public void setgFactor(double gFactor) {
 		this.gFactor = gFactor;
+	}
+
+	public String getNoteCombinazioni() {
+		return noteCombinazioni;
+	}
+
+	public void setNoteCombinazioni(String noteCombinazioni) {
+		this.noteCombinazioni = noteCombinazioni;
 	}
 	
 	

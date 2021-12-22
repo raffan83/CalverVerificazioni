@@ -70,6 +70,10 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 	 private JTextField textField_numero_divisioni_c3;
 	 private JTextField textField_anno_ce;
 	 private JTextField textField_data_ms;
+	 private JTextField textField_limite_pos1;
+	 private JTextField textField_limite_pos2;
+	 private JTextField textField_limite_pos3;
+	 private JTextField textField_limite_pos4;
 	
 	 @SuppressWarnings("unchecked")
 	public PannelloCreazioneStrumento() {
@@ -87,7 +91,7 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 		SessionBO.prevPage="PSS";
 		
 	//	setBackground(Costanti.backgroundGrey);
-		setLayout(new MigLayout("", "[86.00][120px:120:200px,grow][120px:120:200px,grow][120px:120px:200px,grow][120px:120px:200px,grow][120px:120px:200px,grow]", "[][40][40][40][40][40][40][40px][][40][40][40][40][][50][]"));
+		setLayout(new MigLayout("", "[86.00][120px:120:200px,grow][120px:120:200px,grow][120px:120px:200px,grow][120px:120px:200px,grow][120px:120px:200px,grow]", "[][40][40][40][40][40][40][40px][][40][40][40][40][][40][][50][]"));
 		
 		JLabel lblCreazioneStrumentoIn = new JLabel("Creazione Strumento");
 		lblCreazioneStrumentoIn.setFont(new Font("Arial", Font.ITALIC, 22));
@@ -185,7 +189,7 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 		final JComboBox comboBox_tipo_strumento = new JComboBox();
 		
 		comboBox_tipo_strumento.setFont(new Font("Arial", Font.PLAIN, 14));
-		comboBox_tipo_strumento.setModel(new DefaultComboBoxModel(new String[] {"Singolo campo di pesatura","Divisioni Plurime", "Campi plurimi"}));
+		comboBox_tipo_strumento.setModel(new DefaultComboBoxModel(new String[] {"Singolo campo di pesatura","Divisioni Plurime", "Campi plurimi","Semiautomatiche con masse a corredo esterno","Semiautomatiche con masse a corredo interno"}));
 		add(comboBox_tipo_strumento, "cell 1 4 2 1");
 		
 		
@@ -378,10 +382,46 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 		textField_numero_divisioni_c3.setColumns(10);
 		add(textField_numero_divisioni_c3, "cell 5 12,growx");
 		
+		JLabel lblLimitiPosizioniCambio = new JLabel("Limiti posizioni cambio");
+		lblLimitiPosizioniCambio.setFont(new Font("Arial", Font.BOLD, 14));
+		add(lblLimitiPosizioniCambio, "cell 0 14,alignx trailing");
+		
+		textField_limite_pos1 = new JTextField();
+		textField_limite_pos1.setEnabled(false);
+		textField_limite_pos1.setEditable(false);
+		textField_limite_pos1.setHorizontalAlignment(SwingConstants.CENTER);
+		textField_limite_pos1.setFont(new Font("Arial", Font.BOLD, 14));
+		textField_limite_pos1.setColumns(10);
+		add(textField_limite_pos1, "cell 1 14,growx");
+		
+		textField_limite_pos2 = new JTextField();
+		textField_limite_pos2.setEnabled(false);
+		textField_limite_pos2.setEditable(false);
+		textField_limite_pos2.setHorizontalAlignment(SwingConstants.CENTER);
+		textField_limite_pos2.setFont(new Font("Arial", Font.BOLD, 14));
+		textField_limite_pos2.setColumns(10);
+		add(textField_limite_pos2, "cell 2 14,growx");
+		
+		textField_limite_pos3 = new JTextField();
+		textField_limite_pos3.setEnabled(false);
+		textField_limite_pos3.setEditable(false);
+		textField_limite_pos3.setHorizontalAlignment(SwingConstants.CENTER);
+		textField_limite_pos3.setFont(new Font("Arial", Font.BOLD, 14));
+		textField_limite_pos3.setColumns(10);
+		add(textField_limite_pos3, "cell 3 14,growx");
+		
+		textField_limite_pos4 = new JTextField();
+		textField_limite_pos4.setEnabled(false);
+		textField_limite_pos4.setEditable(false);
+		textField_limite_pos4.setHorizontalAlignment(SwingConstants.CENTER);
+		textField_limite_pos4.setFont(new Font("Arial", Font.BOLD, 14));
+		textField_limite_pos4.setColumns(10);
+		add(textField_limite_pos4, "cell 4 14,growx");
+		
 		JButton btnInserisci = new JButton("Inserisci");
 		btnInserisci.setFont(new Font("Arial", Font.BOLD, 18));
 		btnInserisci.setIcon(new ImageIcon(PannelloTOP.class.getResource("/image/insert.png")));
-		add(btnInserisci, "cell 0 14 6 1,alignx center,height :50:");
+		add(btnInserisci, "cell 0 16 6 1,alignx center,height :50:");
 		
 		JLabel lblDivisioniReali = new JLabel("Divisioni Reali");
 		lblDivisioniReali.setFont(new Font("Arial", Font.BOLD, 14));
@@ -456,7 +496,7 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 		comboBox_tipo_strumento.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
-				if(comboBox_tipo_strumento.getSelectedIndex()==0) 
+				if(comboBox_tipo_strumento.getSelectedIndex()==0 || comboBox_tipo_strumento.getSelectedIndex()==3 ||comboBox_tipo_strumento.getSelectedIndex()==4) 
 				{
 					textField_pr_min_c2 .setEnabled(false);
 					textField_pr_max_c2.setEnabled(false);
@@ -509,6 +549,32 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 					textField_divisione_reali_c3.setEditable(true);
 					textField_numero_divisioni_c3.setEditable(true);
 				}
+				
+				if(comboBox_tipo_strumento.getSelectedIndex()==4) 
+				{
+				
+					textField_limite_pos1.setEnabled(true);
+					  textField_limite_pos2.setEnabled(true);
+					  textField_limite_pos3.setEnabled(true);
+					  textField_limite_pos4.setEnabled(true);
+					  
+				  textField_limite_pos1.setEditable(true);
+				  textField_limite_pos2.setEditable(true);
+				  textField_limite_pos3.setEditable(true);
+				  textField_limite_pos4.setEditable(true);
+				}else 
+				{
+					
+					textField_limite_pos1.setEnabled(false);
+					  textField_limite_pos2.setEnabled(false);
+					  textField_limite_pos3.setEnabled(false);
+					  textField_limite_pos4.setEnabled(false);
+					  
+					  textField_limite_pos1.setEditable(false);
+					  textField_limite_pos2.setEditable(false);
+					  textField_limite_pos3.setEditable(false);
+					  textField_limite_pos4.setEditable(false);
+				} 
 				
 			}
 		});
@@ -586,9 +652,16 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 					{
 						strumento.setId_tipo_strumento(2);
 					}
-					else
+					else if (comboBox_tipo_strumento.getSelectedIndex()==2)
 					{
 						strumento.setId_tipo_strumento(3);
+					}
+					else if (comboBox_tipo_strumento.getSelectedIndex()==3)
+					{
+						strumento.setId_tipo_strumento(4);
+					}else 
+					{
+							strumento.setId_tipo_strumento(5);
 					}
 					
 					
@@ -696,6 +769,26 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 					{
 						save=false;
 						JOptionPane.showMessageDialog(null,"Inserire tutti i dati per singolo campo/divisione coerentemente con il tipo strumento scelto \n i campi vuoti non sono ammessi inserire \"0\" ","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+					}
+					
+					if(comboBox_tipo_strumento.getSelectedIndex()==4) 
+					{
+						if(Utility.isDouble(textField_limite_pos1.getText())) 
+						{
+							strumento.setLimite_pos_1(new BigDecimal(textField_limite_pos1.getText()));
+						}
+						if(Utility.isDouble(textField_limite_pos2.getText())) 
+						{
+							strumento.setLimite_pos_2(new BigDecimal(textField_limite_pos2.getText()));
+						}
+						if(Utility.isDouble(textField_limite_pos3.getText())) 
+						{
+							strumento.setLimite_pos_3(new BigDecimal(textField_limite_pos3.getText()));
+						}
+						if(Utility.isDouble(textField_limite_pos4.getText())) 
+						{
+							strumento.setLimite_pos_4(new BigDecimal(textField_limite_pos4.getText()));
+						}
 					}
 					
 					if(save)

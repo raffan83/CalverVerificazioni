@@ -19,6 +19,7 @@ import java.util.Enumeration;
 
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -34,10 +35,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.SwingConstants;
@@ -54,11 +57,8 @@ import javax.swing.table.TableColumn;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
-import com.sun.xml.internal.ws.util.HandlerAnnotationProcessor;
-
 import it.calverDesktopVER.bo.GestioneCampioneBO;
 import it.calverDesktopVER.bo.GestioneMisuraBO;
-import it.calverDesktopVER.bo.GestioneRegistro;
 import it.calverDesktopVER.bo.GestioneStrumentoVER_BO;
 import it.calverDesktopVER.bo.SessionBO;
 import it.calverDesktopVER.dto.VerAccuratezzaDTO;
@@ -69,7 +69,6 @@ import it.calverDesktopVER.dto.VerMisuraDTO;
 import it.calverDesktopVER.dto.VerMobilitaDTO;
 import it.calverDesktopVER.dto.VerRipetibilitaDTO;
 import it.calverDesktopVER.dto.VerStrumentoDTO;
-import it.calverDesktopVER.gui.PannelloStrumentoMaster.MyCellRenderer;
 import it.calverDesktopVER.utl.Costanti;
 import it.calverDesktopVER.utl.FileTypeFilter;
 import it.calverDesktopVER.utl.Utility;
@@ -92,6 +91,7 @@ public class PannelloMisuraMaster extends JPanel
 	private JPanel panel_datiGenarali;
 	private JPanel panel_tabella;
 	private JPanel panel_temp_gravita;
+	private JPanel panel_combinazioni_campioni;
 	private JPanel panel_prova_ripetibilita;
 	private JPanel panel_prova_decentramento;
 	private JPanel panel_prova_linearita;
@@ -118,8 +118,10 @@ public class PannelloMisuraMaster extends JPanel
 
 
 	ModelRipetibilita modelRip;
+	ModelRipetibilitaCorredoEsterno modelRipCorredoEsterno;
 	ModelDecentramento modelDec;
 	ModelLinearita modelLin;
+	ModelLinearitaCorredoEsterno modelLinCorredoEsterno;
 	ModelAccuratezza modelAccuratezza;
 	ModelMobilita modelMobilita_1;
 	ModelMobilita modelMobilita_2;
@@ -157,12 +159,12 @@ public class PannelloMisuraMaster extends JPanel
 	private JTextField textField_res_g_org;
 	private JTextField textField__res_g_util;
 	private JTextField textField_res_gx_gy;
-
+	private JTextArea areaCombinazioni;
 
 	private boolean chk_btn_decentramento=false;
 	private boolean chk_btn_linearita=false;
 	JLabel lbl_lettura_fine;
-	
+
 	public PannelloMisuraMaster(String id) throws Exception
 	{
 		SessionBO.prevPage="PSS";
@@ -171,7 +173,7 @@ public class PannelloMisuraMaster extends JPanel
 		strumento=GestioneStrumentoVER_BO.getStrumento(SessionBO.idStrumento);
 		misura=GestioneMisuraBO.getMisura(SessionBO.idMisura);
 
-		
+
 		listaClassi=GestioneMisuraBO.getListaClassi(strumento.getClasse());
 
 		myFrame=SessionBO.generarFrame;
@@ -201,7 +203,7 @@ public class PannelloMisuraMaster extends JPanel
 			comboBox_campo.setModel(new DefaultComboBoxModel<String>(new String[] {"1"}));
 		}
 
-		
+
 
 		panel_datiGenarali = costruisciDatiGenerali();
 
@@ -211,6 +213,8 @@ public class PannelloMisuraMaster extends JPanel
 
 		panel_struttura =creaPanelStruttura();
 
+
+
 		JLabel lblCampo = new JLabel("Campo");
 		lblCampo.setFont(new Font("Arial", Font.BOLD, 14));
 		masterPanel.add(lblCampo, "flowx,cell 0 0");
@@ -219,7 +223,6 @@ public class PannelloMisuraMaster extends JPanel
 
 
 		final JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-
 
 		tabbedPane.addTab("Dati Generali",panel_datiGenarali);
 
@@ -237,6 +240,11 @@ public class PannelloMisuraMaster extends JPanel
 		panel_prova_linearita=costruisciPannelloLinearita();
 		tabbedPane.addTab("Prova Linearità", panel_prova_linearita);
 
+
+		/*Eliminare*/
+		//	panel_combinazioni_campioni=costruisciPanelCombinazioniCampioni();
+		//	tabbedPane.addTab("Combinazioni Campioni",panel_combinazioni_campioni);
+
 		if(strumento.getTipologia()==2) 
 		{
 			panel_prova_accuratezza= costruisciPannelloAccuratezza();
@@ -246,11 +254,39 @@ public class PannelloMisuraMaster extends JPanel
 			tabbedPane.addTab("Prova Mobilità", panel_prova_mobilita);
 
 		}
+
+		if(strumento.getId_tipo_strumento()==4) 
+		{
+			tabbedPane.removeAll();
+
+			tabbedPane.addTab("Dati Generali",panel_datiGenarali);
+
+
+			tabbedPane.addTab("Controllo preliminare",panel_tabella);
+
+			tabbedPane.addTab("Temperatura & Posizione",panel_temp_gravita);
+
+			panel_combinazioni_campioni=costruisciPanelCombinazioniCampioni();
+			tabbedPane.addTab("Combinazioni Campioni",panel_combinazioni_campioni);
+
+
+
+			panel_prova_ripetibilita=costruisciPanelloRipetibilitaCorredoEsteno();
+			tabbedPane.addTab("Prova Ripetibilità", panel_prova_ripetibilita);
+
+			panel_prova_linearita=costruisciPannelloLinearitaCorredoEsteno();
+			tabbedPane.addTab("Prova Linearità", panel_prova_linearita);
+
+			panel_prova_mobilita=costruisciPannelloMobilita();
+			tabbedPane.addTab("Prova Mobilità", panel_prova_mobilita);
+		}
+
+
 		masterPanel.add(tabbedPane, "cell 0 1,grow");
 		masterPanel.add(panel_struttura,"cell 0 2,grow");
 
 
-	
+
 		JScrollPane scroll= new JScrollPane(masterPanel);
 		this.add(scroll, "cell 0 0,growx,aligny baseline");
 
@@ -319,7 +355,7 @@ public class PannelloMisuraMaster extends JPanel
 		final JLabel lblDataRiparazione = new JLabel("Data riparazione");
 		lblDataRiparazione.setFont(new Font("Arial", Font.BOLD, 12));
 		pannelloDatiGenerali.add(lblDataRiparazione, "flowx,cell 4 3,alignx trailing");
-		
+
 		final JLabel lbl_format_data = new JLabel("(gg/mm/aaaa)");
 		lbl_format_data.setFont(new Font("Arial", Font.BOLD, 12));
 		pannelloDatiGenerali.add(lbl_format_data, "cell 5 3");
@@ -340,8 +376,8 @@ public class PannelloMisuraMaster extends JPanel
 			e1.printStackTrace();
 		}
 
-	//	final JComboBox<String> comboBox_lista_campioni = new JComboBox<String>();
-		final JComboBox<String> comboBox_lista_campioni = new JComboBox<String>(listaCampioniCompleta);
+		//	final JComboBox<String> comboBox_lista_campioni = new JComboBox<String>();
+		final JComboBox<String> comboBox_lista_campioni = new JComboBox<String>(/*listaCampioniCompleta*/);
 		comboBox_lista_campioni.setFont(new Font("Arial", Font.BOLD, 12));
 		pannelloDatiGenerali.add(comboBox_lista_campioni, "cell 2 7");
 
@@ -764,6 +800,45 @@ public class PannelloMisuraMaster extends JPanel
 		return pannelloDatiGenerali;
 	}
 
+	private JPanel costruisciPanelCombinazioniCampioni() {
+
+		JPanel pannelloCombinazioni = new JPanel();
+		pannelloCombinazioni.setBorder(new TitledBorder(new LineBorder(new Color(255, 0, 0), 2, true), "Combinazioni campioni", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		pannelloCombinazioni.setBackground(Color.WHITE);
+		pannelloCombinazioni.setLayout(new MigLayout("", "[600px:600px]", "[300px:300px][grow]"));
+
+
+
+		areaCombinazioni = new JTextArea();
+		areaCombinazioni.setFont(new Font("Arial", Font.BOLD, 18));
+		areaCombinazioni.setLineWrap(true);
+
+		areaCombinazioni.setText(misura.getNoteCombinazioni());
+
+		JScrollPane scrollBar = new JScrollPane(areaCombinazioni);
+		pannelloCombinazioni.add(scrollBar, "cell 0 0,grow");
+
+		JButton btnSalvaCombinazioni = new JButton("Salva Combinazioni");
+		btnSalvaCombinazioni.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				try {
+					GestioneMisuraBO.updateNoteCombinazioni(areaCombinazioni.getText(),misura.getId());
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnSalvaCombinazioni.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/save.png")));
+		btnSalvaCombinazioni.setFont(new Font("Arial", Font.BOLD, 16));
+		pannelloCombinazioni.add(btnSalvaCombinazioni, "cell 0 1,alignx center");
+
+
+
+		return pannelloCombinazioni;
+	}
+
 	private JPanel costruisciTempGravita() {
 		JPanel panelGrav = new JPanel();
 		panelGrav.setBorder(new TitledBorder(new LineBorder(new Color(255, 0, 0), 2, true), "Temperatura e Posizione", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -891,7 +966,7 @@ public class PannelloMisuraMaster extends JPanel
 		lblCompilareLaSezione.setForeground(Color.RED);
 		panelGrav.add(lblCompilareLaSezione, "cell 0 7 7 1");
 
-		
+
 		JLabel lblPosizione = new JLabel("Posizione");
 		lblPosizione.setFont(new Font("Arial", Font.BOLD, 14));
 		panelGrav.add(lblPosizione, "cell 0 9");
@@ -968,19 +1043,19 @@ public class PannelloMisuraMaster extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				
+
 				if (Utility.isDouble(textField_altezza_org.getText())==true &&  Utility.isDouble(textField_latitudine_org.getText())==true &&
 						Utility.isDouble(textField_altezza_util.getText())==true &&  Utility.isDouble(textField_latitudine_util.getText())==true)
 				{
 					int risoluzioneBilancia=getE(1,1,BigDecimal.ZERO).scale();
-					
+
 					BigDecimal g_org=GestioneMisuraBO.calcoloG(Double.parseDouble(textField_altezza_org.getText()),Double.parseDouble(textField_latitudine_org.getText()));
 
 					BigDecimal g_util=GestioneMisuraBO.calcoloG(Double.parseDouble(textField_altezza_util.getText()),Double.parseDouble(textField_latitudine_util.getText()));
 
-					textField_res_g_org.setText(""+g_org.setScale(risoluzioneBilancia+1,RoundingMode.HALF_UP).toPlainString());
+					textField_res_g_org.setText(""+g_org.setScale(risoluzioneBilancia+2,RoundingMode.HALF_UP).toPlainString());
 
-					textField__res_g_util.setText(""+g_util.setScale(risoluzioneBilancia+1,RoundingMode.HALF_UP).toPlainString());
+					textField__res_g_util.setText(""+g_util.setScale(risoluzioneBilancia+2,RoundingMode.HALF_UP).toPlainString());
 
 					BigDecimal res = g_util.divide(g_org,RoundingMode.HALF_UP);
 
@@ -1035,13 +1110,13 @@ public class PannelloMisuraMaster extends JPanel
 		pannelloRipetibilita.setLayout(new MigLayout("", "[22.00][][grow]", "[][][][][60.00][][13.00][][13.00][]"));
 
 		tableRip = new JTable();
-		
+
 		modelRip = new ModelRipetibilita(strumento.getUm(),strumento.getClasse(),strumento.getTipologia());
 
 		tableRip.setModel(modelRip);
 
 		tableRip.setDefaultRenderer(Object.class, new RenderTable(1,strumento.getClasse(),strumento.getTipologia()));
-		
+
 		tableRip.setRowHeight(25);
 		tableRip.setFont(new Font("Arial", Font.PLAIN, 12));
 		tableRip.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
@@ -1050,7 +1125,7 @@ public class PannelloMisuraMaster extends JPanel
 		tableRip.removeColumn(column);
 
 
-	//	tableRip.setDefaultRenderer(Object.class, new MyCellRenderer());
+		//	tableRip.setDefaultRenderer(Object.class, new MyCellRenderer());
 
 		BigDecimal massa=null;
 
@@ -1067,25 +1142,25 @@ public class PannelloMisuraMaster extends JPanel
 
 			massa =getMassa(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento()).stripTrailingZeros();
 
-			
-			
-			
+
+
+
 			if(ver.getMassa()!=null) 
 			{
 				modelRip.setValueAt(ver.getMassa().toPlainString(), i, 1);
-				
-				 risoluzioneBilanciaE0=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),BigDecimal.ZERO).scale()+1;
-				 risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),ver.getMassa()).scale()+1;
-				 risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),ver.getMassa()).scale();
-				
-				
+
+				risoluzioneBilanciaE0=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),BigDecimal.ZERO).scale()+1;
+				risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),ver.getMassa()).scale()+1;
+				risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),ver.getMassa()).scale();
+
+
 			}
 			else 
 			{
-				 risoluzioneBilanciaE0=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),BigDecimal.ZERO).scale()+1;
-				 risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),massa).scale()+1;
-				 risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),massa).scale();
-				
+				risoluzioneBilanciaE0=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),BigDecimal.ZERO).scale()+1;
+				risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),massa).scale()+1;
+				risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),massa).scale();
+
 				modelRip.setValueAt(massa.toPlainString(), i, 1);
 			}
 
@@ -1098,12 +1173,12 @@ public class PannelloMisuraMaster extends JPanel
 			{
 				modelRip.setValueAt(ver.getCaricoAgg().setScale(risoluzioneBilancia,RoundingMode.HALF_UP), i, 3);
 			}
-			
+
 			if(ver.getCaricoAgg()==null && (strumento.getClasse()>=5 || strumento.getTipologia()==2))
 			{
 				modelRip.setValueAt("0", i, 3);
 			}
-			
+
 
 			if(ver.getPortata()!=null) 
 			{
@@ -1155,13 +1230,13 @@ public class PannelloMisuraMaster extends JPanel
 		textField_esito_rip.setFont(new Font("Arial", Font.PLAIN, 12));
 		textField_esito_rip.setColumns(10);
 		pannelloRipetibilita.add(textField_esito_rip, "cell 2 9,width :100:");
-		
+
 		JLabel lbl_um_strumento = new JLabel("");
 		lbl_um_strumento.setFont(new Font("Arial", Font.PLAIN, 12));
 		pannelloRipetibilita.add(lbl_um_strumento, "cell 2 7");
-		
+
 		lbl_um_strumento.setText(strumento.getUm());
-		
+
 		if(lista.get(0).getDeltaPortata()!=null) 
 		{
 			textField_p_p_rip.setText(lista.get(0).getDeltaPortata().setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP).toPlainString());
@@ -1202,7 +1277,7 @@ public class PannelloMisuraMaster extends JPanel
 
 					/*Controllo Risoluzione Massima Indicazione*/
 					BigDecimal  m=null;
-					
+
 					if(massa!=null) 
 					{
 						m=new BigDecimal(massa.toString());
@@ -1211,12 +1286,12 @@ public class PannelloMisuraMaster extends JPanel
 					{
 						return;
 					}
-				
+
 					int risoluzioneBilanciaE0=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),BigDecimal.ZERO).scale()+1;
 					int risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),m).scale()+1;
 					int risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),m).scale();
-					
-					
+
+
 					if(indicazione!=null && new BigDecimal(indicazione.toString()).scale()>risoluzioneIndicazione) 
 					{
 						BigDecimal ind=new BigDecimal(indicazione.toString());
@@ -1224,7 +1299,7 @@ public class PannelloMisuraMaster extends JPanel
 						modelRip.setValueAt(ind.setScale(risoluzioneIndicazione,RoundingMode.FLOOR).toPlainString(),row, 2);
 						return;
 					}
-					
+
 					/*Controllo Risoluzione Massima Carico Aggiuntivo*/
 					if(carico!=null && new BigDecimal(carico.toString()).scale()>risoluzioneBilancia) 
 					{
@@ -1233,7 +1308,7 @@ public class PannelloMisuraMaster extends JPanel
 						modelRip.setValueAt(car.setScale(risoluzioneBilancia,RoundingMode.FLOOR).toPlainString(),row, 3);
 						return;
 					}
-					
+
 
 					try 
 					{
@@ -1243,12 +1318,12 @@ public class PannelloMisuraMaster extends JPanel
 							BigDecimal ind=new BigDecimal(indicazione.toString());
 							BigDecimal car=new BigDecimal(carico.toString());
 
-							
-							
+
+
 							BigDecimal err =getE(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),mas);
 
 							BigDecimal portata=null;
-							
+
 							if(strumento.getClasse()<5 && strumento.getTipologia()!=2) 
 							{
 								portata=(ind.add(err.divide(new BigDecimal(2).setScale(risoluzioneBilanciaE0, RoundingMode.HALF_UP)).subtract(car))).multiply(Costanti.gFactor);
@@ -1257,13 +1332,13 @@ public class PannelloMisuraMaster extends JPanel
 							{
 								portata= ind;
 							}
-							BigDecimal deltaPortata=getDeltaPorta(portata,row).setScale(risoluzioneBilanciaE0, RoundingMode.HALF_UP);
+							BigDecimal deltaPortata=getDeltaPorta(portata,row,strumento.getId_tipo_strumento()).setScale(risoluzioneBilanciaE0, RoundingMode.HALF_UP);
 
 							textField_p_p_rip.setText(deltaPortata.toPlainString());
 
 							modelRip.setValueAt(portata.setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP).toPlainString(),row, 4);
 
-							String esito=controllaEsitoRipetibilita(strumento.getClasse());
+							String esito=controllaEsitoRipetibilita(strumento.getClasse(),strumento.getId_tipo_strumento());
 
 							if (esito.equals("POSITIVO"))
 							{
@@ -1280,7 +1355,7 @@ public class PannelloMisuraMaster extends JPanel
 							textField_esito_rip.setText(esito);
 
 							textField_mpe_rip.setText(getMPE(mas.toPlainString(),comboBox_campo.getSelectedIndex(),2).stripTrailingZeros().toPlainString());
-							
+
 							VerRipetibilitaDTO ripetibilita= new VerRipetibilitaDTO();
 							ripetibilita.setId(Integer.parseInt(modelRip.getValueAt(row, 5).toString()));
 							ripetibilita.setMassa(new BigDecimal(modelRip.getValueAt(row, 1).toString()));
@@ -1313,22 +1388,359 @@ public class PannelloMisuraMaster extends JPanel
 		return pannelloRipetibilita;
 	}
 
-	private BigDecimal getDeltaPorta(BigDecimal portataCorrente, int row) {
+	private JPanel costruisciPanelloRipetibilitaCorredoEsteno() {
+		JPanel pannelloRipetibilita= new JPanel();
+
+		pannelloRipetibilita.setBorder(new TitledBorder(new LineBorder(new Color(255, 0, 0), 2, true), "Prova Ripetibilità", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		pannelloRipetibilita.setBackground(Color.WHITE);
+		pannelloRipetibilita.setLayout(new MigLayout("", "[22.00][][grow]", "[][][][][60.00][][13.00][][13.00][]"));
+
+		tableRip = new JTable();
+
+		modelRipCorredoEsterno = new ModelRipetibilitaCorredoEsterno(strumento.getUm());
+
+		tableRip.setModel(modelRipCorredoEsterno);
+
+		tableRip.setDefaultRenderer(Object.class, new RenderTable(1,1,1));
+
+		tableRip.setRowHeight(25);
+		tableRip.setFont(new Font("Arial", Font.PLAIN, 12));
+		tableRip.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+		tableRip.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		TableColumn column = tableRip.getColumnModel().getColumn(tableRip.getColumnModel().getColumnIndex("id"));
+		tableRip.removeColumn(column);
+
+		setUpSportColumn(tableRip, tableRip.getColumnModel().getColumn(2));
+
+		//	tableRip.setDefaultRenderer(Object.class, new MyCellRenderer());
+
+		BigDecimal massa=null;
+
+		ArrayList<VerRipetibilitaDTO> lista=(ArrayList<VerRipetibilitaDTO>)misura.getVerRipetibilitas(comboBox_campo.getSelectedIndex()+1);
+
+		int risoluzioneBilancia=0;
+		int risoluzioneBilanciaE0=0;
+		int risoluzioneIndicazione=0;
+		for (int i = 0; i < 3; i++) {
+
+			VerRipetibilitaDTO ver=lista.get(i);
+			modelRipCorredoEsterno.addRow(new Object[0]);
+			modelRipCorredoEsterno.setValueAt(ver.getNumeroRipetizione(), i, 0);
+
+			massa =getMassa(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento()).stripTrailingZeros();
+
+
+
+
+			if(ver.getMassa()!=null) 
+			{
+				modelRipCorredoEsterno.setValueAt(ver.getMassa().toPlainString(), i, 1);
+
+				risoluzioneBilanciaE0=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),BigDecimal.ZERO).scale()+1;
+				risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),ver.getMassa()).scale()+1;
+				risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),ver.getMassa()).scale();
+
+
+			}
+			else 
+			{
+				risoluzioneBilanciaE0=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),BigDecimal.ZERO).scale()+1;
+				risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),massa).scale()+1;
+				risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),massa).scale();
+
+				modelRipCorredoEsterno.setValueAt(massa.toPlainString(), i, 1);
+			}
+
+			if(ver.getPosizione()!=null) 
+			{
+				modelRipCorredoEsterno.setValueAt(ver.getPosizione(), i, 2);
+			}
+
+			if(ver.getCaricoAgg()!=null) 
+			{
+				modelRipCorredoEsterno.setValueAt(ver.getCaricoAgg().setScale(risoluzioneBilancia,RoundingMode.HALF_UP), i, 3);
+			}
+
+
+			if(ver.getIndicazione()!=null) 
+			{
+				modelRipCorredoEsterno.setValueAt(ver.getIndicazione().setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP), i, 4);
+			}
+			modelRipCorredoEsterno.setValueAt(ver.getId(), i, 5);
+
+		}
+
+		JLabel lblNewLabel = new JLabel("Prova di Ripetibilit\u00E0");
+		lblNewLabel.setFont(new Font("Calibri", Font.BOLD, 14));
+		pannelloRipetibilita.add(lblNewLabel, "cell 0 0 2 1");
+
+		JLabel lblNewLabel_2 = new JLabel("");
+		lblNewLabel_2.setFont(new Font("Calibri", Font.PLAIN, 14));
+		pannelloRipetibilita.add(lblNewLabel_2, "cell 2 0");
+
+
+		JScrollPane scrollTab = new JScrollPane(tableRip);
+
+		pannelloRipetibilita.add(scrollTab, "cell 1 3 2 1,width :750:,alignx left,height :103:,aligny top");
+
+		JLabel lblPmaxpmin = new JLabel("Pmax-Pmin:");
+		lblPmaxpmin.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloRipetibilita.add(lblPmaxpmin, "cell 1 5,alignx trailing");
+
+		textField_p_p_rip = new JTextField();
+		textField_p_p_rip.setEditable(false);
+		textField_p_p_rip.setFont(new Font("Arial", Font.PLAIN, 12));
+		pannelloRipetibilita.add(textField_p_p_rip, "cell 2 5,width :100:");
+		textField_p_p_rip.setColumns(10);
+
+		JLabel lblMpe = new JLabel("MPE :");
+		lblMpe.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloRipetibilita.add(lblMpe, "cell 1 7,alignx trailing");
+
+		textField_mpe_rip = new JTextField();
+		textField_mpe_rip.setEditable(false);
+		textField_mpe_rip.setFont(new Font("Arial", Font.PLAIN, 12));
+		textField_mpe_rip.setColumns(10);
+		pannelloRipetibilita.add(textField_mpe_rip, "flowx,cell 2 7,width :100:");
+
+		JLabel lblEsito = new JLabel("ESITO:");
+		lblEsito.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloRipetibilita.add(lblEsito, "cell 1 9,alignx trailing");
+
+		textField_esito_rip = new JTextField();
+		textField_esito_rip.setEditable(false);
+		textField_esito_rip.setFont(new Font("Arial", Font.PLAIN, 12));
+		textField_esito_rip.setColumns(10);
+		pannelloRipetibilita.add(textField_esito_rip, "cell 2 9,width :100:");
+
+		JLabel lbl_um_strumento = new JLabel("");
+		lbl_um_strumento.setFont(new Font("Arial", Font.PLAIN, 12));
+		pannelloRipetibilita.add(lbl_um_strumento, "cell 2 7");
+
+		lbl_um_strumento.setText(strumento.getUm());
+
+		if(lista.get(0).getDeltaPortata()!=null) 
+		{
+			textField_p_p_rip.setText(lista.get(0).getDeltaPortata().setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP).toPlainString());
+		}
+		if(lista.get(0).getMpe()!=null) 
+		{
+			textField_mpe_rip.setText(lista.get(0).getMpe().stripTrailingZeros().toPlainString());
+		}else 
+		{
+			textField_mpe_rip.setText(getMPE(massa.toPlainString(),comboBox_campo.getSelectedIndex(),2).stripTrailingZeros().toPlainString());
+		}
+		if(lista.get(0).getEsito()!=null) 
+		{
+			if(lista.get(0).getEsito().equals("POSITIVO")) 
+			{
+				textField_esito_rip.setBackground(Color.GREEN);
+			}else 
+			{
+				textField_esito_rip.setBackground(Color.RED);
+			}
+			textField_esito_rip.setText(lista.get(0).getEsito());
+		}
+
+		tableRip.getModel().addTableModelListener(new TableModelListener() {
+
+			public void tableChanged(TableModelEvent e) {
+
+				int row = e.getFirstRow();
+				int column=e.getColumn();
+
+				if(column==1 || column==2 || column==3) 
+				{
+
+
+					Object massa=modelRipCorredoEsterno.getValueAt(row, 1);
+					Object posizione=modelRipCorredoEsterno.getValueAt(row, 2);
+					Object caricoEquilibrio=modelRipCorredoEsterno.getValueAt(row, 3);
+
+
+					/*Controllo Risoluzione Massima Indicazione*/
+					BigDecimal  m=null;
+
+					if(massa!=null) 
+					{
+						m=new BigDecimal(massa.toString());
+					}
+					else 
+					{
+						return;
+					}
+
+					if(posizione==null) 
+					{
+						return;
+					}
+
+					int risoluzioneBilanciaE0=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),BigDecimal.ZERO).scale()+1;
+					int risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),m).scale()+1;
+					int risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),m).scale();
+
+
+					/*		if(indicazione!=null && new BigDecimal(indicazione.toString()).scale()>risoluzioneIndicazione) 
+					{
+						BigDecimal ind=new BigDecimal(indicazione.toString());
+						JOptionPane.showMessageDialog(null,"Il valore inserito eccede la risoluzione massima ["+risoluzioneIndicazione+"]. \nIl valore verrà troncato a "+ind.setScale(risoluzioneIndicazione,RoundingMode.FLOOR).toPlainString(),"Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+						modelRipCorredoEsterno.setValueAt(ind.setScale(risoluzioneIndicazione,RoundingMode.FLOOR).toPlainString(),row, 2);
+						return;
+					}
+					 */		
+					/*Controllo Risoluzione Massima Carico Aggiuntivo*/
+					if(caricoEquilibrio!=null && new BigDecimal(caricoEquilibrio.toString()).scale()>risoluzioneBilancia) 
+					{
+						BigDecimal car = new BigDecimal(caricoEquilibrio.toString());
+						JOptionPane.showMessageDialog(null,"Il valore inserito eccede la risoluzione massima ["+risoluzioneBilancia+"].\nIl valore verrà troncato a "+car.setScale(risoluzioneBilancia,RoundingMode.FLOOR).toPlainString(),"Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+						modelRipCorredoEsterno.setValueAt(car.setScale(risoluzioneBilancia,RoundingMode.FLOOR).toPlainString(),row, 3);
+						return;
+					}
+
+
+					try 
+					{
+						if(caricoEquilibrio!=null && massa!=null) 
+						{	
+							BigDecimal mas=new BigDecimal(massa.toString());
+
+							BigDecimal car=new BigDecimal(caricoEquilibrio.toString());
+
+
+
+							BigDecimal indicazione=BigDecimal.ZERO;
+
+
+							if(posizione.equals("S")) 
+							{
+
+								indicazione=m.subtract(car);
+							}
+							else 
+							{
+								indicazione=m.add(car);
+							}
+							
+						
+
+							BigDecimal portata=indicazione;
+
+							/*	if(strumento.getClasse()<5 && strumento.getTipologia()!=2) 
+							{
+								portata=(ind.add(err.divide(new BigDecimal(2).setScale(risoluzioneBilanciaE0, RoundingMode.HALF_UP)).subtract(car))).multiply(Costanti.gFactor);
+							}
+							else 
+							{
+								portata= ind;
+							}*/
+							BigDecimal deltaPortata=getDeltaPorta(portata,row,strumento.getId_tipo_strumento()).setScale(risoluzioneBilanciaE0, RoundingMode.HALF_UP);
+
+							textField_p_p_rip.setText(deltaPortata.toPlainString());
+
+						
+
+							modelRipCorredoEsterno.setValueAt(indicazione.setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP).toPlainString(),row, 4);
+
+							String esito=controllaEsitoRipetibilita(strumento.getClasse(),strumento.getId_tipo_strumento());
+
+							if (esito.equals("POSITIVO"))
+							{
+								textField_esito_rip.setBackground(Color.GREEN);
+							}
+							else if(esito.equals("INCOMPLETO")) 
+							{
+								textField_esito_rip.setBackground(Color.YELLOW);
+							}
+							else 
+							{
+								textField_esito_rip.setBackground(Color.RED);
+							}
+							textField_esito_rip.setText(esito);
+
+							textField_mpe_rip.setText(getMPE(mas.toPlainString(),comboBox_campo.getSelectedIndex(),2).stripTrailingZeros().toPlainString());
+
+							VerRipetibilitaDTO ripetibilita= new VerRipetibilitaDTO();
+							ripetibilita.setId(Integer.parseInt(modelRipCorredoEsterno.getValueAt(row, 5).toString()));
+							ripetibilita.setMassa(new BigDecimal(modelRipCorredoEsterno.getValueAt(row, 1).toString()));
+
+							ripetibilita.setPosizione(modelRipCorredoEsterno.getValueAt(row, 2).toString());
+							ripetibilita.setCaricoAgg(new BigDecimal(modelRipCorredoEsterno.getValueAt(row, 3).toString()).setScale(risoluzioneBilancia));
+							ripetibilita.setIndicazione(new BigDecimal(modelRipCorredoEsterno.getValueAt(row, 4).toString()).setScale(risoluzioneIndicazione));
+
+							ripetibilita.setDeltaPortata(BigDecimal.ZERO.setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP));
+
+							ripetibilita.setMpe(new BigDecimal(textField_mpe_rip.getText()).stripTrailingZeros());
+							ripetibilita.setEsito(esito);
+
+							ripetibilita.setCampo(comboBox_campo.getSelectedIndex()+1);
+							GestioneMisuraBO.updateVerRipetibilita(ripetibilita,misura.getId());
+
+
+
+						}
+
+
+					} catch (Exception e2) {
+						e2.printStackTrace();
+					}
+				}
+			}
+
+
+
+
+		});
+
+		return pannelloRipetibilita;
+	}
+	
+	
+	private void setUpSportColumn(JTable table, TableColumn sportColumn) {
+		
+		//Set up the editor for the sport cells.
+		JComboBox comboBox = new JComboBox();
+		comboBox.addItem("S");
+		comboBox.addItem("D");
+		sportColumn.setCellEditor(new DefaultCellEditor(comboBox));
+
+		//Set up tool tips for the sport cells.
+		DefaultTableCellRenderer renderer =
+				new DefaultTableCellRenderer();
+		renderer.setToolTipText("Click for combo box");
+		sportColumn.setCellRenderer(renderer);
+		
+	}
+
+
+
+
+
+	private BigDecimal getDeltaPorta(BigDecimal portataCorrente, int row, int idTipoStrumento) {
 		BigDecimal deltaPortata=BigDecimal.ZERO;
 
 		double min=0;
 		double max=0;
 		Object portata=null;
 
+		
 		for (int i = 0; i < modelRip.getRowCount(); i++) {
 
 			if(i==row) 
 			{
 				portata=portataCorrente;
+				max=portataCorrente.doubleValue();
 			}
 			else 
 			{
-				portata=modelRip.getValueAt(i, 4);
+				if(idTipoStrumento!=4) 
+				{
+				
+					portata=modelRip.getValueAt(i, 4);
+				}
+				else 
+				{
+					portata=modelRipCorredoEsterno.getValueAt(i, 4);
+				}
 			}
 
 
@@ -1362,20 +1774,41 @@ public class PannelloMisuraMaster extends JPanel
 		return deltaPortata;
 	}
 
-	private String controllaEsitoRipetibilita(int classe)throws Exception {
+	private String controllaEsitoRipetibilita(int classe,int tipoStrumento)throws Exception {
 
 		int size=3;
 
-		for (int i = 0; i <size; i++) {
 
-			Object p=modelRip.getValueAt(i, 4);
 
-			if(p==null)
-			{
-				return "INCOMPLETO";
+
+
+
+		if(tipoStrumento==4) 
+		{
+
+			for (int i = 0; i <size; i++) {
+
+				Object indicazione=modelRipCorredoEsterno.getValueAt(i, 4);
+
+				if(indicazione==null)
+				{
+					return "INCOMPLETO";
+				}
 			}
 		}
+		else 
+		{	
 
+			for (int i = 0; i <size; i++) {
+
+				Object p=modelRip.getValueAt(i, 4);
+
+				if(p==null)
+				{
+					return "INCOMPLETO";
+				}
+			}
+		}
 		if(textField_p_p_rip.getText().length()>0 && textField_mpe_rip.getText().length()>0) 
 		{
 
@@ -1400,10 +1833,10 @@ public class PannelloMisuraMaster extends JPanel
 	private BigDecimal getERisoluzione(int campo, int id_tipo_strumento, BigDecimal carico) {
 		BigDecimal e = BigDecimal.ZERO;
 
-		if(id_tipo_strumento==1) 
+		if(id_tipo_strumento==1 || id_tipo_strumento==4 ||id_tipo_strumento==5) 
 		{
 			e=strumento.getDiv_rel_C1();
-			
+
 		}
 
 
@@ -1445,16 +1878,16 @@ public class PannelloMisuraMaster extends JPanel
 
 		return e;
 	}
-	
+
 	private BigDecimal getE(int campo, int id_tipo_strumento,BigDecimal carico)
 	{
 
 		BigDecimal e = BigDecimal.ZERO;
 
-		if(id_tipo_strumento==1) 
+		if(id_tipo_strumento==1 || id_tipo_strumento==4 || id_tipo_strumento==5) 
 		{
 			e=strumento.getDiv_ver_C1();
-			
+
 		}
 
 
@@ -1554,14 +1987,14 @@ public class PannelloMisuraMaster extends JPanel
 
 	private BigDecimal getMassa(int campo,int tipoStrumento) {
 
-		if(tipoStrumento==1) 
+		if(tipoStrumento==1 || tipoStrumento==4 || tipoStrumento==5) 
 		{
 			BigDecimal z8=new BigDecimal("0.8");
 			return strumento.getPortata_max_C1().multiply(z8);
 
 		} 	
 
-/*		if(tipoStrumento==2) {
+		/*		if(tipoStrumento==2) {
 
 			BigDecimal max = null;
 
@@ -1635,19 +2068,19 @@ public class PannelloMisuraMaster extends JPanel
 				}
 			}
 		});
-		
+
 		JLabel label_1 = new JLabel("");
 		label_1.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/tipo_3.png")));
 		pannelloDecentramento.add(label_1, "cell 5 2,alignx center");
-		
+
 		JLabel label_2 = new JLabel("");
 		label_2.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/tipo_4.png")));
 		pannelloDecentramento.add(label_2, "cell 6 2,alignx center");
-		
+
 		JRadioButton rdbtn_tipo_3 = new JRadioButton("");
 		rdbtn_tipo_3.setBackground(Color.WHITE);
 		pannelloDecentramento.add(rdbtn_tipo_3, "cell 5 3,alignx center");
-		
+
 		JRadioButton rdbtn_tipo_4 = new JRadioButton("");
 		rdbtn_tipo_4.setBackground(Color.WHITE);
 		pannelloDecentramento.add(rdbtn_tipo_4, "cell 6 3,alignx center");
@@ -1695,15 +2128,15 @@ public class PannelloMisuraMaster extends JPanel
 			int risoluzioneBilanciaE0=0;
 			int risoluzioneBilancia=0;
 			int risoluzioneIndicazione=0;
-			
+
 			if(ver.getMassa()!=null) 
 			{
 				modelDec.setValueAt(ver.getMassa().stripTrailingZeros(), i, 1);
-				
-				 risoluzioneBilanciaE0=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(), BigDecimal.ZERO).scale()+1;
-				 risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(), ver.getMassa()).scale()+1;
-				 risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),ver.getMassa()).scale();
-				
+
+				risoluzioneBilanciaE0=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(), BigDecimal.ZERO).scale()+1;
+				risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(), ver.getMassa()).scale()+1;
+				risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),ver.getMassa()).scale();
+
 			}
 			if(ver.getIndicazione()!=null) 
 			{
@@ -1733,10 +2166,10 @@ public class PannelloMisuraMaster extends JPanel
 			ver=listaDecentramento.get(i+1);
 			if(ver.getMassa()!=null) 
 			{
-				 risoluzioneBilanciaE0=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(), BigDecimal.ZERO).scale()+1;
-				 risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(), ver.getMassa()).scale()+1;
-				 risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),ver.getMassa()).scale();
-				 
+				risoluzioneBilanciaE0=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(), BigDecimal.ZERO).scale()+1;
+				risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(), ver.getMassa()).scale()+1;
+				risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),ver.getMassa()).scale();
+
 				modelDec.setValueAt(ver.getMassa().stripTrailingZeros(), i+1, 1);
 			}
 			if(ver.getIndicazione()!=null) 
@@ -1817,11 +2250,11 @@ public class PannelloMisuraMaster extends JPanel
 		JLabel lblStrumentoSpeciale = new JLabel("Strumento speciale");
 		lblStrumentoSpeciale.setFont(new Font("Arial", Font.BOLD, 12));
 		pannelloDecentramento.add(lblStrumentoSpeciale, "flowx,cell 5 4,alignx right");
-		
+
 		JButton btnRicalcola = new JButton("Ricalcola");
 		btnRicalcola.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 				for(int i =0; i<tableDec.getRowCount();i++) 
 				{
 					int column=1;
@@ -1835,13 +2268,13 @@ public class PannelloMisuraMaster extends JPanel
 					{
 						modelDec.setValueAt(modelDec.getValueAt(i, column),i, column);
 					}
-					
+
 					column=3;
 					if(modelDec.getValueAt(i, column)!=null && modelDec.getValueAt(i, column).toString().length()>0)
 					{
 						modelDec.setValueAt(modelDec.getValueAt(i, column),i, column);
 					}
-					
+
 				}
 				chk_btn_decentramento=true;
 			}
@@ -1880,7 +2313,7 @@ public class PannelloMisuraMaster extends JPanel
 				{
 					JOptionPane.showMessageDialog(null,"Il campo accetta minimo 3 punti di ancoraggio","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
 				}
-			
+
 			}
 		});
 
@@ -1898,7 +2331,7 @@ public class PannelloMisuraMaster extends JPanel
 		bg.add(rdbtn_tri);
 		bg.add(rdbtn_tipo_3);
 		bg.add(rdbtn_tipo_4);
-		
+
 		rdbtn_quad.addActionListener(new ActionListener() {
 
 			@Override
@@ -1940,7 +2373,7 @@ public class PannelloMisuraMaster extends JPanel
 				}
 			}
 		});
-		
+
 		rdbtn_tipo_3.addActionListener(new ActionListener() {
 
 			@Override
@@ -2000,7 +2433,7 @@ public class PannelloMisuraMaster extends JPanel
 			}
 		}
 
-	//	comboBox.setSelectedIndex(0);
+		//	comboBox.setSelectedIndex(0);
 
 
 		if(listaDecentramento.get(0).getEsito()!=null) 
@@ -2035,7 +2468,7 @@ public class PannelloMisuraMaster extends JPanel
 
 					/*Controllo Risoluzione Massima Indicazione*/
 					BigDecimal  m=null;
-					
+
 					if(massa!=null && !massa.toString().equals("")) 
 					{
 						m=new BigDecimal(massa.toString());
@@ -2044,11 +2477,11 @@ public class PannelloMisuraMaster extends JPanel
 					{
 						return;
 					}
-				
+
 					int risoluzioneBilanciaE0=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),BigDecimal.ZERO).scale()+1;
 					int risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),m).scale()+1;
 					int risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),m).scale();
-					
+
 					if(indicazione!=null &&!indicazione.toString().equals("") && new BigDecimal(indicazione.toString()).scale()>risoluzioneIndicazione) 
 					{
 						BigDecimal ind=new BigDecimal(indicazione.toString());
@@ -2056,7 +2489,7 @@ public class PannelloMisuraMaster extends JPanel
 						modelDec.setValueAt(ind.setScale(risoluzioneIndicazione,RoundingMode.FLOOR).toPlainString(),row, 2);
 						return;
 					}
-					
+
 					/*Controllo Risoluzione Massima Carico Aggiuntivo*/
 					if(carico!=null && !carico.toString().equals("") && new BigDecimal(carico.toString()).scale()>risoluzioneBilancia) 
 					{
@@ -2065,7 +2498,7 @@ public class PannelloMisuraMaster extends JPanel
 						modelDec.setValueAt(car.setScale(risoluzioneBilancia,RoundingMode.FLOOR).toPlainString(),row, 3);
 						return;
 					}
-					
+
 
 					try 
 					{
@@ -2081,21 +2514,21 @@ public class PannelloMisuraMaster extends JPanel
 
 							BigDecimal errore=getErrore(mas,ind,eRis.setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP),car,strumento.getClasse(),strumento.getTipologia());
 							BigDecimal errore_corr=null;
-							
+
 							BigDecimal mpe=getMPE(mas.toPlainString(), comboBox_campo.getSelectedIndex(),2);
-							
+
 							BigDecimal mpe_zero=getE(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),mas).multiply(new BigDecimal(0.25)).stripTrailingZeros();
-							
+
 							if(row==0) 
 							{
 								errore_corr=BigDecimal.ZERO.setScale(risoluzioneBilanciaE0);
-								
+
 								if(mpe_zero!=null) 
 								{
 									modelDec.setValueAt(mpe_zero.toPlainString(), row, 6);
 								}
-								
-								
+
+
 							}else 
 							{
 								if(modelDec.getValueAt(0, 4)!=null) 
@@ -2103,7 +2536,7 @@ public class PannelloMisuraMaster extends JPanel
 									BigDecimal  errGen=new BigDecimal(modelDec.getValueAt(0, 4).toString());
 									errore_corr=errore.subtract(errGen);
 								}
-								
+
 								if(mpe!=null && !modelDec.getValueAt(row, 0).toString().equals("E0")) 
 								{
 									modelDec.setValueAt(mpe, row, 6);
@@ -2113,7 +2546,7 @@ public class PannelloMisuraMaster extends JPanel
 								}
 
 							}
-							
+
 
 							if(errore!=null)
 							{
@@ -2124,7 +2557,7 @@ public class PannelloMisuraMaster extends JPanel
 								modelDec.setValueAt(errore_corr.setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP)/*.stripTrailingZeros()*/.toPlainString(), row, 5);
 
 							}
-		
+
 							String esito =valutaEsitoDecentramento(comboBox.getSelectedIndex());
 
 							if (esito.equals("POSITIVO"))
@@ -2164,8 +2597,8 @@ public class PannelloMisuraMaster extends JPanel
 							}
 							decentramento.setCarico(new BigDecimal(textField_carico.getText()));
 							GestioneMisuraBO.updateValoriDecentramento(decentramento,misura.getId());
-							
-							
+
+
 						}
 
 					}
@@ -2209,11 +2642,11 @@ public class PannelloMisuraMaster extends JPanel
 					}
 				} 
 
-				
+
 				Object mpe_0= modelDec.getValueAt(0,6);
 				Object err_cor_0=modelDec.getValueAt(0,4);
-				
-				
+
+
 				if(mpe_0!=null && err_cor_0!=null && !mpe_0.toString().equals("") && !err_cor_0.toString().equals("")) 
 				{
 					if(Math.abs(Double.parseDouble(err_cor_0.toString()))>Math.abs(Double.parseDouble(mpe_0.toString()))) 
@@ -2221,7 +2654,7 @@ public class PannelloMisuraMaster extends JPanel
 						return "NEGATIVO";
 					}
 				}
-				
+
 
 				for (int i = 1; i <modelDec.getRowCount(); i++) 
 
@@ -2284,7 +2717,7 @@ public class PannelloMisuraMaster extends JPanel
 
 		BigDecimal err =getE(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),carico);
 
-		
+
 		for (int i = 0; i < modelDec.getRowCount(); i++) 
 		{
 			if(i==0) 
@@ -2338,7 +2771,7 @@ public class PannelloMisuraMaster extends JPanel
 			}
 		}
 
-		
+
 	}
 
 
@@ -2356,35 +2789,35 @@ public class PannelloMisuraMaster extends JPanel
 			}
 		}
 
-//		if(idTipoStrumento==2) 
-//		{
-//			BigDecimal max=null;
-//
-//			if(strumento.getPortata_max_C1().doubleValue()!=0) 
-//			{
-//				max=strumento.getPortata_max_C1();
-//			}
-//
-//			if(strumento.getPortata_max_C2().doubleValue()!=0) 
-//			{
-//				max=strumento.getPortata_max_C2();
-//			}
-//
-//			if(strumento.getPortata_max_C3().doubleValue()!=0) 
-//			{
-//				max=strumento.getPortata_max_C3();
-//			}
-//
-//			if(punti_appoggio<=4) 
-//			{
-//				return new BigDecimal(max.doubleValue()/3).setScale(risoluzioneBilancia, RoundingMode.HALF_UP);
-//			}
-//			else 
-//			{
-//				return new BigDecimal(max.doubleValue()/(punti_appoggio-1)).setScale(risoluzioneBilancia, RoundingMode.HALF_UP);
-//			}
-//
-//		}
+		//		if(idTipoStrumento==2) 
+		//		{
+		//			BigDecimal max=null;
+		//
+		//			if(strumento.getPortata_max_C1().doubleValue()!=0) 
+		//			{
+		//				max=strumento.getPortata_max_C1();
+		//			}
+		//
+		//			if(strumento.getPortata_max_C2().doubleValue()!=0) 
+		//			{
+		//				max=strumento.getPortata_max_C2();
+		//			}
+		//
+		//			if(strumento.getPortata_max_C3().doubleValue()!=0) 
+		//			{
+		//				max=strumento.getPortata_max_C3();
+		//			}
+		//
+		//			if(punti_appoggio<=4) 
+		//			{
+		//				return new BigDecimal(max.doubleValue()/3).setScale(risoluzioneBilancia, RoundingMode.HALF_UP);
+		//			}
+		//			else 
+		//			{
+		//				return new BigDecimal(max.doubleValue()/(punti_appoggio-1)).setScale(risoluzioneBilancia, RoundingMode.HALF_UP);
+		//			}
+		//
+		//		}
 
 
 		if(idTipoStrumento==2 || idTipoStrumento==3) 
@@ -2402,7 +2835,7 @@ public class PannelloMisuraMaster extends JPanel
 			}
 			if(campo==1) 
 			{
-			/*	if(punti_appoggio<=4) 
+				/*	if(punti_appoggio<=4) 
 				{
 					return new BigDecimal(strumento.getPortata_max_C2().doubleValue()/3);
 				}
@@ -2414,7 +2847,7 @@ public class PannelloMisuraMaster extends JPanel
 			}
 			if(campo==2) 
 			{
-			/*	if(punti_appoggio<=4) 
+				/*	if(punti_appoggio<=4) 
 				{
 					return new BigDecimal(strumento.getPortata_max_C3().doubleValue()/3);
 				}
@@ -2422,7 +2855,7 @@ public class PannelloMisuraMaster extends JPanel
 				{
 					return new BigDecimal(strumento.getPortata_max_C3().doubleValue()/(punti_appoggio-1));
 				}
-			*/
+				 */
 				return strumento.getPortata_max_C2().add(BigDecimal.ONE);
 			}
 		}
@@ -2505,7 +2938,7 @@ public class PannelloMisuraMaster extends JPanel
 			int risoluzioneBilanciaE0=0;
 			int risoluzioneBilancia=0;
 			int risoluzioneIndicazione=0;
-			
+
 			modelLin.addRow(new Object[0]);
 
 			if(i==0)
@@ -2539,7 +2972,7 @@ public class PannelloMisuraMaster extends JPanel
 				}
 				if(i==2) 
 				{
-					
+
 					if(strumento.getClasse()<5) 
 					{
 						if(strumento.getId_tipo_strumento()==2 && comboBox_campo.getSelectedIndex()>0)							
@@ -2561,9 +2994,9 @@ public class PannelloMisuraMaster extends JPanel
 						if(strumento.getId_tipo_strumento()==2 && comboBox_campo.getSelectedIndex()>0)							
 						{	
 							BigDecimal campoMaxPrec=strumento.getPortataMaxCampo(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento());
-							
+
 							BigDecimal campoMax=strumento.getPortataMaxCampo(comboBox_campo.getSelectedIndex()+1, strumento.getId_tipo_strumento());
-							
+
 							BigDecimal factor=(campoMax.subtract(campoMaxPrec)).divide(new BigDecimal(3),RoundingMode.HALF_UP);
 							modelLin.setValueAt(campoMaxPrec.add(factor).stripTrailingZeros().stripTrailingZeros().toPlainString(), i, 1);
 						}
@@ -2581,9 +3014,9 @@ public class PannelloMisuraMaster extends JPanel
 						if(strumento.getId_tipo_strumento()==2 && comboBox_campo.getSelectedIndex()>0)							
 						{	
 							BigDecimal campoMaxPrec=strumento.getPortataMaxCampo(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento());
-							
+
 							BigDecimal campoMax=strumento.getPortataMaxCampo(comboBox_campo.getSelectedIndex()+1, strumento.getId_tipo_strumento());
-							
+
 							BigDecimal factor=(campoMax.subtract(campoMaxPrec)).divide(new BigDecimal(3),RoundingMode.HALF_UP);
 							factor=factor.multiply(new BigDecimal(2));
 							modelLin.setValueAt(campoMaxPrec.add(factor).stripTrailingZeros().stripTrailingZeros().toPlainString(), i, 1);
@@ -2600,19 +3033,19 @@ public class PannelloMisuraMaster extends JPanel
 					modelLin.setValueAt(strumento.getPortataMaxCampo(campo,strumento.getId_tipo_strumento()).stripTrailingZeros().toPlainString(), i, 1);
 				}
 			}
-			
-			
+
+
 			Object valoreMassa=modelLin.getValueAt(i, 1);
-			
+
 			if(valoreMassa!=null && !valoreMassa.equals(""))
 			{
 				BigDecimal m=new BigDecimal(valoreMassa.toString());
 				risoluzioneBilanciaE0=getERisoluzione(comboBox.getSelectedIndex(), strumento.getId_tipo_strumento(), BigDecimal.ZERO).scale()+1;
 				risoluzioneBilancia=getERisoluzione(comboBox.getSelectedIndex(), strumento.getId_tipo_strumento(), m).scale()+1;
 				risoluzioneIndicazione=getERisoluzione(comboBox.getSelectedIndex(), strumento.getId_tipo_strumento(),m).scale();
-				 
+
 			}
-			 
+
 			if(lin.getIndicazioneSalita()!=null) 
 			{
 				modelLin.setValueAt(lin.getIndicazioneSalita().setScale(risoluzioneIndicazione,RoundingMode.HALF_UP), i, 2);	
@@ -2715,56 +3148,56 @@ public class PannelloMisuraMaster extends JPanel
 		textField_esito_lin.setFont(new Font("Arial", Font.PLAIN, 12));
 		textField_esito_lin.setColumns(10);
 		pannelloLinearita.add(textField_esito_lin, "cell 1 6,width :100:");
-		
+
 		final JButton btnRicalcola_1 = new JButton("Ricalcola");
-		
+
 		btnRicalcola_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-			
+
+
 				for(int i =0; i<tableLin.getRowCount();i++) 
 				{
 					int column=1;
-					
+
 					if(modelLin.getValueAt(i, column)!=null && modelLin.getValueAt(i, column).toString().length()>0)
 					{
-						
+
 						modelLin.setValueAt(modelLin.getValueAt(i, column),i, column);
 					}
 
 					column=2;
 					if(modelLin.getValueAt(i, column)!=null && modelLin.getValueAt(i, column).toString().length()>0)
 					{
-						
+
 						modelLin.setValueAt(modelLin.getValueAt(i, column),i, column);
 					}
-					
+
 					column=3;
 					if(modelLin.getValueAt(i, column)!=null && modelLin.getValueAt(i, column).toString().length()>0)
 					{
-						
+
 						modelLin.setValueAt(modelLin.getValueAt(i, column),i, column);
 					}
 					column=4;
 					if(modelLin.getValueAt(i, column)!=null && modelLin.getValueAt(i, column).toString().length()>0)
 					{
-						
+
 						modelLin.setValueAt(modelLin.getValueAt(i, column),i, column);
 					}
 					column=5;
 					if(modelLin.getValueAt(i, column)!=null && modelLin.getValueAt(i, column).toString().length()>0)
 					{
-					
+
 						modelLin.setValueAt(modelLin.getValueAt(i, column),i, column);
 					}
-					
+
 				}
 				chk_btn_linearita=true;
 			}
 		});
 		btnRicalcola_1.setFont(new Font("Arial", Font.BOLD, 12));
 		pannelloLinearita.add(btnRicalcola_1, "cell 2 2");
-		
+
 		lbl_lettura_fine = new JLabel("");
 		lbl_lettura_fine.setFont(new Font("Arial", Font.BOLD, 12));
 		pannelloLinearita.add(lbl_lettura_fine, "cell 1 7 2 1");
@@ -2774,7 +3207,7 @@ public class PannelloMisuraMaster extends JPanel
 			BigDecimal sugg=new BigDecimal(listaClassi.get(0).getLimiteSuperiore()).multiply(getE(campo, strumento.getId_tipo_strumento(), BigDecimal.ZERO));
 			lbl_lettura_fine.setText("Tenendo in considerazione il punto di variazione calcolato pari a: "+sugg.stripTrailingZeros().toPlainString()+" "+strumento.getUm()+", se non diversamente specificato equi spaziare gli ulteriori due punti previsti tra il minimo e il massimo.");
 		}
-		
+
 		if(listaLinearita.get(0).getEsito()!=null) 
 		{
 			if(listaLinearita.get(0).getEsito().equals("POSITIVO")) 
@@ -2804,7 +3237,7 @@ public class PannelloMisuraMaster extends JPanel
 					Object car_agg_salita=modelLin.getValueAt(row, 4);
 
 					BigDecimal m;
-					
+
 					if(massa!=null && !massa.toString().equals("")) 
 					{
 						m=new BigDecimal(massa.toString());
@@ -2813,11 +3246,11 @@ public class PannelloMisuraMaster extends JPanel
 					{
 						return;
 					}
-				
+
 					int risoluzioneBilanciaE0=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),BigDecimal.ZERO).scale()+1;
 					int risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),m).scale()+1;
 					int risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),m).scale();
-					
+
 					if(indicazioneSalita!=null &&!indicazioneSalita.toString().equals("") && new BigDecimal(indicazioneSalita.toString()).scale()>risoluzioneIndicazione) 
 					{
 						BigDecimal ind=new BigDecimal(indicazioneSalita.toString());
@@ -2825,7 +3258,7 @@ public class PannelloMisuraMaster extends JPanel
 						modelLin.setValueAt(ind.setScale(risoluzioneIndicazione,RoundingMode.FLOOR).toPlainString(),row, 2);
 						return;
 					}
-					
+
 					/*Controllo Risoluzione Massima Carico Aggiuntivo*/
 					if(car_agg_salita!=null && !car_agg_salita.toString().equals("") && new BigDecimal(car_agg_salita.toString()).scale()>risoluzioneBilancia) 
 					{
@@ -2834,7 +3267,7 @@ public class PannelloMisuraMaster extends JPanel
 						modelLin.setValueAt(car.setScale(risoluzioneBilancia,RoundingMode.FLOOR).toPlainString(),row, 4);
 						return;
 					}
-					
+
 					if(massa!=null && indicazioneSalita!=null && car_agg_salita!=null ) 
 					{
 						BigDecimal mas;
@@ -2856,7 +3289,7 @@ public class PannelloMisuraMaster extends JPanel
 								if(strumento.getClasse()<5 && strumento.getTipologia()!=2) 
 								{
 									erroreSalita=indSalita.multiply(Costanti.gFactor).add(err_div.setScale(risoluzioneBilancia).divide(new BigDecimal("2").setScale(risoluzioneBilanciaE0), RoundingMode.HALF_UP)
-										.subtract(car_aggSalita).subtract(mas)).setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
+											.subtract(car_aggSalita).subtract(mas)).setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
 								}
 								else
 								{
@@ -2874,8 +3307,8 @@ public class PannelloMisuraMaster extends JPanel
 							{
 								if(strumento.getClasse()<5 && strumento.getTipologia()!=2) 
 								{
-								erroreSalita=indSalita.multiply(Costanti.gFactor).add(err_div.setScale(4).divide(new BigDecimal("2"), RoundingMode.HALF_UP)
-										.subtract(car_aggSalita).subtract(mas));
+									erroreSalita=indSalita.multiply(Costanti.gFactor).add(err_div.setScale(4).divide(new BigDecimal("2"), RoundingMode.HALF_UP)
+											.subtract(car_aggSalita).subtract(mas));
 								}
 								else 
 								{
@@ -2947,7 +3380,7 @@ public class PannelloMisuraMaster extends JPanel
 					Object car_agg_discesa=modelLin.getValueAt(row, 5);
 
 					BigDecimal m;
-					
+
 					if(massa!=null && !massa.toString().equals("")) 
 					{
 						m=new BigDecimal(massa.toString());
@@ -2956,11 +3389,11 @@ public class PannelloMisuraMaster extends JPanel
 					{
 						return;
 					}
-				
+
 					int risoluzioneBilanciaE0=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),BigDecimal.ZERO).scale()+1;
 					int risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),m).scale()+1;
 					int risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),m).scale();
-					
+
 					if(indicazioneDiscesa!=null &&!indicazioneDiscesa.toString().equals("") && new BigDecimal(indicazioneDiscesa.toString()).scale()>risoluzioneIndicazione) 
 					{
 						BigDecimal ind=new BigDecimal(indicazioneDiscesa.toString());
@@ -2968,7 +3401,7 @@ public class PannelloMisuraMaster extends JPanel
 						modelLin.setValueAt(ind.setScale(risoluzioneIndicazione,RoundingMode.FLOOR).toPlainString(),row, 3);
 						return;
 					}
-					
+
 					/*Controllo Risoluzione Massima Carico Aggiuntivo*/
 					if(car_agg_discesa!=null && !car_agg_discesa.toString().equals("") && new BigDecimal(car_agg_discesa.toString()).scale()>risoluzioneBilancia) 
 					{
@@ -2977,8 +3410,8 @@ public class PannelloMisuraMaster extends JPanel
 						modelLin.setValueAt(car.setScale(risoluzioneBilancia,RoundingMode.FLOOR).toPlainString(),row, 5);
 						return;
 					}
-					
-					
+
+
 					if(massa!=null  && indicazioneDiscesa!=null && car_agg_discesa!=null && !car_agg_discesa.toString().equals("")) 
 					{
 						BigDecimal mas;
@@ -2998,14 +3431,14 @@ public class PannelloMisuraMaster extends JPanel
 
 							BigDecimal err_div=getE(campo,strumento.getId_tipo_strumento(),mas);
 
-						
+
 							if(row==0) 
 							{
 
 								if(strumento.getClasse()<5 && strumento.getTipologia()!=2) 
 								{
 									erroreDiscesa=indDiscesa.multiply(Costanti.gFactor).add(err_div.setScale(risoluzioneBilanciaE0).divide(new BigDecimal("2").setScale(risoluzioneBilanciaE0), RoundingMode.HALF_UP)
-										.subtract(car_aggDiscesa).subtract(mas));
+											.subtract(car_aggDiscesa).subtract(mas));
 								}else 
 								{
 									erroreDiscesa=(indDiscesa.multiply(Costanti.gFactor)).subtract(mas);
@@ -3035,17 +3468,17 @@ public class PannelloMisuraMaster extends JPanel
 
 							else 
 							{
-								
+
 								if(strumento.getClasse()<5 && strumento.getTipologia()!=2 ) 
 								{
 									erroreDiscesa=indDiscesa.multiply(Costanti.gFactor).add(err_div.setScale(4).divide(new BigDecimal("2"), RoundingMode.HALF_UP)
-										.subtract(car_aggDiscesa).subtract(mas));
+											.subtract(car_aggDiscesa).subtract(mas));
 								}
 								else 
 								{
 									erroreDiscesa=(indDiscesa.multiply(Costanti.gFactor)).subtract(mas);
 								}
-								
+
 								BigDecimal mpe=getMPE(mas.toPlainString(), campo,2);
 								modelLin.setValueAt(erroreDiscesa.setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP).toPlainString(), row, 7);
 
@@ -3164,6 +3597,689 @@ public class PannelloMisuraMaster extends JPanel
 	}
 
 
+
+	private JPanel costruisciPannelloLinearitaCorredoEsteno() {
+		// TODO AAA-Pannello Linearita Masse a corredo
+		JPanel pannelloLinearita= new JPanel();
+
+		pannelloLinearita.setBorder(new TitledBorder(new LineBorder(new Color(255, 0, 0), 2, true), "Prova Linearità", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		pannelloLinearita.setBackground(Color.WHITE);
+		pannelloLinearita.setLayout(new MigLayout("", "[22.00][][grow]", "[][][][][][][][]"));
+
+		
+		
+
+		tableLin = new JTable();
+
+		modelLinCorredoEsterno = new ModelLinearitaCorredoEsterno(strumento.getUm());
+
+		tableLin.setModel(modelLinCorredoEsterno);
+
+		tableLin.setRowHeight(25);
+		tableLin.setFont(new Font("Arial", Font.PLAIN, 12));
+		tableLin.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+
+		tableLin.setDefaultRenderer(Object.class, new RenderTable(2,strumento.getClasse(),strumento.getTipologia()));
+
+		TableColumn column = tableLin.getColumnModel().getColumn(tableLin.getColumnModel().getColumnIndex("id"));
+		tableLin.removeColumn(column);
+
+		setUpSportColumn(tableLin, tableLin.getColumnModel().getColumn(2));
+		setUpSportColumn(tableLin, tableLin.getColumnModel().getColumn(3));
+
+		ArrayList<VerLinearitaDTO> listaLinearita = (ArrayList<VerLinearitaDTO>)misura.getVerLinearitas(comboBox_campo.getSelectedIndex()+1);
+
+		int campo=comboBox_campo.getSelectedIndex()+1;
+
+		BigDecimal secondo_punto_variazione=null;
+
+		
+		
+		for (int i = 0; i <=5; i++) {
+
+			VerLinearitaDTO lin=listaLinearita.get(i);
+
+			int risoluzioneBilanciaE0=0;
+			int risoluzioneBilancia=0;
+			int risoluzioneIndicazione=0;
+
+			modelLinCorredoEsterno.addRow(new Object[0]);
+
+			if(i==0)
+			{
+				modelLinCorredoEsterno.setValueAt("E0", i, 0);
+
+			}else
+			{
+				modelLinCorredoEsterno.setValueAt(i, i, 0);
+			}
+
+			if(lin.getMassa()!=null) 
+			{
+				modelLinCorredoEsterno.setValueAt(lin.getMassa().toPlainString(), i, 1);	
+			}else 
+			{
+				if(i==0)
+				{					
+					modelLinCorredoEsterno.setValueAt(BigDecimal.ZERO.toPlainString(), i, 1);
+				}
+				if(i==1) 
+				{
+					modelLinCorredoEsterno.setValueAt(strumento.getPortataMinCampo(campo, strumento.getId_tipo_strumento()).toPlainString(), i, 1);
+				}
+				if(i==2) 
+				{
+
+					if(strumento.getClasse()<5) 
+					{
+						if(strumento.getId_tipo_strumento()==2 && comboBox_campo.getSelectedIndex()>0)							
+						{	
+							BigDecimal campoMaxPrec=strumento.getPortataMaxCampo(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento());
+							modelLinCorredoEsterno.setValueAt(campoMaxPrec.add(getEVariazione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(), BigDecimal.ZERO).multiply(new BigDecimal(100))).stripTrailingZeros().stripTrailingZeros().toPlainString(), i, 1);
+						}
+						else 
+						{
+							BigDecimal primo_punto_variazione=getEVariazione(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),BigDecimal.ZERO).multiply(new BigDecimal(listaClassi.get(0).getLimiteSuperiore()));
+							modelLinCorredoEsterno.setValueAt(primo_punto_variazione.stripTrailingZeros().toPlainString(), i, 1);
+						}
+					}
+				}
+				if(i==3) 
+				{
+					if(strumento.getClasse()<5) 
+					{
+						if(strumento.getId_tipo_strumento()==2 && comboBox_campo.getSelectedIndex()>0)							
+						{	
+							BigDecimal campoMaxPrec=strumento.getPortataMaxCampo(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento());
+
+							BigDecimal campoMax=strumento.getPortataMaxCampo(comboBox_campo.getSelectedIndex()+1, strumento.getId_tipo_strumento());
+
+							BigDecimal factor=(campoMax.subtract(campoMaxPrec)).divide(new BigDecimal(3),RoundingMode.HALF_UP);
+							modelLinCorredoEsterno.setValueAt(campoMaxPrec.add(factor).stripTrailingZeros().stripTrailingZeros().toPlainString(), i, 1);
+						}
+						else 
+						{
+							secondo_punto_variazione=getEVariazione(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),BigDecimal.ZERO).multiply(new BigDecimal(listaClassi.get(1).getLimiteSuperiore()));
+							modelLinCorredoEsterno.setValueAt(secondo_punto_variazione.stripTrailingZeros().stripTrailingZeros().toPlainString(), i, 1);
+						}
+					}
+				}
+				if(i==4) 
+				{
+					if(strumento.getClasse()<5) 
+					{
+						if(strumento.getId_tipo_strumento()==2 && comboBox_campo.getSelectedIndex()>0)							
+						{	
+							BigDecimal campoMaxPrec=strumento.getPortataMaxCampo(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento());
+
+							BigDecimal campoMax=strumento.getPortataMaxCampo(comboBox_campo.getSelectedIndex()+1, strumento.getId_tipo_strumento());
+
+							BigDecimal factor=(campoMax.subtract(campoMaxPrec)).divide(new BigDecimal(3),RoundingMode.HALF_UP);
+							factor=factor.multiply(new BigDecimal(2));
+							modelLinCorredoEsterno.setValueAt(campoMaxPrec.add(factor).stripTrailingZeros().stripTrailingZeros().toPlainString(), i, 1);
+						}else 
+						{
+							secondo_punto_variazione=getEVariazione(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),BigDecimal.ZERO).multiply(new BigDecimal(listaClassi.get(1).getLimiteSuperiore()));
+							BigDecimal terzo_punto_variazione=(strumento.getPortataMaxCampo(campo,strumento.getId_tipo_strumento()).add(secondo_punto_variazione)).divide(new BigDecimal(2),RoundingMode.HALF_UP);
+							modelLinCorredoEsterno.setValueAt(terzo_punto_variazione.stripTrailingZeros().stripTrailingZeros().toPlainString(), i, 1);
+						}
+					}
+				}
+				if(i==5) 
+				{
+					modelLinCorredoEsterno.setValueAt(strumento.getPortataMaxCampo(campo,strumento.getId_tipo_strumento()).stripTrailingZeros().toPlainString(), i, 1);
+				}
+			}
+
+
+			Object valoreMassa=modelLinCorredoEsterno.getValueAt(i, 1);
+
+			if(valoreMassa!=null && !valoreMassa.equals(""))
+			{
+				BigDecimal m=new BigDecimal(valoreMassa.toString());
+				risoluzioneBilanciaE0=getERisoluzione(comboBox.getSelectedIndex(), strumento.getId_tipo_strumento(), BigDecimal.ZERO).scale()+1;
+				risoluzioneBilancia=getERisoluzione(comboBox.getSelectedIndex(), strumento.getId_tipo_strumento(), m).scale()+1;
+				risoluzioneIndicazione=getERisoluzione(comboBox.getSelectedIndex(), strumento.getId_tipo_strumento(),m).scale();
+
+			}
+			
+			modelLinCorredoEsterno.setValueAt(BigDecimal.ZERO, 0, 1);
+			
+
+			if(lin.getIndicazioneSalita()!=null) 
+			{
+				modelLinCorredoEsterno.setValueAt(lin.getIndicazioneSalita().setScale(risoluzioneIndicazione,RoundingMode.HALF_UP), i, 2);	
+			}
+
+			if(lin.getIndicazioneDiscesa()!=null) 
+			{
+				modelLinCorredoEsterno.setValueAt(lin.getIndicazioneDiscesa().setScale(risoluzioneIndicazione,RoundingMode.HALF_UP), i, 3);	
+			}
+
+			if(lin.getCaricoAggSalita()!=null) 
+			{
+				modelLinCorredoEsterno.setValueAt(lin.getCaricoAggSalita().setScale(risoluzioneBilancia,RoundingMode.HALF_UP), i, 4);	
+			}
+			if(strumento.getClasse()>=5 ||strumento.getTipologia()==2) 
+			{
+				modelLinCorredoEsterno.setValueAt("0", i, 4);	
+			}
+
+			if(lin.getCaricoAggDiscesa()!=null) 
+			{
+				modelLinCorredoEsterno.setValueAt(lin.getCaricoAggDiscesa().setScale(risoluzioneBilancia,RoundingMode.HALF_UP), i, 5);	
+			}
+			if(strumento.getClasse()>=5 ||strumento.getTipologia()==2) 
+			{
+				modelLinCorredoEsterno.setValueAt("0", i, 5);	
+			}
+
+			if(lin.getErroreSalita()!=null) 
+			{
+				modelLinCorredoEsterno.setValueAt(lin.getErroreSalita().setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP), i, 6);	
+			}
+
+			if(lin.getErroreDiscesa()!=null) 
+			{
+				modelLinCorredoEsterno.setValueAt(lin.getErroreDiscesa().setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP), i, 7);	
+			}
+
+			if(lin.getErroreCorSalita()!=null) 
+			{
+				modelLinCorredoEsterno.setValueAt(lin.getErroreCorSalita().setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP), i, 8);	
+			}
+
+			if(lin.getErroreCorDiscesa()!=null) 
+			{
+				modelLinCorredoEsterno.setValueAt(lin.getErroreCorDiscesa().setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP), i, 9);	
+			}
+
+			if(lin.getMpe()!=null) 
+			{
+				modelLinCorredoEsterno.setValueAt(lin.getMpe().stripTrailingZeros().toPlainString(), i, 10);	
+			}
+
+			modelLinCorredoEsterno.setValueAt(lin.getId(), i, 11);
+		}
+
+
+		JLabel lblNewLabel = new JLabel("Prova di Linearità");
+		lblNewLabel.setFont(new Font("Calibri", Font.BOLD, 14));
+		pannelloLinearita.add(lblNewLabel, "cell 0 0 3 1");
+
+		JLabel lblNewLabel_2 = new JLabel("");
+		lblNewLabel_2.setFont(new Font("Calibri", Font.PLAIN, 14));
+		pannelloLinearita.add(lblNewLabel_2, "cell 0 0 3 1");
+
+		JLabel lblTipoDispositivoDi = new JLabel("Tipo dispositivo di azzeramento");
+		lblTipoDispositivoDi.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloLinearita.add(lblTipoDispositivoDi, "cell 1 2,alignx trailing");
+
+
+
+
+		JScrollPane scrollTab = new JScrollPane(tableLin);
+
+		pannelloLinearita.add(scrollTab, "cell 1 4 2 1,growx,alignx left,height :200:,aligny top");
+
+
+		JLabel lblEsito = new JLabel("ESITO:");
+		lblEsito.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloLinearita.add(lblEsito, "cell 1 6,alignx left");
+
+		textField_esito_lin = new JTextField();
+		textField_esito_lin.setEditable(false);
+		textField_esito_lin.setBackground(Color.YELLOW);
+		textField_esito_lin.setFont(new Font("Arial", Font.PLAIN, 12));
+		textField_esito_lin.setColumns(10);
+		pannelloLinearita.add(textField_esito_lin, "cell 1 6,width :100:");
+
+		final JButton btnRicalcola_1 = new JButton("Ricalcola");
+
+		btnRicalcola_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+
+				for(int i =0; i<tableLin.getRowCount();i++) 
+				{
+					int column=1;
+
+					if(modelLinCorredoEsterno.getValueAt(i, column)!=null && modelLinCorredoEsterno.getValueAt(i, column).toString().length()>0)
+					{
+
+						modelLinCorredoEsterno.setValueAt(modelLinCorredoEsterno.getValueAt(i, column),i, column);
+					}
+
+					column=2;
+					if(modelLinCorredoEsterno.getValueAt(i, column)!=null && modelLinCorredoEsterno.getValueAt(i, column).toString().length()>0)
+					{
+
+						modelLinCorredoEsterno.setValueAt(modelLinCorredoEsterno.getValueAt(i, column),i, column);
+					}
+
+					column=3;
+					if(modelLinCorredoEsterno.getValueAt(i, column)!=null && modelLinCorredoEsterno.getValueAt(i, column).toString().length()>0)
+					{
+
+						modelLinCorredoEsterno.setValueAt(modelLinCorredoEsterno.getValueAt(i, column),i, column);
+					}
+					column=4;
+					if(modelLinCorredoEsterno.getValueAt(i, column)!=null && modelLinCorredoEsterno.getValueAt(i, column).toString().length()>0)
+					{
+
+						modelLinCorredoEsterno.setValueAt(modelLinCorredoEsterno.getValueAt(i, column),i, column);
+					}
+					column=5;
+					if(modelLinCorredoEsterno.getValueAt(i, column)!=null && modelLinCorredoEsterno.getValueAt(i, column).toString().length()>0)
+					{
+
+						modelLinCorredoEsterno.setValueAt(modelLinCorredoEsterno.getValueAt(i, column),i, column);
+					}
+
+				}
+				chk_btn_linearita=true;
+			}
+		});
+		btnRicalcola_1.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloLinearita.add(btnRicalcola_1, "cell 2 2");
+
+		lbl_lettura_fine = new JLabel("");
+		lbl_lettura_fine.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloLinearita.add(lbl_lettura_fine, "cell 1 7 2 1");
+
+		if(strumento.getClasse()>=5 || strumento.getTipologia()==2) 
+		{
+			BigDecimal sugg=new BigDecimal(listaClassi.get(0).getLimiteSuperiore()).multiply(getE(campo, strumento.getId_tipo_strumento(), BigDecimal.ZERO));
+			lbl_lettura_fine.setText("Tenendo in considerazione il punto di variazione calcolato pari a: "+sugg.stripTrailingZeros().toPlainString()+" "+strumento.getUm()+", se non diversamente specificato equi spaziare gli ulteriori due punti previsti tra il minimo e il massimo.");
+		}
+
+		if(listaLinearita.get(0).getEsito()!=null) 
+		{
+			if(listaLinearita.get(0).getEsito().equals("POSITIVO")) 
+			{
+				textField_esito_lin.setBackground(Color.GREEN);
+			}else 
+			{
+				textField_esito_lin.setBackground(Color.RED);
+			}
+			textField_esito_lin.setText(listaLinearita.get(0).getEsito());
+		}
+
+
+		tableLin.getModel().addTableModelListener(new TableModelListener() {
+
+			public void tableChanged(TableModelEvent e) {
+
+				int row = e.getFirstRow();
+				int column=e.getColumn();
+
+				if(column==1 || column==2 || column==4 ) 
+				{
+					int campo=comboBox_campo.getSelectedIndex();
+
+					Object massa=modelLinCorredoEsterno.getValueAt(row, 1);
+					Object indicazioneSalita=modelLinCorredoEsterno.getValueAt(row, 2);
+					Object car_agg_salita=modelLinCorredoEsterno.getValueAt(row, 4);
+
+					BigDecimal m;
+
+					if(massa!=null && !massa.toString().equals("")) 
+					{
+						m=new BigDecimal(massa.toString());
+					}
+					else 
+					{
+						return;
+					}
+
+					int risoluzioneBilanciaE0=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),BigDecimal.ZERO).scale()+1;
+					int risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),m).scale()+1;
+					int risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),m).scale();
+
+					if(indicazioneSalita!=null &&!indicazioneSalita.toString().equals("") && new BigDecimal(indicazioneSalita.toString()).scale()>risoluzioneIndicazione) 
+					{
+						BigDecimal ind=new BigDecimal(indicazioneSalita.toString());
+						JOptionPane.showMessageDialog(null,"Il valore inserito eccede la risoluzione massima ["+risoluzioneIndicazione+"]. \nIl valore verrà troncato a "+ind.setScale(risoluzioneIndicazione,RoundingMode.FLOOR).toPlainString(),"Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+						modelLinCorredoEsterno.setValueAt(ind.setScale(risoluzioneIndicazione,RoundingMode.FLOOR).toPlainString(),row, 2);
+						return;
+					}
+
+					/*Controllo Risoluzione Massima Carico Aggiuntivo*/
+					if(car_agg_salita!=null && !car_agg_salita.toString().equals("") && new BigDecimal(car_agg_salita.toString()).scale()>risoluzioneBilancia) 
+					{
+						BigDecimal car = new BigDecimal(car_agg_salita.toString());
+						JOptionPane.showMessageDialog(null,"Il valore inserito eccede la risoluzione massima ["+risoluzioneBilancia+"].\nIl valore verrà troncato a "+car.setScale(risoluzioneBilancia,RoundingMode.FLOOR).toPlainString(),"Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+						modelLinCorredoEsterno.setValueAt(car.setScale(risoluzioneBilancia,RoundingMode.FLOOR).toPlainString(),row, 4);
+						return;
+					}
+
+					if(massa!=null && indicazioneSalita!=null && car_agg_salita!=null ) 
+					{
+						BigDecimal mas;
+						BigDecimal indSalita;
+						BigDecimal car_aggSalita;
+						BigDecimal erroreSalita = null;
+						BigDecimal erroreSalita_cor = null;
+
+
+						try 
+						{
+							mas=new BigDecimal(massa.toString());
+							indSalita=new BigDecimal(indicazioneSalita.toString());
+							car_aggSalita=new BigDecimal(car_agg_salita.toString());
+							BigDecimal err_div=getE(campo,strumento.getId_tipo_strumento(),mas);
+
+							if(row==0) 
+							{
+								if(strumento.getClasse()<5 && strumento.getTipologia()!=2) 
+								{
+									erroreSalita=indSalita.multiply(Costanti.gFactor).add(err_div.setScale(risoluzioneBilancia).divide(new BigDecimal("2").setScale(risoluzioneBilanciaE0), RoundingMode.HALF_UP)
+											.subtract(car_aggSalita).subtract(mas)).setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
+								}
+								else
+								{
+									erroreSalita=(indSalita.multiply(Costanti.gFactor)).subtract(mas).setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
+								}
+
+								erroreSalita_cor=BigDecimal.ZERO.setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
+								modelLinCorredoEsterno.setValueAt(erroreSalita.setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP).toPlainString(), row, 6);
+								modelLinCorredoEsterno.setValueAt(BigDecimal.ZERO.setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP), row, 8);
+								BigDecimal mpe_zero=getE(campo,strumento.getId_tipo_strumento(),mas).multiply(new BigDecimal(0.25)).stripTrailingZeros();
+								modelLinCorredoEsterno.setValueAt(mpe_zero, row, 10);
+							}
+
+							else 
+							{
+								if(strumento.getClasse()<5 && strumento.getTipologia()!=2) 
+								{
+									erroreSalita=indSalita.multiply(Costanti.gFactor).add(err_div.setScale(4).divide(new BigDecimal("2"), RoundingMode.HALF_UP)
+											.subtract(car_aggSalita).subtract(mas));
+								}
+								else 
+								{
+									erroreSalita=(indSalita.multiply(Costanti.gFactor)).subtract(mas);
+								}
+
+								erroreSalita_cor=erroreSalita.subtract(new BigDecimal(modelLinCorredoEsterno.getValueAt(0, 6).toString()));
+								erroreSalita_cor=erroreSalita_cor.setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
+								BigDecimal mpe=getMPE(mas.toPlainString(), campo,2);
+								modelLinCorredoEsterno.setValueAt(erroreSalita.setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP).toPlainString(), row, 6);
+								modelLinCorredoEsterno.setValueAt(erroreSalita_cor, row, 8);
+								modelLinCorredoEsterno.setValueAt(mpe, row, 10);
+
+							}
+
+
+							String esito=valutaEsitoLinearita();
+
+							if(esito.equals("POSITIVO")) 
+							{
+								textField_esito_lin.setBackground(Color.GREEN);
+							}
+							else if(esito.equals("INCOMPLETO")) 
+							{
+								textField_esito_lin.setBackground(Color.YELLOW);
+							}
+							else 
+							{
+								textField_esito_lin.setBackground(Color.RED);	
+							}
+							textField_esito_lin.setText(esito);
+
+							VerLinearitaDTO linearita = new VerLinearitaDTO();
+
+							linearita.setId(Integer.parseInt(modelLinCorredoEsterno.getValueAt(row, 11).toString()));
+				
+							linearita.setCampo(comboBox_campo.getSelectedIndex()+1);
+							linearita.setMassa(mas);
+							linearita.setIndicazioneSalita(getValue(modelLinCorredoEsterno.getValueAt(row,2)));
+							linearita.setIndicazioneDiscesa(getValue(modelLinCorredoEsterno.getValueAt(row,3)));
+							linearita.setCaricoAggSalita(getValue(modelLinCorredoEsterno.getValueAt(row,4)));
+							linearita.setCaricoAggDiscesa(getValue(modelLinCorredoEsterno.getValueAt(row,5)));
+							linearita.setErroreSalita(getValue(modelLinCorredoEsterno.getValueAt(row,6)));
+							linearita.setErroreDiscesa(getValue(modelLinCorredoEsterno.getValueAt(row,7)));
+							linearita.setErroreCorSalita(getValue(modelLinCorredoEsterno.getValueAt(row,8)));
+							linearita.setErroreCorDiscesa(getValue(modelLinCorredoEsterno.getValueAt(row,9)));
+							linearita.setEsito(esito);
+							linearita.setMpe(getValue(modelLinCorredoEsterno.getValueAt(row,10)));
+
+							GestioneMisuraBO.updateValoriLinearita(linearita, misura.getId());
+
+
+						}
+						catch (Exception e2) 
+						{
+							e2.printStackTrace();
+						}
+
+
+					}
+
+				}
+
+				if(column==1 ||  column==3 || column==5) 
+				{
+					int campo=comboBox_campo.getSelectedIndex();
+					Object massa=modelLinCorredoEsterno.getValueAt(row, 1);
+					Object indicazioneDiscesa=modelLinCorredoEsterno.getValueAt(row, 3);
+					Object car_agg_discesa=modelLinCorredoEsterno.getValueAt(row, 5);
+
+					BigDecimal m;
+
+					if(massa!=null && !massa.toString().equals("")) 
+					{
+						m=new BigDecimal(massa.toString());
+					}
+					else 
+					{
+						return;
+					}
+
+					int risoluzioneBilanciaE0=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),BigDecimal.ZERO).scale()+1;
+					int risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),m).scale()+1;
+					int risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),m).scale();
+
+					if(indicazioneDiscesa!=null &&!indicazioneDiscesa.toString().equals("") && new BigDecimal(indicazioneDiscesa.toString()).scale()>risoluzioneIndicazione) 
+					{
+						BigDecimal ind=new BigDecimal(indicazioneDiscesa.toString());
+						JOptionPane.showMessageDialog(null,"Il valore inserito eccede la risoluzione massima ["+risoluzioneIndicazione+"]. \nIl valore verrà troncato a "+ind.setScale(risoluzioneIndicazione,RoundingMode.FLOOR).toPlainString(),"Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+						modelLinCorredoEsterno.setValueAt(ind.setScale(risoluzioneIndicazione,RoundingMode.FLOOR).toPlainString(),row, 3);
+						return;
+					}
+
+					/*Controllo Risoluzione Massima Carico Aggiuntivo*/
+					if(car_agg_discesa!=null && !car_agg_discesa.toString().equals("") && new BigDecimal(car_agg_discesa.toString()).scale()>risoluzioneBilancia) 
+					{
+						BigDecimal car = new BigDecimal(car_agg_discesa.toString());
+						JOptionPane.showMessageDialog(null,"Il valore inserito eccede la risoluzione massima ["+risoluzioneBilancia+"].\nIl valore verrà troncato a "+car.setScale(risoluzioneBilancia,RoundingMode.FLOOR).toPlainString(),"Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+						modelLinCorredoEsterno.setValueAt(car.setScale(risoluzioneBilancia,RoundingMode.FLOOR).toPlainString(),row, 5);
+						return;
+					}
+
+
+					if(massa!=null  && indicazioneDiscesa!=null && car_agg_discesa!=null && !car_agg_discesa.toString().equals("")) 
+					{
+						BigDecimal mas;
+						BigDecimal indDiscesa;
+						BigDecimal car_aggDiscesa;
+						BigDecimal erroreDiscesa;
+						BigDecimal erroreDiscesa_cor = null;
+
+						try 
+						{
+							mas=new BigDecimal(massa.toString());
+
+							indDiscesa=new BigDecimal(indicazioneDiscesa.toString());
+
+
+							car_aggDiscesa=new BigDecimal(car_agg_discesa.toString());
+
+							BigDecimal err_div=getE(campo,strumento.getId_tipo_strumento(),mas);
+
+
+							if(row==0) 
+							{
+
+								if(strumento.getClasse()<5 && strumento.getTipologia()!=2) 
+								{
+									erroreDiscesa=indDiscesa.multiply(Costanti.gFactor).add(err_div.setScale(risoluzioneBilanciaE0).divide(new BigDecimal("2").setScale(risoluzioneBilanciaE0), RoundingMode.HALF_UP)
+											.subtract(car_aggDiscesa).subtract(mas));
+								}else 
+								{
+									erroreDiscesa=(indDiscesa.multiply(Costanti.gFactor)).subtract(mas);
+								}
+
+								String mpe=getE(campo,strumento.getId_tipo_strumento(),mas).multiply(new BigDecimal(0.25)).stripTrailingZeros().toPlainString();
+
+								modelLinCorredoEsterno.setValueAt(erroreDiscesa.setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP).stripTrailingZeros().toPlainString(), row, 7);
+
+								erroreDiscesa_cor=BigDecimal.ZERO.setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
+
+								for (int i = 0; i <modelLinCorredoEsterno.getRowCount(); i++) 
+								{
+									if(modelLinCorredoEsterno.getValueAt(i, 7)!=null) 
+									{
+										erroreDiscesa_cor=new BigDecimal(modelLinCorredoEsterno.getValueAt(i, 7).toString()).subtract(erroreDiscesa);
+										modelLinCorredoEsterno.setValueAt(erroreDiscesa_cor.setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP).toPlainString(), i, 9);
+										int id =Integer.parseInt(modelLinCorredoEsterno.getValueAt(i, 11).toString());									
+										GestioneMisuraBO.updateErrore_correttoDiscesa(id,erroreDiscesa_cor.setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP));	
+									}
+
+
+								}
+								modelLinCorredoEsterno.setValueAt(BigDecimal.ZERO.setScale(risoluzioneBilancia,RoundingMode.HALF_UP), row, 9);
+								modelLinCorredoEsterno.setValueAt(mpe, row, 10);
+							}
+
+							else 
+							{
+
+								if(strumento.getClasse()<5 && strumento.getTipologia()!=2 ) 
+								{
+									erroreDiscesa=indDiscesa.multiply(Costanti.gFactor).add(err_div.setScale(4).divide(new BigDecimal("2"), RoundingMode.HALF_UP)
+											.subtract(car_aggDiscesa).subtract(mas));
+								}
+								else 
+								{
+									erroreDiscesa=(indDiscesa.multiply(Costanti.gFactor)).subtract(mas);
+								}
+
+								BigDecimal mpe=getMPE(mas.toPlainString(), campo,2);
+								modelLinCorredoEsterno.setValueAt(erroreDiscesa.setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP).toPlainString(), row, 7);
+
+								modelLinCorredoEsterno.setValueAt(mpe, row, 10);
+
+							}
+
+							String esito=valutaEsitoLinearita();
+
+							if(esito.equals("POSITIVO")) 
+							{
+								textField_esito_lin.setBackground(Color.GREEN);
+							}
+							else if(esito.equals("INCOMPLETO")) 
+							{
+								textField_esito_lin.setBackground(Color.YELLOW);
+							}
+							else 
+							{
+								textField_esito_lin.setBackground(Color.RED);	
+							}
+							textField_esito_lin.setText(esito);
+
+							VerLinearitaDTO linearita = new VerLinearitaDTO();
+
+							linearita.setId(Integer.parseInt(modelLinCorredoEsterno.getValueAt(row, 11).toString()));
+							linearita.setCampo(comboBox_campo.getSelectedIndex()+1);
+							linearita.setMassa(mas);
+
+							linearita.setIndicazioneSalita(getValue(modelLinCorredoEsterno.getValueAt(row,2)));
+							linearita.setIndicazioneDiscesa(getValue(modelLinCorredoEsterno.getValueAt(row,3)));
+							linearita.setCaricoAggSalita(getValue(modelLinCorredoEsterno.getValueAt(row,4)));
+							linearita.setCaricoAggDiscesa(getValue(modelLinCorredoEsterno.getValueAt(row,5)));
+							linearita.setErroreSalita(getValue(modelLinCorredoEsterno.getValueAt(row,6)));
+							linearita.setErroreDiscesa(getValue(modelLinCorredoEsterno.getValueAt(row,7)));
+							linearita.setErroreCorSalita(getValue(modelLinCorredoEsterno.getValueAt(row,8)));
+							linearita.setErroreCorDiscesa(getValue(modelLinCorredoEsterno.getValueAt(row,9)));
+
+							linearita.setEsito(esito);
+							linearita.setMpe(getValue(modelLinCorredoEsterno.getValueAt(row,10)));
+
+							GestioneMisuraBO.updateValoriLinearita(linearita, misura.getId());
+
+
+						}
+						catch (Exception e2) 
+						{
+							e2.printStackTrace();
+						}
+
+
+					}
+
+				}
+
+			}
+
+			private BigDecimal getValue(Object valueAt) {
+
+				if(valueAt==null) 
+				{
+					return null;
+				}else 
+				{
+					return new BigDecimal(valueAt.toString());
+				}
+			}
+
+			private String valutaEsitoLinearita() {
+
+
+				for (int i = 0; i <modelLinCorredoEsterno.getRowCount(); i++) 
+				{
+					Object mpe= modelLinCorredoEsterno.getValueAt(i,10);
+					Object err_corr= modelLinCorredoEsterno.getValueAt(i,9);
+					if(mpe==null || err_corr==null) 
+					{
+						return "INCOMPLETO";
+					}
+				} 
+
+				for (int i = 0; i <modelLinCorredoEsterno.getRowCount(); i++) 
+				{
+					Object mpe= modelLinCorredoEsterno.getValueAt(i,10);
+					Object err_sal=modelLinCorredoEsterno.getValueAt(i,6);
+					Object err_dis=modelLinCorredoEsterno.getValueAt(i,7);
+					Object err_cor_sal=modelLinCorredoEsterno.getValueAt(i,8);
+					Object err_cor_dis=modelLinCorredoEsterno.getValueAt(i,9);
+					if(i==0 && mpe!=null && err_sal!=null && err_dis!=null && err_cor_sal!=null && err_dis!=null ) 
+					{
+						if(Math.abs(Double.parseDouble(err_sal.toString())) > Math.abs(Double.parseDouble(mpe.toString())) ||
+								Math.abs(Double.parseDouble(err_dis.toString())) > Math.abs(Double.parseDouble(mpe.toString()))	) 
+						{
+							return "NEGATIVO";
+						} 
+					}
+
+					if(i>0 && mpe!=null && err_sal!=null && err_dis!=null && err_cor_sal!=null && err_cor_dis!=null) 
+					{
+						if(Math.abs(Double.parseDouble(err_cor_sal.toString())) > Math.abs(Double.parseDouble(mpe.toString())) ||
+								Math.abs(Double.parseDouble(err_cor_dis.toString())) > Math.abs(Double.parseDouble(mpe.toString()))	) 
+						{
+							return "NEGATIVO";
+						} 
+					}
+
+				}
+				return "POSITIVO";
+			}
+
+		});
+
+
+		return pannelloLinearita;
+	}
+	
 	private BigDecimal getEVariazione(int campo, int id_tipo_strumento, BigDecimal carico) {
 		BigDecimal e = BigDecimal.ZERO;
 
@@ -3173,7 +4289,7 @@ public class PannelloMisuraMaster extends JPanel
 		}
 
 
-	/*	if(id_tipo_strumento==2 ) 
+		/*	if(id_tipo_strumento==2 ) 
 		{
 			if(carico.doubleValue()>=0 && carico.doubleValue() <strumento.getPortata_max_C1().doubleValue()) 
 			{
@@ -3296,17 +4412,17 @@ public class PannelloMisuraMaster extends JPanel
 
 		modelAccuratezza.addRow(new Object[0]);
 		modelAccuratezza.setValueAt("Et", 0, 0);
-		
+
 		int risoluzioneBilanciaE0=0;
 		int  risoluzioneBilancia=0;
 		int risoluzioneIndicazione=0;
-		 
+
 		if(ver.getMassa()!=null) 
 		{
-			 risoluzioneBilanciaE0=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),BigDecimal.ZERO).scale()+1;
-			 risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),ver.getMassa()).scale()+1;
-			 risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),ver.getMassa()).scale();
-			 
+			risoluzioneBilanciaE0=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),BigDecimal.ZERO).scale()+1;
+			risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),ver.getMassa()).scale()+1;
+			risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),ver.getMassa()).scale();
+
 			modelAccuratezza.setValueAt(ver.getMassa().stripTrailingZeros(), 0, 1);
 		}else 
 		{
@@ -3393,7 +4509,7 @@ public class PannelloMisuraMaster extends JPanel
 					Object car_agg=modelAccuratezza.getValueAt(row, 3);
 
 					BigDecimal m;
-					
+
 					if(massa!=null && !massa.toString().equals("")) 
 					{
 						m=new BigDecimal(massa.toString());
@@ -3402,11 +4518,11 @@ public class PannelloMisuraMaster extends JPanel
 					{
 						return;
 					}
-				
+
 					int risoluzioneBilanciaE0=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),BigDecimal.ZERO).scale()+1;
 					int risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),m).scale()+1;
 					int risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),m).scale();
-					
+
 					if(indicazione!=null &&!indicazione.toString().equals("") && new BigDecimal(indicazione.toString()).scale()>risoluzioneIndicazione) 
 					{
 						BigDecimal ind=new BigDecimal(indicazione.toString());
@@ -3414,7 +4530,7 @@ public class PannelloMisuraMaster extends JPanel
 						modelAccuratezza.setValueAt(ind.setScale(risoluzioneIndicazione,RoundingMode.FLOOR).toPlainString(),row, 2);
 						return;
 					}
-					
+
 					/*Controllo Risoluzione Massima Carico Aggiuntivo*/
 					if(car_agg!=null && !car_agg.toString().equals("") && new BigDecimal(car_agg.toString()).scale()>risoluzioneBilancia) 
 					{
@@ -3435,11 +4551,11 @@ public class PannelloMisuraMaster extends JPanel
 							indicaz=new BigDecimal(indicazione.toString());
 							car_aggiuntivo=new BigDecimal(car_agg.toString());
 
-							
+
 							BigDecimal e2=getE(campo,strumento.getId_tipo_strumento(),mas).setScale(5).divide(new BigDecimal(2).setScale(5), RoundingMode.HALF_UP);
 
-			//				BigDecimal errore=(indicaz.multiply(Costanti.gFactor).add(e2).subtract(car_aggiuntivo).subtract(mas)).setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
-							
+							//				BigDecimal errore=(indicaz.multiply(Costanti.gFactor).add(e2).subtract(car_aggiuntivo).subtract(mas)).setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
+
 							BigDecimal errore=(indicaz.multiply(Costanti.gFactor).subtract(mas)).setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
 
 							String mpe="";
@@ -3541,11 +4657,11 @@ public class PannelloMisuraMaster extends JPanel
 		tabellaMobilita1.setFont(new Font("Arial", Font.PLAIN, 12));
 		tabellaMobilita1.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
 
-	//	tabellaMobilita1.setDefaultRenderer(Object.class, new MyCellRenderer());
+		//	tabellaMobilita1.setDefaultRenderer(Object.class, new MyCellRenderer());
 
 		JLabel lblCaso = new JLabel("Caso 1) - Strumenti ad equilibrio non automatico (con indicazione analogica)");
 		lblCaso.setFont(new Font("Arial", Font.BOLD, 12));
-		
+
 		tabellaMobilita2 = new JTable();
 		tabellaMobilita2.setModel(modelMobilita_2);
 
@@ -3697,12 +4813,12 @@ public class PannelloMisuraMaster extends JPanel
 
 			int risoluzioneBilancia=0;
 			int risoluzioneIndicazione=0;
-			
+
 			if(mob.getMassa()!=null) 
 			{
-				 risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),mob.getMassa()).scale()+1;
-				 risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),mob.getMassa()).scale();
-				 
+				risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),mob.getMassa()).scale()+1;
+				risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),mob.getMassa()).scale();
+
 				modelMobilita_2.setValueAt(mob.getMassa().stripTrailingZeros().toPlainString(),i, 1);
 			}
 			else 
@@ -3799,10 +4915,10 @@ public class PannelloMisuraMaster extends JPanel
 							BigDecimal indicazioneTab=new BigDecimal (indicazione.toString());
 							BigDecimal post_indicazioneTab=new BigDecimal (post_indicazione.toString());
 
-							
+
 							int risoluzioneBilancia=getERisoluzione(comboBox.getSelectedIndex(), strumento.getId_tipo_strumento(), indicazioneTab).scale()+1;
 							int risoluzioneIndicazione=getERisoluzione(comboBox.getSelectedIndex(), strumento.getId_tipo_strumento(),indicazioneTab).scale();
-							
+
 							BigDecimal mpe=getMPE(modelMobilita_1.getValueAt(row, 1).toString(),comboBox_campo.getSelectedIndex(),1);
 
 							BigDecimal carr_agg=mpe.multiply(new BigDecimal("0.4"));
@@ -3889,7 +5005,7 @@ public class PannelloMisuraMaster extends JPanel
 					Object post_indicazione=modelMobilita_2.getValueAt(row, 4);
 
 					BigDecimal m;
-					
+
 					if(modelMobilita_2.getValueAt(row, 1)!=null && !modelMobilita_2.getValueAt(row, 1).toString().equals("")) 
 					{
 						m=new BigDecimal(modelMobilita_2.getValueAt(row, 1).toString());
@@ -3898,10 +5014,10 @@ public class PannelloMisuraMaster extends JPanel
 					{
 						return;
 					}
-				
+
 					int risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),m).scale()+1;
 					int risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),m).scale();
-					
+
 					if(indicazione!=null &&!indicazione.toString().equals("") && new BigDecimal(indicazione.toString()).scale()>risoluzioneIndicazione) 
 					{
 						BigDecimal ind=new BigDecimal(indicazione.toString());
@@ -3909,7 +5025,7 @@ public class PannelloMisuraMaster extends JPanel
 						modelMobilita_2.setValueAt(ind.setScale(risoluzioneIndicazione,RoundingMode.FLOOR).toPlainString(),row, 2);
 						return;
 					}
-					
+
 					/*Controllo Risoluzione Massima Carico Aggiuntivo*/
 					if(post_indicazione!=null && !post_indicazione.toString().equals("") && new BigDecimal(post_indicazione.toString()).scale()>risoluzioneIndicazione) 
 					{
@@ -3918,7 +5034,7 @@ public class PannelloMisuraMaster extends JPanel
 						modelMobilita_2.setValueAt(post_ind.setScale(risoluzioneIndicazione,RoundingMode.FLOOR).toPlainString(),row, 4);
 						return;
 					}
-					
+
 					try 
 					{
 
@@ -3927,7 +5043,7 @@ public class PannelloMisuraMaster extends JPanel
 							BigDecimal indicazioneTab=new BigDecimal (indicazione.toString());
 							BigDecimal post_indicazioneTab=new BigDecimal (post_indicazione.toString());
 
-							
+
 							BigDecimal mpe=getMPE(modelMobilita_2.getValueAt(row, 1).toString(),comboBox_campo.getSelectedIndex(),2);
 
 							BigDecimal carr_agg=mpe;
@@ -4466,14 +5582,14 @@ public class PannelloMisuraMaster extends JPanel
 					try 
 					{
 						//Controllo tasti ricalcola
-						
+
 						if(chk_btn_decentramento==false || chk_btn_linearita==false) 
 						{
 							JOptionPane.showMessageDialog(null,"Cliccare tasto Ricalcola nei tab Decentramento e Linearità","Mancato Salvataggio",JOptionPane.ERROR_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
 							return;
 						}
-						
-						
+
+
 						//Controllo completamento dati
 
 						misura=GestioneMisuraBO.getMisura(misura.getId());
@@ -4546,175 +5662,175 @@ public class PannelloMisuraMaster extends JPanel
 				{
 					/*Controllo solo su Ripetibilità - Decentramento - Linearità*/
 
-				for (int i = 1; i <= comboBox_campo.getItemCount(); i++) {
-					
-					
-					/*Ripetibilita*/
-					for (VerRipetibilitaDTO ripetibilita : misura.getVerRipetibilitas()) {
+					for (int i = 1; i <= comboBox_campo.getItemCount(); i++) {
 
-						
-					if(ripetibilita.getCampo()==i) 
-					{
-						if(ripetibilita.getEsito()==null)
-						{
-							System.out.println("Valori assenti ripetibilità campo "+ripetibilita.getCampo());
-							return false;
-						}
-						
-						if(ripetibilita.getEsito().equals("INCOMPLETO")) 
-						{
-							System.out.println("Valori INCOMPLETI ripetibilita campo "+ripetibilita.getCampo());
-							return false;
-						}
-					
-					}
-					
-					}
-					/*Decentramento*/
-					for (VerDecentramentoDTO decentramento : misura.getVerDecentramentos()) {
 
-					if(decentramento.getCampo()==i) 
-					{	
-						
-						if(decentramento.getEsito()==null)
-						{
-							System.out.println("Valori assenti decentramento campo "+decentramento.getCampo());
-							return false;
-						}
-						
-						if(decentramento.getEsito().equals("INCOMPLETO")) 
-						{
-							System.out.println("Valori INCOMPLETI decentramento campo "+decentramento.getCampo());
-							return false;
-						}
-					}
-					
-					}
+						/*Ripetibilita*/
+						for (VerRipetibilitaDTO ripetibilita : misura.getVerRipetibilitas()) {
 
-					/*Linearita*/
-					for (VerLinearitaDTO linearita : misura.getVerLinearitas()) {
 
-					if(linearita.getCampo()==i) 
-					{	
-						if(linearita.getEsito()==null)
-						{
-							System.out.println("Valori assenti linearità campo "+linearita.getCampo());
-							return false;
+							if(ripetibilita.getCampo()==i) 
+							{
+								if(ripetibilita.getEsito()==null)
+								{
+									System.out.println("Valori assenti ripetibilità campo "+ripetibilita.getCampo());
+									return false;
+								}
+
+								if(ripetibilita.getEsito().equals("INCOMPLETO")) 
+								{
+									System.out.println("Valori INCOMPLETI ripetibilita campo "+ripetibilita.getCampo());
+									return false;
+								}
+
+							}
+
 						}
-						
-						if(linearita.getEsito().equals("INCOMPLETO")) 
-						{
-							System.out.println("Valori INCOMPLETI linearita campo "+linearita.getCampo());
-							return false;
+						/*Decentramento*/
+						for (VerDecentramentoDTO decentramento : misura.getVerDecentramentos()) {
+
+							if(decentramento.getCampo()==i) 
+							{	
+
+								if(decentramento.getEsito()==null)
+								{
+									System.out.println("Valori assenti decentramento campo "+decentramento.getCampo());
+									return false;
+								}
+
+								if(decentramento.getEsito().equals("INCOMPLETO")) 
+								{
+									System.out.println("Valori INCOMPLETI decentramento campo "+decentramento.getCampo());
+									return false;
+								}
+							}
+
+						}
+
+						/*Linearita*/
+						for (VerLinearitaDTO linearita : misura.getVerLinearitas()) {
+
+							if(linearita.getCampo()==i) 
+							{	
+								if(linearita.getEsito()==null)
+								{
+									System.out.println("Valori assenti linearità campo "+linearita.getCampo());
+									return false;
+								}
+
+								if(linearita.getEsito().equals("INCOMPLETO")) 
+								{
+									System.out.println("Valori INCOMPLETI linearita campo "+linearita.getCampo());
+									return false;
+								}
+							}
+
 						}
 					}
-					
-					}
-				}
 
 				}
 				else 
 				{
 					/*Controllo solo su Ripetibilità - Decentramento - Linearità - Accuratezza - Mobilita*/
-					
+
 					for (int j = 1; j <= comboBox_campo.getItemCount(); j++) {
-					/*Ripetibilita*/
-					for (VerRipetibilitaDTO ripetibilita : misura.getVerRipetibilitas()) {
+						/*Ripetibilita*/
+						for (VerRipetibilitaDTO ripetibilita : misura.getVerRipetibilitas()) {
 
-						if(ripetibilita.getCampo()==j) 
-						{
-							if(ripetibilita.getEsito()==null)
+							if(ripetibilita.getCampo()==j) 
 							{
-								System.out.println("Valori assenti ripetibilità campo "+ripetibilita.getCampo());
-								return false;
-							}
-							
-							if(ripetibilita.getEsito().equals("INCOMPLETO")) 
-							{
-								System.out.println("Valori INCOMPLETI ripetibilita campo "+ripetibilita.getCampo());
-								return false;
-							}
-						
-						}
-					}
-					/*Decentramento*/
-					for (VerDecentramentoDTO decentramento : misura.getVerDecentramentos()) {
+								if(ripetibilita.getEsito()==null)
+								{
+									System.out.println("Valori assenti ripetibilità campo "+ripetibilita.getCampo());
+									return false;
+								}
 
-						if(decentramento.getCampo()==j) 
-						{	
-							
-							if(decentramento.getEsito()==null)
-							{
-								System.out.println("Valori assenti decentramento campo "+decentramento.getCampo());
-								return false;
-							}
-							
-							if(decentramento.getEsito().equals("INCOMPLETO")) 
-							{
-								System.out.println("Valori INCOMPLETI decentramento campo "+decentramento.getCampo());
-								return false;
-							}
-						}
-					}
+								if(ripetibilita.getEsito().equals("INCOMPLETO")) 
+								{
+									System.out.println("Valori INCOMPLETI ripetibilita campo "+ripetibilita.getCampo());
+									return false;
+								}
 
-					/*Linearita*/
-					for (VerLinearitaDTO linearita : misura.getVerLinearitas()) {
-						if(linearita.getCampo()==j) 
-						{	
-							if(linearita.getEsito()==null)
-							{
-								System.out.println("Valori assenti linearità campo "+linearita.getCampo());
-								return false;
-							}
-							
-							if(linearita.getEsito().equals("INCOMPLETO")) 
-							{
-								System.out.println("Valori INCOMPLETI linearità campo "+linearita.getCampo());
-								return false;
 							}
 						}
-					}
-					/*Accuratezza*/
-					for (VerAccuratezzaDTO accuratezza : misura.getVerAccuratezzas()) {
+						/*Decentramento*/
+						for (VerDecentramentoDTO decentramento : misura.getVerDecentramentos()) {
 
-					if(accuratezza.getCampo()==j) 
-					{	
-					
-						if(accuratezza.getEsito()==null)
-						{
-							System.out.println("Valori assenti accuratezza campo "+accuratezza.getCampo());
-							return false;
-						}
-						
-						if(accuratezza.getEsito().equals("INCOMPLETO")) 
-						{
-							System.out.println("Valori INCOMPLETI accuratezza campo "+accuratezza.getCampo());
-							return false;
-						}
-					}
-					}
-					/*Mobilita*/
-					
-						
-					for (VerMobilitaDTO mobilita : misura.getVerMobilitas()) {
-						
-						if(mobilita.getCampo()==j && mobilita.getCaso()==2) 
-						{
-							
-							if(mobilita.getEsito()==null )
-							{
-								System.out.println("Valori assenti mobilita campo "+mobilita.getCampo());
-								return false;
-							}
-							
-							if(mobilita.getEsito().equals("INCOMPLETO")) 
-							{
-								System.out.println("Valori INCOMPLETI mobilita campo "+mobilita.getCampo());
-								return false;
+							if(decentramento.getCampo()==j) 
+							{	
+
+								if(decentramento.getEsito()==null)
+								{
+									System.out.println("Valori assenti decentramento campo "+decentramento.getCampo());
+									return false;
+								}
+
+								if(decentramento.getEsito().equals("INCOMPLETO")) 
+								{
+									System.out.println("Valori INCOMPLETI decentramento campo "+decentramento.getCampo());
+									return false;
+								}
 							}
 						}
+
+						/*Linearita*/
+						for (VerLinearitaDTO linearita : misura.getVerLinearitas()) {
+							if(linearita.getCampo()==j) 
+							{	
+								if(linearita.getEsito()==null)
+								{
+									System.out.println("Valori assenti linearità campo "+linearita.getCampo());
+									return false;
+								}
+
+								if(linearita.getEsito().equals("INCOMPLETO")) 
+								{
+									System.out.println("Valori INCOMPLETI linearità campo "+linearita.getCampo());
+									return false;
+								}
+							}
+						}
+						/*Accuratezza*/
+						for (VerAccuratezzaDTO accuratezza : misura.getVerAccuratezzas()) {
+
+							if(accuratezza.getCampo()==j) 
+							{	
+
+								if(accuratezza.getEsito()==null)
+								{
+									System.out.println("Valori assenti accuratezza campo "+accuratezza.getCampo());
+									return false;
+								}
+
+								if(accuratezza.getEsito().equals("INCOMPLETO")) 
+								{
+									System.out.println("Valori INCOMPLETI accuratezza campo "+accuratezza.getCampo());
+									return false;
+								}
+							}
+						}
+						/*Mobilita*/
+
+
+						for (VerMobilitaDTO mobilita : misura.getVerMobilitas()) {
+
+							if(mobilita.getCampo()==j && mobilita.getCaso()==2) 
+							{
+
+								if(mobilita.getEsito()==null )
+								{
+									System.out.println("Valori assenti mobilita campo "+mobilita.getCampo());
+									return false;
+								}
+
+								if(mobilita.getEsito().equals("INCOMPLETO")) 
+								{
+									System.out.println("Valori INCOMPLETI mobilita campo "+mobilita.getCampo());
+									return false;
+								}
+							}
+						}
 					}
-				}
 				}
 
 				return true;
@@ -4744,6 +5860,62 @@ public class PannelloMisuraMaster extends JPanel
 		return true;
 	}
 
+
+	class ModelRipetibilitaCorredoEsterno extends DefaultTableModel
+	{
+
+		private static final long serialVersionUID = 1L;
+
+		private int classe=0;
+		private int tipologia=0;
+
+		public ModelRipetibilitaCorredoEsterno(String um) 
+		{
+			addColumn("N° Ripetizioni");
+			addColumn("Massa L ("+um+")");
+			addColumn("Posizione");
+			addColumn("Carico equilibrio("+um+")");
+			addColumn("Indicazione P("+um+")");
+
+			addColumn("id");
+
+		}
+		@Override
+		public Class<?> getColumnClass(int column) {
+			switch (column) {
+			case 0:
+				return String.class;
+			case 1:
+				return String.class;
+			case 2:
+				return String.class;
+			case 3:
+				return String.class;
+			case 4:
+				return String.class;
+			case 5:
+				return String.class;
+			default:
+				return String.class;
+			}
+		}
+
+		@Override
+		public boolean isCellEditable(int row, int column) {
+
+
+			if( column==1 || column==2 || column==3)
+			{
+				return true;
+			}else
+			{
+				return false;
+			}
+
+		}
+
+	}
+
 	class ModelRipetibilita extends DefaultTableModel {
 
 
@@ -4754,7 +5926,7 @@ public class PannelloMisuraMaster extends JPanel
 
 		private int classe=0;
 		private int tipologia=0;
-		
+
 		public ModelRipetibilita(String um, int _classe, int _tipologia) 
 		{
 			addColumn("N° Ripetizioni");
@@ -4801,13 +5973,13 @@ public class PannelloMisuraMaster extends JPanel
 			}
 			else 
 			{
-				
+
 				if( column==1 || column==2 )
 				{
 					return true;
 				}else
 				{
-					
+
 					return false;
 				}
 			}
@@ -4815,7 +5987,7 @@ public class PannelloMisuraMaster extends JPanel
 
 
 	}
-	
+
 
 	class ModelDecentramento extends DefaultTableModel {
 
@@ -4891,7 +6063,7 @@ public class PannelloMisuraMaster extends JPanel
 						return false;
 					}
 				}
-				
+
 			}else 
 			{
 				if(row%2==0 && row!=0) 
@@ -4984,20 +6156,20 @@ public class PannelloMisuraMaster extends JPanel
 		@Override
 		public boolean isCellEditable(int row, int column) {
 
-		if(classe!=5 && tipologia!=2)
-		{
-			
-		
-			if(column==1 || column==2 || column==3 || column==4 || column==5)
+			if(classe!=5 && tipologia!=2)
 			{
-				return true;
-			}else
-			{
-				return false;
+
+
+				if(column==1 || column==2 || column==3 || column==4 || column==5)
+				{
+					return true;
+				}else
+				{
+					return false;
+				}
 			}
-		}
-		else 
-		{
+			else 
+			{
 				if(column==1 || column==2 || column==3 )
 				{
 					return true;
@@ -5005,8 +6177,81 @@ public class PannelloMisuraMaster extends JPanel
 				{
 					return false;
 				}	
+			}
+
 		}
-		
+	}
+	
+	class ModelLinearitaCorredoEsterno extends DefaultTableModel {
+		private static final long serialVersionUID = 1L;
+
+		public ModelLinearitaCorredoEsterno(String um) 
+		{
+			addColumn("Rif. n°");
+			addColumn("Massa L ("+um+")");
+			addColumn("↑ Posizione");
+			addColumn("↓ Posizione");
+			addColumn("↑ Carico equ");
+			addColumn("↓ Carico equ");
+			addColumn("↑ Indicazione stimata ("+um+")");
+			addColumn("↓ Indicazione stimata ("+um+")");
+			addColumn("↑ Errore E ("+um+")");
+			addColumn("↓ Errore E ("+um+")");
+			addColumn("↑ Er. corretto Ec ("+um+")");
+			addColumn("↓ Er. corretto Ec ("+um+")");
+			addColumn("MPE(±) ("+um+")");
+			addColumn("id");
+
+
+		}
+		@Override
+		public Class<?> getColumnClass(int column) {
+			switch (column) {
+			case 0:
+				return String.class;
+			case 1:
+				return String.class;
+			case 2:
+				return String.class;
+			case 3:
+				return String.class;
+			case 4:
+				return String.class;
+			case 5:
+				return String.class;
+			case 6:
+				return String.class;
+			case 7:
+				return String.class;
+			case 8:
+				return String.class;
+			case 9:
+				return String.class;
+			case 10:
+				return String.class;
+			case 11:
+				return String.class;
+			case 12:
+				return String.class;
+			case 13:
+				return String.class;
+			default:
+				return String.class;
+			}
+		}
+
+		@Override
+		public boolean isCellEditable(int row, int column) {
+
+	
+				if(column==1 || column==2 || column==3 || column==4 || column==5)
+				{
+					return true;
+				}else
+				{
+					return false;
+				}
+
 		}
 	}
 
@@ -5128,54 +6373,54 @@ public class PannelloMisuraMaster extends JPanel
 
 	}
 
-//	public class MyCellRenderer extends javax.swing.table.DefaultTableCellRenderer {
-//
-//		private static final long serialVersionUID = 1L;
-//		public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, java.lang.Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-//
-//			final java.awt.Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-//
-//
-//			setHorizontalAlignment(CENTER);
-//			if (row % 2 == 0) 
-//			{
-//				cellComponent.setForeground(Color.black);
-//				cellComponent.setBackground(Color.white);
-//
-//			}
-//			else
-//			{
-//				cellComponent.setForeground(Color.black);
-//				cellComponent.setBackground(new Color(224,224,224));
-//
-//			}
-//			return cellComponent;
-//
-//		} 
-//	}
-	
+	//	public class MyCellRenderer extends javax.swing.table.DefaultTableCellRenderer {
+	//
+	//		private static final long serialVersionUID = 1L;
+	//		public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, java.lang.Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+	//
+	//			final java.awt.Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+	//
+	//
+	//			setHorizontalAlignment(CENTER);
+	//			if (row % 2 == 0) 
+	//			{
+	//				cellComponent.setForeground(Color.black);
+	//				cellComponent.setBackground(Color.white);
+	//
+	//			}
+	//			else
+	//			{
+	//				cellComponent.setForeground(Color.black);
+	//				cellComponent.setBackground(new Color(224,224,224));
+	//
+	//			}
+	//			return cellComponent;
+	//
+	//		} 
+	//	}
+
 	class RenderTable extends DefaultTableCellRenderer
 	{
-		
+
 		/**
 		 * 
 		 */
-		
+
 		private static final long serialVersionUID = 3960577119495527018L;
 
 		private int tipoTabella=0;
-		
+
 		private int classe=0;
-		
+
 		private int tipologia=0;
-		
+
 		public RenderTable(int _tipoTabella,int _classe,int _tipologia) 
 		{
 			tipoTabella=_tipoTabella;
 			classe=_classe;
 			tipologia=_tipologia;
 		}
-		
+
 		public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, java.lang.Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 
 			final java.awt.Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
@@ -5185,107 +6430,107 @@ public class PannelloMisuraMaster extends JPanel
 				/*Tabella Ripetibilita e Accuratezza */
 				if(tipoTabella==1 ) 
 				{
-						setHorizontalAlignment(CENTER);
-						if (row % 2 == 0) 
-						{
-							cellComponent.setForeground(Color.black);
-							cellComponent.setBackground(Color.white);
-		
-						}
-						else
-						{
-							cellComponent.setForeground(Color.black);
-							cellComponent.setBackground(new Color(224,224,224));
-		
-						}
-						
-						if(classe<5 && tipologia!=2) 
-						{
-							if(column==2 ||  column==3)
-							{
-								cellComponent.setForeground(Color.black);
-								cellComponent.setBackground(Color.YELLOW);
-							}
-						}else 
-						{
-							if(column==2)
-							{
-								cellComponent.setForeground(Color.black);
-								cellComponent.setBackground(Color.YELLOW);
-							}
-							if(column==3)
-							{
-								cellComponent.setForeground(Color.black);
-								cellComponent.setBackground(new Color(224,224,224));
-								
-							}
-							
-						}
+					setHorizontalAlignment(CENTER);
+					if (row % 2 == 0) 
+					{
+						cellComponent.setForeground(Color.black);
+						cellComponent.setBackground(Color.white);
+
 					}
-				
-				/*Tabella Linearita*/
-				if(tipoTabella==2) 
-				{
-						setHorizontalAlignment(CENTER);
-						if (row % 2 == 0) 
-						{
-							cellComponent.setForeground(Color.black);
-							cellComponent.setBackground(Color.white);
-		
-						}
-						else
-						{
-							cellComponent.setForeground(Color.black);
-							cellComponent.setBackground(new Color(224,224,224));
-		
-						}
-						
-						if(classe<5 && tipologia!=2 ) 
-						{
-							if(column==2 ||  column==3 ||column==4||column==5)
-							{
-								cellComponent.setForeground(Color.black);
-								cellComponent.setBackground(Color.YELLOW);
-							}
-						}else 
-						{
-							if(column==2 ||  column==3 )
-							{
-								cellComponent.setForeground(Color.black);
-								cellComponent.setBackground(Color.YELLOW);
-							}
-							if(column==4||column==5)
-							{
-								cellComponent.setForeground(Color.black);
-								cellComponent.setBackground(new Color(224,224,224));
-							}
-						}
-				}
-				
-				/*Tabella Mobilita*/
-				if(tipoTabella==3) 
-				{
-						setHorizontalAlignment(CENTER);
-						if (row % 2 == 0) 
-						{
-							cellComponent.setForeground(Color.black);
-							cellComponent.setBackground(Color.white);
-		
-						}
-						else
-						{
-							cellComponent.setForeground(Color.black);
-							cellComponent.setBackground(new Color(224,224,224));
-		
-						}
-						
-						if(column==2 ||  column==4 )
+					else
+					{
+						cellComponent.setForeground(Color.black);
+						cellComponent.setBackground(new Color(224,224,224));
+
+					}
+
+					if(classe<5 && tipologia!=2) 
+					{
+						if(column==2 ||  column==3)
 						{
 							cellComponent.setForeground(Color.black);
 							cellComponent.setBackground(Color.YELLOW);
 						}
+					}else 
+					{
+						if(column==2)
+						{
+							cellComponent.setForeground(Color.black);
+							cellComponent.setBackground(Color.YELLOW);
+						}
+						if(column==3)
+						{
+							cellComponent.setForeground(Color.black);
+							cellComponent.setBackground(new Color(224,224,224));
+
+						}
+
+					}
 				}
-				
+
+				/*Tabella Linearita*/
+				if(tipoTabella==2) 
+				{
+					setHorizontalAlignment(CENTER);
+					if (row % 2 == 0) 
+					{
+						cellComponent.setForeground(Color.black);
+						cellComponent.setBackground(Color.white);
+
+					}
+					else
+					{
+						cellComponent.setForeground(Color.black);
+						cellComponent.setBackground(new Color(224,224,224));
+
+					}
+
+					if(classe<5 && tipologia!=2 ) 
+					{
+						if(column==2 ||  column==3 ||column==4||column==5)
+						{
+							cellComponent.setForeground(Color.black);
+							cellComponent.setBackground(Color.YELLOW);
+						}
+					}else 
+					{
+						if(column==2 ||  column==3 )
+						{
+							cellComponent.setForeground(Color.black);
+							cellComponent.setBackground(Color.YELLOW);
+						}
+						if(column==4||column==5)
+						{
+							cellComponent.setForeground(Color.black);
+							cellComponent.setBackground(new Color(224,224,224));
+						}
+					}
+				}
+
+				/*Tabella Mobilita*/
+				if(tipoTabella==3) 
+				{
+					setHorizontalAlignment(CENTER);
+					if (row % 2 == 0) 
+					{
+						cellComponent.setForeground(Color.black);
+						cellComponent.setBackground(Color.white);
+
+					}
+					else
+					{
+						cellComponent.setForeground(Color.black);
+						cellComponent.setBackground(new Color(224,224,224));
+
+					}
+
+					if(column==2 ||  column==4 )
+					{
+						cellComponent.setForeground(Color.black);
+						cellComponent.setBackground(Color.YELLOW);
+					}
+				}
+
 			}catch (Exception e) {
 				PannelloConsole.printException(e);
 			}
@@ -5297,18 +6542,18 @@ public class PannelloMisuraMaster extends JPanel
 	public class MyRendererDecentramentoSpecial extends javax.swing.table.DefaultTableCellRenderer {
 
 		private static final long serialVersionUID = 1L;
-		
+
 		private int classe=0;
-		
+
 		private int tipologia=0;
-		
+
 		public MyRendererDecentramentoSpecial(int _classe,int _tipologia) 
 		{
 			classe=_classe;
-			
+
 			tipologia=_tipologia;
 		}
-		
+
 		public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, java.lang.Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 
 			final java.awt.Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
@@ -5318,7 +6563,7 @@ public class PannelloMisuraMaster extends JPanel
 			cellComponent.setForeground(Color.black);
 			cellComponent.setBackground(Color.white);
 
-			
+
 			if(classe<5 && tipologia!=2) 
 			{
 				if(column==2 ||  column==3 )
@@ -5328,22 +6573,22 @@ public class PannelloMisuraMaster extends JPanel
 				}
 			}
 			else 
+			{
+
+				if(column==2)
 				{
-				
-					if(column==2)
-					{
-						cellComponent.setForeground(Color.black);
-						cellComponent.setBackground(Color.YELLOW);
-					}
-					
-					if(column==3 )
-					{
-						cellComponent.setForeground(Color.black);
-						cellComponent.setBackground(new Color(224,224,224)); 
-					}
+					cellComponent.setForeground(Color.black);
+					cellComponent.setBackground(Color.YELLOW);
 				}
-			
-			
+
+				if(column==3 )
+				{
+					cellComponent.setForeground(Color.black);
+					cellComponent.setBackground(new Color(224,224,224)); 
+				}
+			}
+
+
 			return cellComponent;
 
 		} 
@@ -5353,15 +6598,15 @@ public class PannelloMisuraMaster extends JPanel
 	public class MyRendererDecentramentoNormal extends javax.swing.table.DefaultTableCellRenderer {
 
 		private static final long serialVersionUID = 1L;
-		
+
 		private int classe;
-		
+
 		private int tipologia=0;
-		
+
 		public MyRendererDecentramentoNormal(int _classe,int _tipologia) 
 		{
 			classe=_classe;
-			
+
 			tipologia=_tipologia;
 		}
 		public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, java.lang.Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -5375,13 +6620,13 @@ public class PannelloMisuraMaster extends JPanel
 				cellComponent.setForeground(Color.black);
 				cellComponent.setBackground(new Color(224,224,224));          
 				table.getCellEditor(row, column).stopCellEditing();
-				
+
 			}
 			else
 			{
 				cellComponent.setForeground(Color.black);
 				cellComponent.setBackground(Color.white);
-				
+
 				if(classe<5 && tipologia!=2) 
 				{
 					if(column==2 ||  column==3 )
@@ -5403,13 +6648,15 @@ public class PannelloMisuraMaster extends JPanel
 					}
 				}
 			}
-			
-			
+
+
 			return cellComponent;
 
 		} 
 
 	}
+	
+
 }
 
 

@@ -226,6 +226,12 @@ public class GestioneMisuraBO
 		
 		return new BigDecimal(g);
 	}
+
+	public static void updateNoteCombinazioni(String text, int id) throws Exception {
+		
+		SQLiteDAO.updateNoteCombinazioni(text,id);
+		
+	}
 	
 }
 

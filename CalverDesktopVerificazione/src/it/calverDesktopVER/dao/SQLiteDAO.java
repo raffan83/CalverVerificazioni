@@ -277,6 +277,10 @@ public class SQLiteDAO {
 			strumento.setTipologia(rs.getInt("id_tipologia"));
 			strumento.setFreq_mesi(rs.getInt("freq_mesi"));
 			strumento.setFamiglia_strumento(rs.getString("famiglia_strumento"));
+			strumento.setLimite_pos_1(rs.getBigDecimal("limite_pos_1"));
+			strumento.setLimite_pos_2(rs.getBigDecimal("limite_pos_2"));
+			strumento.setLimite_pos_3(rs.getBigDecimal("limite_pos_3"));
+			strumento.setLimite_pos_4(rs.getBigDecimal("limite_pos_4"));
 			
 		}
 	}catch(Exception ex)
@@ -1344,7 +1348,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 																"portata_min_C1,portata_max_C1,div_ver_C1,div_rel_C1,numero_div_C1," +
 																"portata_min_C2,portata_max_C2,div_ver_C2,div_rel_C2,numero_div_C2," +
 																"portata_min_C3,portata_max_C3,div_ver_C3,div_rel_C3,numero_div_C3," +
-																"anno_marcatura_CE,data_ms,id_tipologia,freq_mesi,creato,famiglia_strumento) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+																"anno_marcatura_CE,data_ms,id_tipologia,freq_mesi,creato,famiglia_strumento,limite_pos_1,limite_pos_2,limite_pos_3,limite_pos_4) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 																Statement.RETURN_GENERATED_KEYS);
 			
 			
@@ -1381,6 +1385,10 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			pst.setInt(26, strumento.getFreq_mesi());
 			pst.setString(27,"S");
 			pst.setString(28, strumento.getFamiglia_strumento());
+			pst.setBigDecimal(29, strumento.getLimite_pos_1());
+			pst.setBigDecimal(30, strumento.getLimite_pos_2());
+			pst.setBigDecimal(31, strumento.getLimite_pos_3());
+			pst.setBigDecimal(32, strumento.getLimite_pos_4());
 	
 			pst.executeUpdate();
 			
@@ -1643,7 +1651,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 										   +"portata_min_C1=?,portata_max_C1=?,div_ver_C1=?,div_rel_C1=?,numero_div_C1=?,"
 										   +"portata_min_C2=?,portata_max_C2=?,div_ver_C2=?,div_rel_C2=?,numero_div_C2=?,"
 										   +"portata_min_C3=?,portata_max_C3=?,div_ver_C3=?,div_rel_C3=?,numero_div_C3=?, "
-										   +"classe=?,id_ver_tipo_strumento=?,um=?,id_tipologia=?, famiglia_strumento=? WHERE id=?");
+										   +"classe=?,id_ver_tipo_strumento=?,um=?,id_tipologia=?, famiglia_strumento=?,limite_pos_1=?,limite_pos_2=?,limite_pos_3=?,limite_pos_4=? WHERE id=?");
 		
 			pst.setString(1,strumento.getDenominazione());
 			pst.setString(2,strumento.getCostruttore());
@@ -1676,9 +1684,13 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			pst.setString(25, strumento.getUm());
 			pst.setInt(26, strumento.getTipologia());
 			pst.setString(27, strumento.getFamiglia_strumento());
+
+			pst.setBigDecimal(28, strumento.getLimite_pos_1());
+			pst.setBigDecimal(29, strumento.getLimite_pos_2());
+			pst.setBigDecimal(30, strumento.getLimite_pos_3());
+			pst.setBigDecimal(31, strumento.getLimite_pos_4());
 			
-			pst.setInt(28, strumento.getId());
-			
+			pst.setInt(32, strumento.getId());
 			
 			
 			toReturn=pst.executeUpdate();
@@ -2201,6 +2213,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 				misura.setgOrg(rs.getDouble("gOrg"));
 				misura.setgUtil(rs.getDouble("gUtil"));
 				misura.setgFactor(rs.getDouble("gFactor"));
+				misura.setNoteCombinazioni(rs.getString("note_combinazioni"));
 				
 				if (rs.wasNull()) {
 					misura.setNumeroSigilli(null);
@@ -2316,6 +2329,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			    ver_rip.setDeltaPortata(rs.getBigDecimal("delta_portata"));
 			    ver_rip.setMpe(rs.getBigDecimal("mpe"));
 			    ver_rip.setEsito(rs.getString("esito"));
+			    ver_rip.setPosizione(rs.getString("posizione"));
 			    
 			    listaRipetibilita.add(ver_rip);
 			    
@@ -2603,15 +2617,17 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		try 
 		{
 			con=getConnection();
-			pst=con.prepareStatement("UPDATE ver_ripetibilita set massa=?,indicazione=?,carico_agg=?,portata=?"
+			pst=con.prepareStatement("UPDATE ver_ripetibilita set massa=?,indicazione=?,carico_agg=?,portata=?,posizione=?"
 					+ " WHERE id=? and campo=?");
 			
 			pst.setBigDecimal(1, ripetibilita.getMassa());
 			pst.setBigDecimal(2, ripetibilita.getIndicazione());
 			pst.setBigDecimal(3, ripetibilita.getCaricoAgg());
 			pst.setBigDecimal(4, ripetibilita.getPortata());
-			pst.setInt(5, ripetibilita.getId());
-			pst.setInt(6, ripetibilita.getCampo());
+			pst.setString(5, ripetibilita.getPosizione());
+			pst.setInt(6, ripetibilita.getId());
+			pst.setInt(7, ripetibilita.getCampo());
+			
 			
 			pst.execute();
 			
@@ -3113,6 +3129,35 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 				pst=con.prepareStatement("UPDATE ver_decentramento SET tipo_ricettore=? WHERE id_misura=?");
 				pst.setInt(1, i);
 				pst.setInt(2, idMisura);
+				
+			pst.execute();
+		
+	
+		}
+		catch (Exception e) 
+		{
+		 e.printStackTrace();	
+		 throw e;
+		}
+		finally
+		{
+			pst.close();
+			con.close();
+		}
+		
+	}
+	public static void updateNoteCombinazioni(String text, int id) throws Exception {
+		
+		Connection con=null;
+		PreparedStatement pst=null;
+		try 
+		{
+			con=getConnection();
+			
+		
+				pst=con.prepareStatement("UPDATE ver_misura SET note_combinazioni=? WHERE id=?");
+				pst.setString(1, text);
+				pst.setInt(2, id);
 				
 			pst.execute();
 		

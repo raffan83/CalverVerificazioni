@@ -28,6 +28,16 @@ public class VerRipetibilitaDTO {
 
 	private BigDecimal portata;
 
+	private String posizione;
+	
+
+	public String getPosizione() {
+		return posizione;
+	}
+
+	public void setPosizione(String posizione) {
+		this.posizione = posizione;
+	}
 
 	private VerMisuraDTO verMisura;
 
