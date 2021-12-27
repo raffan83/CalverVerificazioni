@@ -532,7 +532,7 @@ public class PannelloStrumentoMaster extends JPanel implements ActionListener {
 							{
 								if (controllaDataStrumento(strumento.getData_messa_in_servizio())) 
 								{
-									idMisura=GestioneMisuraBO.insertMisura(id,strumento.getId_tipo_strumento());
+									idMisura=GestioneMisuraBO.insertMisura(id,strumento.getId_tipo_strumento(),strumento);
 									SessionBO.idMisura=idMisura;
 									panelDB =new PannelloMisuraMaster(id);
 

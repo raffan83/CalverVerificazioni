@@ -19,6 +19,7 @@ import it.calverDesktopVER.dto.VerLinearitaDTO;
 import it.calverDesktopVER.dto.VerMisuraDTO;
 import it.calverDesktopVER.dto.VerMobilitaDTO;
 import it.calverDesktopVER.dto.VerRipetibilitaDTO;
+import it.calverDesktopVER.dto.VerStrumentoDTO;
 
 
 // Referenced classes of package it.calverDesktop.bo:
@@ -34,12 +35,12 @@ public class GestioneMisuraBO
         return result;
     }
 
-    public static int insertMisura(String id, int tipoStrumento)
+    public static int insertMisura(String id, int tipoStrumento, VerStrumentoDTO strumento)
         throws Exception
     {
     	int idMisura=SQLiteDAO.insertMisura(id);
     	
-    	SQLiteDAO.insertProvaLineare(idMisura,tipoStrumento);
+    	SQLiteDAO.insertProvaLineare(idMisura,strumento);
     	
     	SQLiteDAO.insertProvaRipetibilita(idMisura,tipoStrumento);
     	

@@ -1858,7 +1858,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 	}
 	
 	
-	public static void insertProvaLineare(int idMisura, int tipoStrumento) throws Exception {
+	public static void insertProvaLineare(int idMisura, VerStrumentoDTO strumento) throws Exception {
 
 		Connection con =null;
 		PreparedStatement pst= null;
@@ -1867,8 +1867,56 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			con=getConnection();
 			pst=con.prepareStatement("INSERT INTO ver_linearita(id_misura,campo,riferimento) VALUES(?,?,?)");
 
+			if(strumento.getId_tipo_strumento()==4) 
+			{
+				for (int i = 0; i < 9; i++) 
 
-			if(tipoStrumento!=3 && tipoStrumento!=2) 
+				{
+					pst.setInt(1,idMisura);		
+					pst.setInt(2,1);
+					pst.setInt(3,i+1);
+
+					pst.execute();
+				}
+				return;
+			}
+				
+			
+			if(strumento.getId_tipo_strumento()==5) 
+			{
+				int sizeRow=0;
+				
+				if(strumento.getLimite_pos_1()!=null)
+				{
+					sizeRow=3;
+				}
+				if(strumento.getLimite_pos_2()!=null)
+				{
+					sizeRow=6;
+				}
+				if(strumento.getLimite_pos_3()!=null)
+				{
+					sizeRow=9;
+				}
+				if(strumento.getLimite_pos_4()!=null)
+				{
+					sizeRow=12;
+				}
+				
+				
+				for(int i=0;i<sizeRow+1;i++) 
+				{
+					pst.setInt(1,idMisura);		
+					pst.setInt(2,1);
+					pst.setInt(3,i+1);
+
+					pst.execute();
+				}
+				return;
+			}
+
+			
+			if(strumento.getId_tipo_strumento()!=3 && strumento.getId_tipo_strumento()!=2) 
 			{
 				for (int i = 0; i < 6; i++) 
 
@@ -2439,6 +2487,8 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			    ver_lin.setMpe(rs.getBigDecimal("mpe"));
 			    ver_lin.setDivisione(rs.getBigDecimal("divisione"));
 			    ver_lin.setEsito(rs.getString("esito"));
+			    ver_lin.setPosizioneDiscesa(rs.getString("posizione_discesa"));
+			    ver_lin.setPosizioneSalita(rs.getString("posizione_salita"));
 			    
 			    listaLinearita.add(ver_lin);
 			    
@@ -2742,7 +2792,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		{
 			con=getConnection();
 			pst=con.prepareStatement("UPDATE ver_linearita set tipo_azzeramento=?,massa=?,indicazione_salita=?,indicazione_discesa=?,carico_agg_salita=?,carico_agg_discesa=?,"
-									+"errore_salita=?,errore_discesa=?,errore_cor_salita=?,errore_cor_discesa=?,mpe=?"
+									+"errore_salita=?,errore_discesa=?,errore_cor_salita=?,errore_cor_discesa=?,mpe=?,posizione_salita=?,posizione_discesa=? "
 									+"WHERE id=? AND campo=? ");
 			
 			pst.setInt(1,linearita.getTipoAzzeramento() );
@@ -2756,8 +2806,10 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			pst.setBigDecimal(9, linearita.getErroreCorSalita());
 			pst.setBigDecimal(10, linearita.getErroreCorDiscesa());
 			pst.setBigDecimal(11, linearita.getMpe());
-			pst.setInt(12, linearita.getId());
-			pst.setInt(13, linearita.getCampo());
+			pst.setString(12, linearita.getPosizioneSalita());
+			pst.setString(13, linearita.getPosizioneDiscesa());
+			pst.setInt(14, linearita.getId());
+			pst.setInt(15, linearita.getCampo());
 			pst.execute();
 			
 		

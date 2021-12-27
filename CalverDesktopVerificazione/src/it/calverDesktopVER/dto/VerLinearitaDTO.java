@@ -43,6 +43,12 @@ public class VerLinearitaDTO {
 
 	private int riferimento;
 
+	private String posizioneSalita;
+	
+	private String posizioneDiscesa;
+	
+	
+	
 	
 	private int tipoAzzeramento;
 
@@ -185,5 +191,22 @@ public class VerLinearitaDTO {
 		this.indicazioneDiscesa = indicazioneDiscesa;
 	}
 
+	public String getPosizioneSalita() {
+		return posizioneSalita;
+	}
+
+	public void setPosizioneSalita(String posizioneSalita) {
+		this.posizioneSalita = posizioneSalita;
+	}
+
+	public String getPosizioneDiscesa() {
+		return posizioneDiscesa;
+	}
+
+	public void setPosizioneDiscesa(String posizioneDiscesa) {
+		this.posizioneDiscesa = posizioneDiscesa;
+	}
+	
+	
 
 }
