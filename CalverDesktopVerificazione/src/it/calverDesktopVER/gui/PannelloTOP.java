@@ -279,10 +279,12 @@ button.addActionListener(new ActionListener() {
 			
 			try
 			{
+				d.close();
+				
 				JPanel panelDB =new PannelloStrumentoMaster();
     			SystemGUI.callPanel(panelDB, "PSS");
     			
-    			d.close();
+    			
     			PannelloConsole.printArea("Caricati "+SessionBO.numeroStrumenti+" Strumenti");
 			}
 			catch (Exception er) 

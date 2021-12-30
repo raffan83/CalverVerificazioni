@@ -2866,6 +2866,7 @@ public class PannelloMisuraMaster extends JPanel
 
 		JPanel pannelloLinearita= new JPanel();
 
+		int idTipoStrumento=strumento.getId_tipo_strumento();
 		pannelloLinearita.setBorder(new TitledBorder(new LineBorder(new Color(255, 0, 0), 2, true), "Prova Linearità", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		pannelloLinearita.setBackground(Color.WHITE);
 		pannelloLinearita.setLayout(new MigLayout("", "[22.00][][grow]", "[][][][][][][][]"));
@@ -2874,6 +2875,10 @@ public class PannelloMisuraMaster extends JPanel
 		comboBox_tipo_azzeramento.setModel(new DefaultComboBoxModel<String>(new String[] {"Non automatico o semiautomatico","Automatico"}));
 		comboBox_tipo_azzeramento.setFont(new Font("Arial", Font.PLAIN, 12));
 
+		if(idTipoStrumento==5) 
+		{
+			comboBox_tipo_azzeramento.setEnabled(false);
+		}
 
 		comboBox_tipo_azzeramento.addActionListener(new ActionListener() {
 
@@ -2930,8 +2935,12 @@ public class PannelloMisuraMaster extends JPanel
 		int campo=comboBox_campo.getSelectedIndex()+1;
 
 		BigDecimal secondo_punto_variazione=null;
-
-		for (int i = 0; i <=5; i++) {
+		
+		for (int i = 0; i <listaLinearita.size(); i++) 
+		{
+			modelLin.addRow(new Object[0]);
+		}
+		for (int i = 0; i <listaLinearita.size(); i++) {
 
 			VerLinearitaDTO lin=listaLinearita.get(i);
 
@@ -2939,7 +2948,7 @@ public class PannelloMisuraMaster extends JPanel
 			int risoluzioneBilancia=0;
 			int risoluzioneIndicazione=0;
 
-			modelLin.addRow(new Object[0]);
+	//		modelLin.addRow(new Object[0]);
 
 			if(i==0)
 			{
@@ -2955,8 +2964,11 @@ public class PannelloMisuraMaster extends JPanel
 				modelLin.setValueAt(lin.getMassa().toPlainString(), i, 1);	
 			}else 
 			{
+				
+				if(idTipoStrumento!=5) {
+				
 				if(i==0) {
-					if(comboBox_tipo_azzeramento.getSelectedIndex()==0) 
+					if(comboBox_tipo_azzeramento.getSelectedIndex()==0 || idTipoStrumento==5) 
 					{
 						modelLin.setValueAt(BigDecimal.ZERO.toPlainString(), i, 1);
 					}
@@ -3031,6 +3043,77 @@ public class PannelloMisuraMaster extends JPanel
 				if(i==5) 
 				{
 					modelLin.setValueAt(strumento.getPortataMaxCampo(campo,strumento.getId_tipo_strumento()).stripTrailingZeros().toPlainString(), i, 1);
+				}
+				
+				}else 
+				{
+					/*Proposta Masse Corredo Interno*/
+					int sizeLinearitaCorredoEsterno=0;
+					
+					if(strumento.getLimite_pos_1()!=null) 
+					{
+						sizeLinearitaCorredoEsterno=1;
+					}
+					if(strumento.getLimite_pos_2()!=null) 
+					{
+						sizeLinearitaCorredoEsterno=2;
+					}
+					if(strumento.getLimite_pos_3()!=null) 
+					{
+						sizeLinearitaCorredoEsterno=3;
+					}
+					if(strumento.getLimite_pos_4()!=null) 
+					{
+						sizeLinearitaCorredoEsterno=4;
+					}
+
+					for(int z=1;z<=sizeLinearitaCorredoEsterno;z++) {
+						
+					/*	int limiteInferioreTabella=0;
+						int limiteSuperioreTabella=0;
+						
+						if(z==1) 
+						{
+							limiteInferioreTabella=1;
+							limiteSuperioreTabella=3;
+						}
+						if(z==2) 
+						{
+							limiteInferioreTabella=4;
+							limiteSuperioreTabella=6;
+						}
+						if(z==3) 
+						{
+							limiteInferioreTabella=7;
+							limiteSuperioreTabella=9;
+						}
+						if(z==4) 
+						{
+							limiteInferioreTabella=10;
+							limiteSuperioreTabella=12;
+						}
+						for(int y=limiteInferioreTabella;y<limiteSuperioreTabella;y++) 
+						{*/
+							if(z==1) 
+							{
+								modelLin.setValueAt(strumento.getPortataMinCampo(campo,strumento.getId_tipo_strumento()).stripTrailingZeros().toPlainString(), 1, 1);
+								BigDecimal media=(strumento.getLimite_pos_1().add(strumento.getPortataMinCampo(campo,strumento.getId_tipo_strumento()))).divide(new BigDecimal(2));
+								modelLin.setValueAt(media.stripTrailingZeros().toPlainString(), 2, 1);
+								modelLin.setValueAt(strumento.getLimite_pos_1().stripTrailingZeros().toPlainString(), 3, 1);
+							}
+							if(z==2) 
+							{
+								BigDecimal minimo=strumento.getLimite_pos_1().add(getE(campo, idTipoStrumento, BigDecimal.ZERO));
+								modelLin.setValueAt(minimo.stripTrailingZeros().toPlainString(), 4, 1);
+								
+								BigDecimal media=(strumento.getLimite_pos_2().add(minimo)).divide(new BigDecimal(2));
+								modelLin.setValueAt(media.stripTrailingZeros().toPlainString(), 5, 1);
+								
+								modelLin.setValueAt(strumento.getLimite_pos_2().stripTrailingZeros().toPlainString(), 6, 1);
+							}
+
+					//	}
+					}
 				}
 			}
 
@@ -3768,14 +3851,23 @@ public class PannelloMisuraMaster extends JPanel
 				modelLinCorredoEsterno.setValueAt(lin.getCaricoAggDiscesa().setScale(risoluzioneBilancia,RoundingMode.HALF_UP), i, 5);	
 			}
 			
-			if(lin.getIndicazioneSalita()!=null) 
+			
+			/*Cosa facciamo con questa risoluzione?
+			 * if(lin.getIndicazioneSalita()!=null) 
 			{
 				modelLinCorredoEsterno.setValueAt(lin.getIndicazioneSalita().setScale(risoluzioneIndicazione,RoundingMode.HALF_UP), i, 6);	
+			}*/
+			
+			
+			
+			if(lin.getIndicazioneSalita()!=null) 
+			{
+				modelLinCorredoEsterno.setValueAt(lin.getIndicazioneSalita().setScale(risoluzioneBilancia,RoundingMode.HALF_UP), i, 6);	
 			}
 
 			if(lin.getIndicazioneDiscesa()!=null) 
 			{
-				modelLinCorredoEsterno.setValueAt(lin.getIndicazioneDiscesa().setScale(risoluzioneIndicazione,RoundingMode.HALF_UP), i, 7);	
+				modelLinCorredoEsterno.setValueAt(lin.getIndicazioneDiscesa().setScale(risoluzioneBilancia,RoundingMode.HALF_UP), i, 7);	
 			}
 
 		
@@ -3888,7 +3980,7 @@ public class PannelloMisuraMaster extends JPanel
 			}
 		});
 		btnRicalcola_1.setFont(new Font("Arial", Font.BOLD, 12));
-		pannelloLinearita.add(btnRicalcola_1, "cell 0 2");
+		pannelloLinearita.add(btnRicalcola_1, "cell 1 2");
 
 		lbl_lettura_fine = new JLabel("");
 		lbl_lettura_fine.setFont(new Font("Arial", Font.BOLD, 12));
@@ -4160,11 +4252,14 @@ public class PannelloMisuraMaster extends JPanel
 							{
 
 								erroreDiscesa=(indDiscesa.multiply(Costanti.gFactor)).subtract(mas);
-
+								erroreDiscesa_cor=erroreDiscesa.subtract(new BigDecimal(modelLinCorredoEsterno.getValueAt(0, 9).toString()));
+								erroreDiscesa_cor=erroreDiscesa_cor.setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
 								BigDecimal mpe=getMPE(mas.toPlainString(), campo,2);
+			
 								modelLinCorredoEsterno.setValueAt(erroreDiscesa.setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP).toPlainString(), row, 9);
-
+								modelLinCorredoEsterno.setValueAt(erroreDiscesa_cor, row, 11);
 								modelLinCorredoEsterno.setValueAt(mpe, row, 12);
+
 
 							}
 
@@ -4244,8 +4339,8 @@ public class PannelloMisuraMaster extends JPanel
 
 				for (int i = 0; i <modelLinCorredoEsterno.getRowCount(); i++) 
 				{
-					Object mpe= modelLinCorredoEsterno.getValueAt(i,10);
-					Object err_corr= modelLinCorredoEsterno.getValueAt(i,9);
+					Object mpe= modelLinCorredoEsterno.getValueAt(i,12);
+					Object err_corr= modelLinCorredoEsterno.getValueAt(i,11);
 					if(mpe==null || err_corr==null) 
 					{
 						return "INCOMPLETO";
@@ -4254,11 +4349,11 @@ public class PannelloMisuraMaster extends JPanel
 
 				for (int i = 0; i <modelLinCorredoEsterno.getRowCount(); i++) 
 				{
-					Object mpe= modelLinCorredoEsterno.getValueAt(i,10);
-					Object err_sal=modelLinCorredoEsterno.getValueAt(i,6);
-					Object err_dis=modelLinCorredoEsterno.getValueAt(i,7);
-					Object err_cor_sal=modelLinCorredoEsterno.getValueAt(i,8);
-					Object err_cor_dis=modelLinCorredoEsterno.getValueAt(i,9);
+					Object mpe= modelLinCorredoEsterno.getValueAt(i,12);
+					Object err_sal=modelLinCorredoEsterno.getValueAt(i,8);
+					Object err_dis=modelLinCorredoEsterno.getValueAt(i,9);
+					Object err_cor_sal=modelLinCorredoEsterno.getValueAt(i,10);
+					Object err_cor_dis=modelLinCorredoEsterno.getValueAt(i,11);
 					if(i==0 && mpe!=null && err_sal!=null && err_dis!=null && err_cor_sal!=null && err_dis!=null ) 
 					{
 						if(Math.abs(Double.parseDouble(err_sal.toString())) > Math.abs(Double.parseDouble(mpe.toString())) ||
@@ -5873,8 +5968,6 @@ public class PannelloMisuraMaster extends JPanel
 
 		private static final long serialVersionUID = 1L;
 
-		private int classe=0;
-		private int tipologia=0;
 
 		public ModelRipetibilitaCorredoEsterno(String um) 
 		{
