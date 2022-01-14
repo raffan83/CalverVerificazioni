@@ -1888,19 +1888,19 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 				
 				if(strumento.getLimite_pos_1()!=null)
 				{
-					sizeRow=3;
+					sizeRow=6;
 				}
 				if(strumento.getLimite_pos_2()!=null)
 				{
-					sizeRow=6;
+					sizeRow=9;
 				}
 				if(strumento.getLimite_pos_3()!=null)
 				{
-					sizeRow=9;
+					sizeRow=12;
 				}
 				if(strumento.getLimite_pos_4()!=null)
 				{
-					sizeRow=12;
+					sizeRow=15;
 				}
 				
 				

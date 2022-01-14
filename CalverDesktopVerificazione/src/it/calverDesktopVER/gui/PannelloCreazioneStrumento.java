@@ -553,6 +553,9 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 				if(comboBox_tipo_strumento.getSelectedIndex()==4) 
 				{
 				
+			
+					comboBox_tipologia.setSelectedIndex(1);
+					comboBox_tipologia.setEnabled(false);
 					textField_limite_pos1.setEnabled(true);
 					  textField_limite_pos2.setEnabled(true);
 					  textField_limite_pos3.setEnabled(true);
@@ -564,6 +567,8 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 				  textField_limite_pos4.setEditable(true);
 				}else 
 				{
+					comboBox_tipologia.setSelectedIndex(0);
+					comboBox_tipologia.setEnabled(true);
 					
 					textField_limite_pos1.setEnabled(false);
 					  textField_limite_pos2.setEnabled(false);

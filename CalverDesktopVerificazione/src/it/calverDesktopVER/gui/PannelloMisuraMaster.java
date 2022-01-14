@@ -35,7 +35,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -2085,6 +2084,11 @@ public class PannelloMisuraMaster extends JPanel
 		rdbtn_tipo_4.setBackground(Color.WHITE);
 		pannelloDecentramento.add(rdbtn_tipo_4, "cell 6 3,alignx center");
 		comboBox.setModel(new DefaultComboBoxModel<>(new String[] {"NO", "SI"}));
+		
+		if(strumento.getId_tipo_strumento()==5) 
+		{
+			comboBox.setEnabled(false);
+		}
 		pannelloDecentramento.add(comboBox, "cell 5 4,alignx right");
 
 		if(listaDecentramento.get(0).getSpeciale().equals("N")) 
@@ -2940,6 +2944,7 @@ public class PannelloMisuraMaster extends JPanel
 		{
 			modelLin.addRow(new Object[0]);
 		}
+		
 		for (int i = 0; i <listaLinearita.size(); i++) {
 
 			VerLinearitaDTO lin=listaLinearita.get(i);
@@ -3052,21 +3057,24 @@ public class PannelloMisuraMaster extends JPanel
 					
 					if(strumento.getLimite_pos_1()!=null) 
 					{
-						sizeLinearitaCorredoEsterno=1;
+						sizeLinearitaCorredoEsterno=2;
 					}
 					if(strumento.getLimite_pos_2()!=null) 
 					{
-						sizeLinearitaCorredoEsterno=2;
+						sizeLinearitaCorredoEsterno=3;
 					}
 					if(strumento.getLimite_pos_3()!=null) 
 					{
-						sizeLinearitaCorredoEsterno=3;
+						sizeLinearitaCorredoEsterno=4;
 					}
 					if(strumento.getLimite_pos_4()!=null) 
 					{
-						sizeLinearitaCorredoEsterno=4;
+						sizeLinearitaCorredoEsterno=5;
 					}
 
+					BigDecimal portataMinima=strumento.getPortataMinCampo(campo,strumento.getId_tipo_strumento());
+				
+					BigDecimal portataMassima=strumento.getPortataMaxCampo(campo,strumento.getId_tipo_strumento());
 					for(int z=1;z<=sizeLinearitaCorredoEsterno;z++) {
 						
 					/*	int limiteInferioreTabella=0;
@@ -3096,20 +3104,78 @@ public class PannelloMisuraMaster extends JPanel
 						{*/
 							if(z==1) 
 							{
-								modelLin.setValueAt(strumento.getPortataMinCampo(campo,strumento.getId_tipo_strumento()).stripTrailingZeros().toPlainString(), 1, 1);
-								BigDecimal media=(strumento.getLimite_pos_1().add(strumento.getPortataMinCampo(campo,strumento.getId_tipo_strumento()))).divide(new BigDecimal(2));
+								modelLin.setValueAt(portataMinima.stripTrailingZeros().toPlainString(), 1, 1);
+								BigDecimal media=(strumento.getLimite_pos_1().add(portataMinima)).divide(new BigDecimal(2));
 								modelLin.setValueAt(media.stripTrailingZeros().toPlainString(), 2, 1);
 								modelLin.setValueAt(strumento.getLimite_pos_1().stripTrailingZeros().toPlainString(), 3, 1);
 							}
 							if(z==2) 
 							{
-								BigDecimal minimo=strumento.getLimite_pos_1().add(getE(campo, idTipoStrumento, BigDecimal.ZERO));
+								BigDecimal minimo=strumento.getLimite_pos_1().add(portataMinima);
 								modelLin.setValueAt(minimo.stripTrailingZeros().toPlainString(), 4, 1);
 								
-								BigDecimal media=(strumento.getLimite_pos_2().add(minimo)).divide(new BigDecimal(2));
-								modelLin.setValueAt(media.stripTrailingZeros().toPlainString(), 5, 1);
+								if(strumento.getLimite_pos_2()!=null) 
+								{
+									BigDecimal media=(strumento.getLimite_pos_2().add(minimo)).divide(new BigDecimal(2));
+									modelLin.setValueAt(media.stripTrailingZeros().toPlainString(), 5, 1);
+									
+									modelLin.setValueAt(strumento.getLimite_pos_2().stripTrailingZeros().toPlainString(), 6, 1);
+								}
+								else 
+								{
+									BigDecimal media=(portataMassima.add(minimo)).divide(new BigDecimal(2));
+									modelLin.setValueAt(media.stripTrailingZeros().toPlainString(), 5, 1);
+									
+									modelLin.setValueAt(portataMassima.stripTrailingZeros().toPlainString(), 6, 1);
+								}
+							}
+							if(z==3) 
+							{
+								BigDecimal minimo=strumento.getLimite_pos_2().add(portataMinima);
+								modelLin.setValueAt(minimo.stripTrailingZeros().toPlainString(), 7, 1);
+							
+								if(strumento.getLimite_pos_3()!=null) 
+								{
+									BigDecimal media=(strumento.getLimite_pos_3().add(minimo)).divide(new BigDecimal(2));
+									modelLin.setValueAt(media.stripTrailingZeros().toPlainString(), 8, 1);
+									
+									modelLin.setValueAt(strumento.getLimite_pos_3().stripTrailingZeros().toPlainString(), 9, 1);
+								}else 
+								{
+									BigDecimal media=(portataMassima.add(minimo)).divide(new BigDecimal(2));
+									modelLin.setValueAt(media.stripTrailingZeros().toPlainString(), 8, 1);
+									
+									modelLin.setValueAt(portataMassima.stripTrailingZeros().toPlainString(), 9, 1);
+								}
+							}
+							if(z==4) 
+							{
+								BigDecimal minimo=strumento.getLimite_pos_3().add(portataMinima);
+								modelLin.setValueAt(minimo.stripTrailingZeros().toPlainString(), 10, 1);
 								
-								modelLin.setValueAt(strumento.getLimite_pos_2().stripTrailingZeros().toPlainString(), 6, 1);
+								if(strumento.getLimite_pos_4()!=null) 
+								{
+									BigDecimal media=(strumento.getLimite_pos_4().add(minimo)).divide(new BigDecimal(2));
+									modelLin.setValueAt(media.stripTrailingZeros().toPlainString(), 11, 1);
+								
+									modelLin.setValueAt(strumento.getLimite_pos_4().stripTrailingZeros().toPlainString(), 12, 1);
+								}else 
+								{
+									BigDecimal media=(portataMassima.add(minimo)).divide(new BigDecimal(2));
+									modelLin.setValueAt(media.stripTrailingZeros().toPlainString(), 11, 1);
+									
+									modelLin.setValueAt(portataMassima.stripTrailingZeros().toPlainString(), 12, 1);
+								}
+							}
+							if(z==5) 
+							{
+								BigDecimal minimo=strumento.getLimite_pos_4().add(portataMinima);
+								modelLin.setValueAt(minimo.stripTrailingZeros().toPlainString(), 13, 1);
+								
+								BigDecimal media=(portataMassima.add(minimo)).divide(new BigDecimal(2));
+								modelLin.setValueAt(media.stripTrailingZeros().toPlainString(), 14, 1);
+								
+								modelLin.setValueAt(portataMassima.stripTrailingZeros().toPlainString(), 15, 1);
 							}
 
 					//	}
@@ -4471,6 +4537,11 @@ public class PannelloMisuraMaster extends JPanel
 		comboBox_tipo_azzeramento.setFont(new Font("Arial", Font.PLAIN, 12));
 		pannelloAccuratezza.add(comboBox_tipo_azzeramento, "cell 2 2");
 
+		if(strumento.getId_tipo_strumento()==5) 
+		{
+			comboBox_tipo_azzeramento.setEnabled(false);
+		}
+		
 		comboBox_tipo_azzeramento.addActionListener(new ActionListener() {
 
 			@Override
