@@ -38,10 +38,8 @@ public class VerStrumentoDTO {
 	private int tipologia;
 	private int freq_mesi;
 	private String famiglia_strumento;
-	private BigDecimal limite_pos_1;
-	private BigDecimal limite_pos_2;
-	private BigDecimal limite_pos_3;
-	private BigDecimal limite_pos_4;
+	private int posizioni_cambio;
+	
 
 	public int getId() {
 		return id;
@@ -364,30 +362,12 @@ public class VerStrumentoDTO {
 	public void setFamiglia_strumento(String famiglia_strumento) {
 		this.famiglia_strumento = famiglia_strumento;
 	}
-	public BigDecimal getLimite_pos_1() {
-		return limite_pos_1;
+	public int getPosizioni_cambio() {
+		return posizioni_cambio;
 	}
-	public void setLimite_pos_1(BigDecimal limite_pos_1) {
-		this.limite_pos_1 = limite_pos_1;
+	public void setPosizioni_cambio(int posizioni_cambio) {
+		this.posizioni_cambio = posizioni_cambio;
 	}
-	public BigDecimal getLimite_pos_2() {
-		return limite_pos_2;
-	}
-	public void setLimite_pos_2(BigDecimal limite_pos_2) {
-		this.limite_pos_2 = limite_pos_2;
-	}
-	public BigDecimal getLimite_pos_3() {
-		return limite_pos_3;
-	}
-	public void setLimite_pos_3(BigDecimal limite_pos_3) {
-		this.limite_pos_3 = limite_pos_3;
-	}
-	public BigDecimal getLimite_pos_4() {
-		return limite_pos_4;
-	}
-	public void setLimite_pos_4(BigDecimal limite_pos_4) {
-		this.limite_pos_4 = limite_pos_4;
-	}
-	
+
 		
 }

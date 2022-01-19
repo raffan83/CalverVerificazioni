@@ -376,7 +376,7 @@ public class PannelloMisuraMaster extends JPanel
 		}
 
 		//	final JComboBox<String> comboBox_lista_campioni = new JComboBox<String>();
-		final JComboBox<String> comboBox_lista_campioni = new JComboBox<String>(/*listaCampioniCompleta*/);
+		final JComboBox<String> comboBox_lista_campioni = new JComboBox<String>(listaCampioniCompleta);
 		comboBox_lista_campioni.setFont(new Font("Arial", Font.BOLD, 12));
 		pannelloDatiGenerali.add(comboBox_lista_campioni, "cell 2 7");
 
@@ -2781,7 +2781,7 @@ public class PannelloMisuraMaster extends JPanel
 
 	private BigDecimal getCaricoDecentramento(int punti_appoggio, int campo,int idTipoStrumento) {
 
-		if(idTipoStrumento==1) 
+		if(idTipoStrumento==1 || idTipoStrumento==4 ||idTipoStrumento==5) 
 		{
 			if(punti_appoggio<=4) 
 			{
@@ -3050,68 +3050,94 @@ public class PannelloMisuraMaster extends JPanel
 					modelLin.setValueAt(strumento.getPortataMaxCampo(campo,strumento.getId_tipo_strumento()).stripTrailingZeros().toPlainString(), i, 1);
 				}
 				
-				}else 
+				}
+				
+				 else 
 				{
 					/*Proposta Masse Corredo Interno*/
-					int sizeLinearitaCorredoEsterno=0;
 					
-					if(strumento.getLimite_pos_1()!=null) 
-					{
-						sizeLinearitaCorredoEsterno=2;
-					}
-					if(strumento.getLimite_pos_2()!=null) 
-					{
-						sizeLinearitaCorredoEsterno=3;
-					}
-					if(strumento.getLimite_pos_3()!=null) 
-					{
-						sizeLinearitaCorredoEsterno=4;
-					}
-					if(strumento.getLimite_pos_4()!=null) 
-					{
-						sizeLinearitaCorredoEsterno=5;
-					}
-
 					BigDecimal portataMinima=strumento.getPortataMinCampo(campo,strumento.getId_tipo_strumento());
-				
+					
 					BigDecimal portataMassima=strumento.getPortataMaxCampo(campo,strumento.getId_tipo_strumento());
-					for(int z=1;z<=sizeLinearitaCorredoEsterno;z++) {
+					
+					int numeroPosizioni=strumento.getPosizioni_cambio()+1;
+					
+					double intervallo=portataMassima.doubleValue()/numeroPosizioni;
+					
+					double[] listaLimiti=new double[numeroPosizioni];
+					
+					double[] listaValoriMassa=new double[numeroPosizioni*3];
+					
+					for(int z=0;z<numeroPosizioni;z++) 
+					{
+						listaLimiti[z]=(z+1)*intervallo;
+					}
+					
+					
+					for(int x=0;x<listaLimiti.length;x++) 
+					{
+						for(int y=0;y<3;y++) 
+						{
+							
 						
-					/*	int limiteInferioreTabella=0;
-						int limiteSuperioreTabella=0;
+							if(y+1==1 && x!=0) 
+							{
+								int indice=(x*3);
+								listaValoriMassa[indice]=listaLimiti[x-1]+portataMinima.doubleValue();
+							}
+							
+							if(y+1==2) 
+							{
+								
+								
+								int indice=(x*3)+1;
+								listaValoriMassa[indice]=(listaLimiti[x]+listaValoriMassa[3*x])/2;
+							}
+							
+							if(y+1==3) 
+							{
+								int indice=((x+1)*3-1);
+								listaValoriMassa[indice]=listaLimiti[x];
+							}
+							/*PortataMassima*/
+							
+							
+							/*PortataMinima*/
+							if(x==0 && y==0) 
+							{
+								listaValoriMassa[0]=portataMinima.doubleValue();
+							}
+							
+							
+							if(x+1==listaLimiti.length && y+1==3) 
+							{
+								listaValoriMassa[listaValoriMassa.length-1]=portataMassima.doubleValue();
+							}
+						}
+					}
+					
+					
+				
+					if(i!=0) 
+					{
+						modelLin.setValueAt(listaValoriMassa[i-1], i, 1);
+					}else 
+					{
+						modelLin.setValueAt(0, 0, 1);
+					}
+				/*	for(int z=1;z<=sizeLinearitaCorredoEsterno;z++) {
 						
-						if(z==1) 
-						{
-							limiteInferioreTabella=1;
-							limiteSuperioreTabella=3;
-						}
-						if(z==2) 
-						{
-							limiteInferioreTabella=4;
-							limiteSuperioreTabella=6;
-						}
-						if(z==3) 
-						{
-							limiteInferioreTabella=7;
-							limiteSuperioreTabella=9;
-						}
-						if(z==4) 
-						{
-							limiteInferioreTabella=10;
-							limiteSuperioreTabella=12;
-						}
-						for(int y=limiteInferioreTabella;y<limiteSuperioreTabella;y++) 
-						{*/
+			
 							if(z==1) 
 							{
 								modelLin.setValueAt(portataMinima.stripTrailingZeros().toPlainString(), 1, 1);
 								BigDecimal media=(strumento.getLimite_pos_1().add(portataMinima)).divide(new BigDecimal(2));
 								modelLin.setValueAt(media.stripTrailingZeros().toPlainString(), 2, 1);
-								modelLin.setValueAt(strumento.getLimite_pos_1().stripTrailingZeros().toPlainString(), 3, 1);
+						//		modelLin.setValueAt(strumento.getLimite_pos_1().stripTrailingZeros().toPlainString(), 3, 1);
 							}
 							if(z==2) 
 							{
-								BigDecimal minimo=strumento.getLimite_pos_1().add(portataMinima);
+						//		BigDecimal minimo=strumento.getLimite_pos_1().add(portataMinima);
 								modelLin.setValueAt(minimo.stripTrailingZeros().toPlainString(), 4, 1);
 								
 								if(strumento.getLimite_pos_2()!=null) 
@@ -3179,7 +3205,7 @@ public class PannelloMisuraMaster extends JPanel
 							}
 
 					//	}
-					}
+					}*/
 				}
 			}
 
@@ -3590,12 +3616,16 @@ public class PannelloMisuraMaster extends JPanel
 											.subtract(car_aggDiscesa).subtract(mas));
 								}else 
 								{
-									erroreDiscesa=(indDiscesa.multiply(Costanti.gFactor)).subtract(mas);
+									erroreDiscesa=(indDiscesa.multiply(Costanti.gFactor)).subtract(mas).setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
+									
+									
 								}
 
 								String mpe=getE(campo,strumento.getId_tipo_strumento(),mas).multiply(new BigDecimal(0.25)).stripTrailingZeros().toPlainString();
 
-								modelLin.setValueAt(erroreDiscesa.setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP).stripTrailingZeros().toPlainString(), row, 7);
+								modelLin.setValueAt(erroreDiscesa.setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP).toPlainString(), row, 7);
+								
+								
 
 								erroreDiscesa_cor=BigDecimal.ZERO.setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
 
@@ -3625,7 +3655,8 @@ public class PannelloMisuraMaster extends JPanel
 								}
 								else 
 								{
-									erroreDiscesa=(indDiscesa.multiply(Costanti.gFactor)).subtract(mas);
+									erroreDiscesa=(indDiscesa.multiply(Costanti.gFactor)).subtract(mas).setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
+									
 								}
 
 								BigDecimal mpe=getMPE(mas.toPlainString(), campo,2);
@@ -4901,41 +4932,79 @@ public class PannelloMisuraMaster extends JPanel
 			}
 			else 
 			{
-				if(i==0) 
-				{	
-					modelMobilita_1.setValueAt(strumento.getPortataMinCampo(campo, strumento.getId_tipo_strumento()).toPlainString(),i, 1);
-
-					BigDecimal mpe=getMPE(strumento.getPortataMinCampo(campo, strumento.getId_tipo_strumento()).toPlainString(),comboBox_campo.getSelectedIndex(),1);
-
-					BigDecimal carr_agg=mpe.multiply(new BigDecimal("0.4"));
-
-					modelMobilita_1.setValueAt(carr_agg.toPlainString(),i,3);
-
-				}
-				if(i==1) 
+				if(strumento.getId_tipo_strumento()==4 || strumento.getId_tipo_strumento()==5) 
 				{
-					modelMobilita_1.setValueAt(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).setScale(2).divide(new BigDecimal("2"),RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP).toPlainString(),i, 1);
-
-					BigDecimal mpe=getMPE(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).setScale(2).divide(new BigDecimal("2"),RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP).toPlainString(),comboBox_campo.getSelectedIndex(),1);
-
-					BigDecimal carr_agg=mpe.multiply(new BigDecimal("0.4"));
-
-					modelMobilita_1.setValueAt(carr_agg.toPlainString(),i,3);
-
+					if(i==0) 
+					{	
+						modelMobilita_1.setValueAt(""+0,i, 1);
+	
+						BigDecimal mpe=getMPE(strumento.getPortataMinCampo(campo, strumento.getId_tipo_strumento()).toPlainString(),comboBox_campo.getSelectedIndex(),1);
+	
+						BigDecimal carr_agg=mpe.multiply(new BigDecimal("0.4"));
+	
+						modelMobilita_1.setValueAt(carr_agg.toPlainString(),i,3);
+	
+					}
+					if(i==1) 
+					{
+						modelMobilita_1.setValueAt(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).setScale(2).divide(new BigDecimal("2"),RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP).toPlainString(),i, 1);
+	
+						BigDecimal mpe=getMPE(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).setScale(2).divide(new BigDecimal("2"),RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP).toPlainString(),comboBox_campo.getSelectedIndex(),1);
+	
+						BigDecimal carr_agg=mpe.multiply(new BigDecimal("0.4"));
+	
+						modelMobilita_1.setValueAt(carr_agg.toPlainString(),i,3);
+	
+	
+					}
+					if(i==2) 
+					{
+						modelMobilita_1.setValueAt(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).toPlainString(),i, 1);
+	
+						BigDecimal mpe=getMPE(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).toPlainString(),comboBox_campo.getSelectedIndex(),1);
+	
+						BigDecimal carr_agg=mpe.multiply(new BigDecimal("0.4"));
+	
+						modelMobilita_1.setValueAt(carr_agg.toPlainString(),i,3);
+					}
+				
+				}
+				else {
+						if(i==0) 
+						{	
+							modelMobilita_1.setValueAt(strumento.getPortataMinCampo(campo, strumento.getId_tipo_strumento()).toPlainString(),i, 1);
+		
+							BigDecimal mpe=getMPE(strumento.getPortataMinCampo(campo, strumento.getId_tipo_strumento()).toPlainString(),comboBox_campo.getSelectedIndex(),1);
+		
+							BigDecimal carr_agg=mpe.multiply(new BigDecimal("0.4"));
+		
+							modelMobilita_1.setValueAt(carr_agg.toPlainString(),i,3);
+		
+						}
+						if(i==1) 
+						{
+							modelMobilita_1.setValueAt(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).setScale(2).divide(new BigDecimal("2"),RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP).toPlainString(),i, 1);
+		
+							BigDecimal mpe=getMPE(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).setScale(2).divide(new BigDecimal("2"),RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP).toPlainString(),comboBox_campo.getSelectedIndex(),1);
+		
+							BigDecimal carr_agg=mpe.multiply(new BigDecimal("0.4"));
+		
+							modelMobilita_1.setValueAt(carr_agg.toPlainString(),i,3);
+		
+		
+						}
+						if(i==2) 
+						{
+							modelMobilita_1.setValueAt(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).toPlainString(),i, 1);
+		
+							BigDecimal mpe=getMPE(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).toPlainString(),comboBox_campo.getSelectedIndex(),1);
+		
+							BigDecimal carr_agg=mpe.multiply(new BigDecimal("0.4"));
+		
+							modelMobilita_1.setValueAt(carr_agg.toPlainString(),i,3);
+						}
 
 				}
-				if(i==2) 
-				{
-					modelMobilita_1.setValueAt(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).toPlainString(),i, 1);
-
-					BigDecimal mpe=getMPE(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).toPlainString(),comboBox_campo.getSelectedIndex(),1);
-
-					BigDecimal carr_agg=mpe.multiply(new BigDecimal("0.4"));
-
-					modelMobilita_1.setValueAt(carr_agg.toPlainString(),i,3);
-				}
-
-
 
 			}
 			if(mob.getIndicazione()!=null) 
@@ -4996,35 +5065,69 @@ public class PannelloMisuraMaster extends JPanel
 			}
 			else 
 			{
-				if(i==0) 
-				{	
-					modelMobilita_2.setValueAt(strumento.getPortataMinCampo(campo, strumento.getId_tipo_strumento()).stripTrailingZeros().toPlainString(),i, 1);
-
-					BigDecimal mpe=getMPE(strumento.getPortataMinCampo(campo, strumento.getId_tipo_strumento()).stripTrailingZeros().toPlainString(),comboBox_campo.getSelectedIndex(),1);
-
-					modelMobilita_2.setValueAt(mpe,i,3);
-
-				}
-				if(i==1) 
+				
+				if(strumento.getId_tipo_strumento()==4 || strumento.getId_tipo_strumento()==5) 
 				{
-					modelMobilita_2.setValueAt(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).setScale(2).divide(new BigDecimal("2"),RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString(),i, 1);
-
-					BigDecimal mpe=getMPE(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).setScale(2).divide(new BigDecimal("2"),RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString(),comboBox_campo.getSelectedIndex(),1);
-
-					modelMobilita_2.setValueAt(mpe,i,3);
-
+					if(i==0) 
+					{	
+						modelMobilita_2.setValueAt(""+0,i, 1);
+	
+						BigDecimal mpe=getMPE(strumento.getPortataMinCampo(campo, strumento.getId_tipo_strumento()).stripTrailingZeros().toPlainString(),comboBox_campo.getSelectedIndex(),1);
+	
+						modelMobilita_2.setValueAt(mpe,i,3);
+	
+					}
+					if(i==1) 
+					{
+						modelMobilita_2.setValueAt(""+0,i, 1);
+	
+						BigDecimal mpe=getMPE(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).setScale(2).divide(new BigDecimal("2"),RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString(),comboBox_campo.getSelectedIndex(),1);
+	
+						modelMobilita_2.setValueAt(mpe,i,3);
+	
+					}
+					if(i==2) 
+					{
+						modelMobilita_2.setValueAt(""+0,i, 1);
+	
+						BigDecimal mpe=getMPE(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).toPlainString(),comboBox_campo.getSelectedIndex(),1);
+	
+						modelMobilita_2.setValueAt(mpe,i,3);
+	
+					}
+				
 				}
-				if(i==2) 
+				else 
 				{
-					modelMobilita_2.setValueAt(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).stripTrailingZeros().toPlainString(),i, 1);
-
-					BigDecimal mpe=getMPE(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).toPlainString(),comboBox_campo.getSelectedIndex(),1);
-
-					modelMobilita_2.setValueAt(mpe,i,3);
+					if(i==0) 
+					{	
+						modelMobilita_2.setValueAt(strumento.getPortataMinCampo(campo, strumento.getId_tipo_strumento()).stripTrailingZeros().toPlainString(),i, 1);
+	
+						BigDecimal mpe=getMPE(strumento.getPortataMinCampo(campo, strumento.getId_tipo_strumento()).stripTrailingZeros().toPlainString(),comboBox_campo.getSelectedIndex(),1);
+	
+						modelMobilita_2.setValueAt(mpe,i,3);
+	
+					}
+					if(i==1) 
+					{
+						modelMobilita_2.setValueAt(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).setScale(2).divide(new BigDecimal("2"),RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString(),i, 1);
+	
+						BigDecimal mpe=getMPE(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).setScale(2).divide(new BigDecimal("2"),RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString(),comboBox_campo.getSelectedIndex(),1);
+	
+						modelMobilita_2.setValueAt(mpe,i,3);
+	
+					}
+					if(i==2) 
+					{
+						modelMobilita_2.setValueAt(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).stripTrailingZeros().toPlainString(),i, 1);
+	
+						BigDecimal mpe=getMPE(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).toPlainString(),comboBox_campo.getSelectedIndex(),1);
+	
+						modelMobilita_2.setValueAt(mpe,i,3);
+	
+					}
 
 				}
-
-
 			}
 			if(mob.getIndicazione()!=null) 
 			{
@@ -6624,17 +6727,17 @@ public class PannelloMisuraMaster extends JPanel
 						}
 					}else 
 					{
-						if(column==2)
+						if(column==2 || column==3)
 						{
 							cellComponent.setForeground(Color.black);
 							cellComponent.setBackground(Color.YELLOW);
 						}
-						if(column==3)
-						{
-							cellComponent.setForeground(Color.black);
-							cellComponent.setBackground(new Color(224,224,224));
+				//		if(column==3)
+				//		{
+				//			cellComponent.setForeground(Color.black);
+				//			cellComponent.setBackground(new Color(224,224,224));
 
-						}
+					//}
 
 					}
 				}
@@ -6695,7 +6798,7 @@ public class PannelloMisuraMaster extends JPanel
 
 					}
 
-					if(column==2 ||  column==4 )
+					if(column==2 ||   column==4 )
 					{
 						cellComponent.setForeground(Color.black);
 						cellComponent.setBackground(Color.YELLOW);

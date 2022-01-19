@@ -277,10 +277,8 @@ public class SQLiteDAO {
 			strumento.setTipologia(rs.getInt("id_tipologia"));
 			strumento.setFreq_mesi(rs.getInt("freq_mesi"));
 			strumento.setFamiglia_strumento(rs.getString("famiglia_strumento"));
-			strumento.setLimite_pos_1(rs.getBigDecimal("limite_pos_1"));
-			strumento.setLimite_pos_2(rs.getBigDecimal("limite_pos_2"));
-			strumento.setLimite_pos_3(rs.getBigDecimal("limite_pos_3"));
-			strumento.setLimite_pos_4(rs.getBigDecimal("limite_pos_4"));
+			strumento.setPosizioni_cambio(rs.getInt("posizione_cambio"));
+		
 			
 		}
 	}catch(Exception ex)
@@ -1348,7 +1346,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 																"portata_min_C1,portata_max_C1,div_ver_C1,div_rel_C1,numero_div_C1," +
 																"portata_min_C2,portata_max_C2,div_ver_C2,div_rel_C2,numero_div_C2," +
 																"portata_min_C3,portata_max_C3,div_ver_C3,div_rel_C3,numero_div_C3," +
-																"anno_marcatura_CE,data_ms,id_tipologia,freq_mesi,creato,famiglia_strumento,limite_pos_1,limite_pos_2,limite_pos_3,limite_pos_4) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+																"anno_marcatura_CE,data_ms,id_tipologia,freq_mesi,creato,famiglia_strumento,posizione_cambio) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 																Statement.RETURN_GENERATED_KEYS);
 			
 			
@@ -1385,10 +1383,8 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			pst.setInt(26, strumento.getFreq_mesi());
 			pst.setString(27,"S");
 			pst.setString(28, strumento.getFamiglia_strumento());
-			pst.setBigDecimal(29, strumento.getLimite_pos_1());
-			pst.setBigDecimal(30, strumento.getLimite_pos_2());
-			pst.setBigDecimal(31, strumento.getLimite_pos_3());
-			pst.setBigDecimal(32, strumento.getLimite_pos_4());
+			pst.setInt(29, strumento.getPosizioni_cambio());
+			
 	
 			pst.executeUpdate();
 			
@@ -1651,7 +1647,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 										   +"portata_min_C1=?,portata_max_C1=?,div_ver_C1=?,div_rel_C1=?,numero_div_C1=?,"
 										   +"portata_min_C2=?,portata_max_C2=?,div_ver_C2=?,div_rel_C2=?,numero_div_C2=?,"
 										   +"portata_min_C3=?,portata_max_C3=?,div_ver_C3=?,div_rel_C3=?,numero_div_C3=?, "
-										   +"classe=?,id_ver_tipo_strumento=?,um=?,id_tipologia=?, famiglia_strumento=?,limite_pos_1=?,limite_pos_2=?,limite_pos_3=?,limite_pos_4=? WHERE id=?");
+										   +"classe=?,id_ver_tipo_strumento=?,um=?,id_tipologia=?, famiglia_strumento=?,posizione_cambio=? WHERE id=?");
 		
 			pst.setString(1,strumento.getDenominazione());
 			pst.setString(2,strumento.getCostruttore());
@@ -1685,12 +1681,10 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			pst.setInt(26, strumento.getTipologia());
 			pst.setString(27, strumento.getFamiglia_strumento());
 
-			pst.setBigDecimal(28, strumento.getLimite_pos_1());
-			pst.setBigDecimal(29, strumento.getLimite_pos_2());
-			pst.setBigDecimal(30, strumento.getLimite_pos_3());
-			pst.setBigDecimal(31, strumento.getLimite_pos_4());
+			pst.setInt(28, strumento.getPosizioni_cambio());
+
 			
-			pst.setInt(32, strumento.getId());
+			pst.setInt(29, strumento.getId());
 			
 			
 			toReturn=pst.executeUpdate();
@@ -1884,24 +1878,8 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			
 			if(strumento.getId_tipo_strumento()==5) 
 			{
-				int sizeRow=0;
-				
-				if(strumento.getLimite_pos_1()!=null)
-				{
-					sizeRow=6;
-				}
-				if(strumento.getLimite_pos_2()!=null)
-				{
-					sizeRow=9;
-				}
-				if(strumento.getLimite_pos_3()!=null)
-				{
-					sizeRow=12;
-				}
-				if(strumento.getLimite_pos_4()!=null)
-				{
-					sizeRow=15;
-				}
+				int sizeRow =(strumento.getPosizioni_cambio()+1)*3;
+			
 				
 				
 				for(int i=0;i<sizeRow+1;i++) 

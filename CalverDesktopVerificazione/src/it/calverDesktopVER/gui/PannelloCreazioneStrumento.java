@@ -70,10 +70,7 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 	 private JTextField textField_numero_divisioni_c3;
 	 private JTextField textField_anno_ce;
 	 private JTextField textField_data_ms;
-	 private JTextField textField_limite_pos1;
-	 private JTextField textField_limite_pos2;
-	 private JTextField textField_limite_pos3;
-	 private JTextField textField_limite_pos4;
+	 private JTextField textField_posizioni_cambio;
 	
 	 @SuppressWarnings("unchecked")
 	public PannelloCreazioneStrumento() {
@@ -252,10 +249,6 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 			}
 		});
 		
-		JLabel lblSeNonReperibile = new JLabel("* Se non reperibile inserire 01/01/1900");
-		lblSeNonReperibile.setFont(new Font("Arial", Font.BOLD, 11));
-		add(lblSeNonReperibile, "cell 4 6 2 1,alignx left,aligny top");
-		
 		JLabel lblFamigliaStrumento = new JLabel("Famiglia strumento");
 		lblFamigliaStrumento.setFont(new Font("Arial", Font.BOLD, 18));
 		add(lblFamigliaStrumento, "cell 0 7,alignx trailing");
@@ -382,41 +375,17 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 		textField_numero_divisioni_c3.setColumns(10);
 		add(textField_numero_divisioni_c3, "cell 5 12,growx");
 		
-		JLabel lblLimitiPosizioniCambio = new JLabel("Limiti posizioni cambio");
+		JLabel lblLimitiPosizioniCambio = new JLabel("Numero posizioni cambio");
 		lblLimitiPosizioniCambio.setFont(new Font("Arial", Font.BOLD, 14));
 		add(lblLimitiPosizioniCambio, "cell 0 14,alignx trailing");
 		
-		textField_limite_pos1 = new JTextField();
-		textField_limite_pos1.setEnabled(false);
-		textField_limite_pos1.setEditable(false);
-		textField_limite_pos1.setHorizontalAlignment(SwingConstants.CENTER);
-		textField_limite_pos1.setFont(new Font("Arial", Font.BOLD, 14));
-		textField_limite_pos1.setColumns(10);
-		add(textField_limite_pos1, "cell 1 14,growx");
-		
-		textField_limite_pos2 = new JTextField();
-		textField_limite_pos2.setEnabled(false);
-		textField_limite_pos2.setEditable(false);
-		textField_limite_pos2.setHorizontalAlignment(SwingConstants.CENTER);
-		textField_limite_pos2.setFont(new Font("Arial", Font.BOLD, 14));
-		textField_limite_pos2.setColumns(10);
-		add(textField_limite_pos2, "cell 2 14,growx");
-		
-		textField_limite_pos3 = new JTextField();
-		textField_limite_pos3.setEnabled(false);
-		textField_limite_pos3.setEditable(false);
-		textField_limite_pos3.setHorizontalAlignment(SwingConstants.CENTER);
-		textField_limite_pos3.setFont(new Font("Arial", Font.BOLD, 14));
-		textField_limite_pos3.setColumns(10);
-		add(textField_limite_pos3, "cell 3 14,growx");
-		
-		textField_limite_pos4 = new JTextField();
-		textField_limite_pos4.setEnabled(false);
-		textField_limite_pos4.setEditable(false);
-		textField_limite_pos4.setHorizontalAlignment(SwingConstants.CENTER);
-		textField_limite_pos4.setFont(new Font("Arial", Font.BOLD, 14));
-		textField_limite_pos4.setColumns(10);
-		add(textField_limite_pos4, "cell 4 14,growx");
+		textField_posizioni_cambio = new JTextField();
+		textField_posizioni_cambio.setEnabled(false);
+		textField_posizioni_cambio.setEditable(false);
+		textField_posizioni_cambio.setHorizontalAlignment(SwingConstants.CENTER);
+		textField_posizioni_cambio.setFont(new Font("Arial", Font.BOLD, 14));
+		textField_posizioni_cambio.setColumns(10);
+		add(textField_posizioni_cambio, "cell 1 14,growx");
 		
 		JButton btnInserisci = new JButton("Inserisci");
 		btnInserisci.setFont(new Font("Arial", Font.BOLD, 18));
@@ -556,29 +525,21 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 			
 					comboBox_tipologia.setSelectedIndex(1);
 					comboBox_tipologia.setEnabled(false);
-					textField_limite_pos1.setEnabled(true);
-					  textField_limite_pos2.setEnabled(true);
-					  textField_limite_pos3.setEnabled(true);
-					  textField_limite_pos4.setEnabled(true);
+					textField_posizioni_cambio.setEnabled(true);
+					 
 					  
-				  textField_limite_pos1.setEditable(true);
-				  textField_limite_pos2.setEditable(true);
-				  textField_limite_pos3.setEditable(true);
-				  textField_limite_pos4.setEditable(true);
+				  textField_posizioni_cambio.setEditable(true);
+				
 				}else 
 				{
 					comboBox_tipologia.setSelectedIndex(0);
 					comboBox_tipologia.setEnabled(true);
 					
-					textField_limite_pos1.setEnabled(false);
-					  textField_limite_pos2.setEnabled(false);
-					  textField_limite_pos3.setEnabled(false);
-					  textField_limite_pos4.setEnabled(false);
+					textField_posizioni_cambio.setEnabled(false);
+					
 					  
-					  textField_limite_pos1.setEditable(false);
-					  textField_limite_pos2.setEditable(false);
-					  textField_limite_pos3.setEditable(false);
-					  textField_limite_pos4.setEditable(false);
+					  textField_posizioni_cambio.setEditable(false);
+					
 				} 
 				
 			}
@@ -778,22 +739,15 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 					
 					if(comboBox_tipo_strumento.getSelectedIndex()==4) 
 					{
-						if(Utility.isDouble(textField_limite_pos1.getText())) 
+						
+						if(Utility.isNumber(textField_posizioni_cambio.getText())) 
 						{
-							strumento.setLimite_pos_1(new BigDecimal(textField_limite_pos1.getText()));
+							strumento.setPosizioni_cambio(Integer.parseInt(textField_posizioni_cambio.getText()));
 						}
-						if(Utility.isDouble(textField_limite_pos2.getText())) 
-						{
-							strumento.setLimite_pos_2(new BigDecimal(textField_limite_pos2.getText()));
-						}
-						if(Utility.isDouble(textField_limite_pos3.getText())) 
-						{
-							strumento.setLimite_pos_3(new BigDecimal(textField_limite_pos3.getText()));
-						}
-						if(Utility.isDouble(textField_limite_pos4.getText())) 
-						{
-							strumento.setLimite_pos_4(new BigDecimal(textField_limite_pos4.getText()));
-						}
+					
+					}else 
+					{
+						strumento.setPosizioni_cambio(0);
 					}
 					
 					if(save)
