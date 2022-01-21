@@ -111,7 +111,7 @@ public class PannelloMisuraMaster extends JPanel
 	JFrame f;
 	ArrayList<ButtonGroup> listaRisposte_tipo_1 = new ArrayList<>();
 	ArrayList<ButtonGroup> listaRisposte_tipo_2 = new ArrayList<>();
-	private JTable tableRip,tableDec,tableLin,tableAcc,tabellaMobilita1,tabellaMobilita2;
+	private JTable tableRip,tableDec,tableLin,tableAcc,tabellaMobilita;
 
 	private static String[] listaCampioniCompleta=new String[0];
 
@@ -123,12 +123,12 @@ public class PannelloMisuraMaster extends JPanel
 	ModelLinearitaCorredoEsterno modelLinCorredoEsterno;
 	ModelAccuratezza modelAccuratezza;
 	ModelMobilita modelMobilita_1;
-	ModelMobilita modelMobilita_2;
+	ModelMobilita modelMobilita;
 
 	private JTextField textField_p_p_rip;
 	private JTextField textField_mpe_rip;
 	private JTextField textField_esito_rip;
-	private JTextField textField_esito_mob_2;
+	private JTextField textField_esito_mob;
 	private JTextField textField_esito_acc;
 	private JTextField textField_esito_lin;
 	private JTextField textField_esito_dec;
@@ -3893,10 +3893,10 @@ public class PannelloMisuraMaster extends JPanel
 				modelLinCorredoEsterno.setValueAt(lin.getMassa().toPlainString(), i, 1);	
 			}else 
 			{
-			//	if(i==0)
-			//	{					
+				if(i==0)
+				{					
 					modelLinCorredoEsterno.setValueAt(BigDecimal.ZERO.toPlainString(), i, 1);
-			/*	}
+				}
 				if(i==1) 
 				{
 					modelLinCorredoEsterno.setValueAt(strumento.getPortataMinCampo(campo, strumento.getId_tipo_strumento()).toPlainString(), i, 1);
@@ -3959,11 +3959,11 @@ public class PannelloMisuraMaster extends JPanel
 						}
 					}
 				}
-				if(i==5) 
+				if(i==8) 
 				{
 					modelLinCorredoEsterno.setValueAt(strumento.getPortataMaxCampo(campo,strumento.getId_tipo_strumento()).stripTrailingZeros().toPlainString(), i, 1);
 				}
-			*/
+			
 			}
 
 
@@ -4565,7 +4565,7 @@ public class PannelloMisuraMaster extends JPanel
 	private BigDecimal getEVariazione(int campo, int id_tipo_strumento, BigDecimal carico) {
 		BigDecimal e = BigDecimal.ZERO;
 
-		if(id_tipo_strumento==1) 
+		if(id_tipo_strumento==1 || id_tipo_strumento==4 || id_tipo_strumento==5) 
 		{
 			e=strumento.getDiv_ver_C1();
 		}
@@ -4618,7 +4618,7 @@ public class PannelloMisuraMaster extends JPanel
 
 		tableAcc = new JTable();
 
-		modelAccuratezza = new ModelAccuratezza(strumento.getUm());
+		modelAccuratezza = new ModelAccuratezza(strumento.getUm(),strumento.getClasse(),strumento.getTipologia());
 
 		tableAcc.setModel(modelAccuratezza);
 
@@ -4943,9 +4943,8 @@ public class PannelloMisuraMaster extends JPanel
 		pannelloMobilita.setBackground(Color.WHITE);
 		pannelloMobilita.setLayout(new MigLayout("", "[22.00][][grow]", "[][][][][][][][][][13.00][]"));
 
-		modelMobilita_1 = new ModelMobilita(strumento.getUm());
 
-		modelMobilita_2 = new ModelMobilita(strumento.getUm());
+		modelMobilita = new ModelMobilita(strumento.getUm());
 
 
 		JLabel lblNewLabel = new JLabel("Prova di mobilità");
@@ -4956,50 +4955,32 @@ public class PannelloMisuraMaster extends JPanel
 		lblNewLabel_2.setFont(new Font("Calibri", Font.PLAIN, 14));
 		pannelloMobilita.add(lblNewLabel_2, "cell 0 0 3 1");
 
-		tabellaMobilita1 = new JTable();
-
-		tabellaMobilita1.setModel(modelMobilita_1);
-
-		tabellaMobilita1.setRowHeight(25);
-		tabellaMobilita1.setFont(new Font("Arial", Font.PLAIN, 12));
-		tabellaMobilita1.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
-
-		//	tabellaMobilita1.setDefaultRenderer(Object.class, new MyCellRenderer());
 
 		JLabel lblCaso = new JLabel("Caso 1) - Strumenti ad equilibrio non automatico (con indicazione analogica)");
 		lblCaso.setFont(new Font("Arial", Font.BOLD, 12));
 
-		tabellaMobilita2 = new JTable();
-		tabellaMobilita2.setModel(modelMobilita_2);
+		tabellaMobilita = new JTable();
+		tabellaMobilita.setModel(modelMobilita);
 
-		tabellaMobilita2.setRowHeight(25);
-		tabellaMobilita2.setFont(new Font("Arial", Font.PLAIN, 12));
-		tabellaMobilita2.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
-		tabellaMobilita2.setDefaultRenderer(Object.class, new RenderTable(3,strumento.getClasse(),strumento.getTipologia()));
-
-
-		TableColumn column = tabellaMobilita1.getColumnModel().getColumn(tabellaMobilita1.getColumnModel().getColumnIndex("id"));
-		tabellaMobilita1.removeColumn(column);
+		tabellaMobilita.setRowHeight(25);
+		tabellaMobilita.setFont(new Font("Arial", Font.PLAIN, 12));
+		tabellaMobilita.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+		tabellaMobilita.setDefaultRenderer(Object.class, new RenderTable(3,strumento.getClasse(),strumento.getTipologia()));
 
 
+		TableColumn column = tabellaMobilita.getColumnModel().getColumn(tabellaMobilita.getColumnModel().getColumnIndex("id"));
+		tabellaMobilita.removeColumn(column);
 
-		column = tabellaMobilita2.getColumnModel().getColumn(tabellaMobilita2.getColumnModel().getColumnIndex("id"));
-		tabellaMobilita2.removeColumn(column);
 
+		tabellaMobilita.getColumnModel().getColumn(3).setHeaderValue("Carico Agg=|MPE|  ΔL ("+strumento.getUm()+")");
+		tabellaMobilita.getColumnModel().getColumn(6).setHeaderValue("0,7·Carico aggiuntivo 0,7·MPE ("+strumento.getUm()+")");
 
-		tabellaMobilita2.getColumnModel().getColumn(3).setHeaderValue("Carico Agg=|MPE|  ΔL ("+strumento.getUm()+")");
-		tabellaMobilita2.getColumnModel().getColumn(6).setHeaderValue("0,7·Carico aggiuntivo 0,7·MPE ("+strumento.getUm()+")");
-
-		tabellaMobilita2.repaint();
-
-		JLabel label = new JLabel("ESITO:");
-		label.setFont(new Font("Arial", Font.BOLD, 12));
-		//	pannelloMobilita.add(label, "flowx,cell 1 4");
+		tabellaMobilita.repaint();
 
 		JLabel lblCaso_1 = new JLabel("Strumenti ad equilibrio automatico o semiautomatico (con indicazione analogica)");
 		lblCaso_1.setFont(new Font("Arial", Font.BOLD, 12));
 		pannelloMobilita.add(lblCaso_1, "cell 1 2");
-		JScrollPane scrollTab2 = new JScrollPane(tabellaMobilita2);
+		JScrollPane scrollTab2 = new JScrollPane(tabellaMobilita);
 
 		pannelloMobilita.add(scrollTab2, "cell 1 3,width :800:,height :103:,aligny top");
 
@@ -5008,163 +4989,40 @@ public class PannelloMisuraMaster extends JPanel
 		lblEsito.setFont(new Font("Arial", Font.BOLD, 12));
 		pannelloMobilita.add(lblEsito, "flowx,cell 1 4,alignx left");
 
-		textField_esito_mob_1 = new JTextField();
-		textField_esito_mob_1.setFont(new Font("Arial", Font.PLAIN, 12));
-		textField_esito_mob_1.setEditable(false);
-		textField_esito_mob_1.setColumns(10);
-		textField_esito_mob_1.setBackground(Color.YELLOW);
-		//	pannelloMobilita.add(textField_esito_mob_1, "cell 1 4,width :100:");
 
-		textField_esito_mob_2 = new JTextField();
-		textField_esito_mob_2.setEditable(false);
-		textField_esito_mob_2.setBackground(Color.YELLOW);
-		textField_esito_mob_2.setFont(new Font("Arial", Font.PLAIN, 12));
-		textField_esito_mob_2.setColumns(10);
-		pannelloMobilita.add(textField_esito_mob_2, "cell 1 4,width :100:");
+		textField_esito_mob = new JTextField();
+		textField_esito_mob.setEditable(false);
+		textField_esito_mob.setBackground(Color.YELLOW);
+		textField_esito_mob.setFont(new Font("Arial", Font.PLAIN, 12));
+		textField_esito_mob.setColumns(10);
+		pannelloMobilita.add(textField_esito_mob, "cell 1 4,width :100:");
 
-		ArrayList<VerMobilitaDTO> listaMobilita1=(ArrayList<VerMobilitaDTO>)misura.getVerMobilitas(comboBox_campo.getSelectedIndex()+1, 1);
 
 		int campo=comboBox_campo.getSelectedIndex()+1;
-		for (int i = 0; i <3; i++) {
 
-			VerMobilitaDTO mob=listaMobilita1.get(i);
-
-			if(mob.getMassa()!=null) 
-			{
-				modelMobilita_1.setValueAt(mob.getMassa(),i, 1);
-			}
-			else 
-			{
-				if(strumento.getId_tipo_strumento()==4 || strumento.getId_tipo_strumento()==5) 
-				{
-					if(i==0) 
-					{	
-						modelMobilita_1.setValueAt(""+0,i, 1);
-	
-						BigDecimal mpe=getMPE(strumento.getPortataMinCampo(campo, strumento.getId_tipo_strumento()).toPlainString(),comboBox_campo.getSelectedIndex(),1);
-	
-						BigDecimal carr_agg=mpe.multiply(new BigDecimal("0.4"));
-	
-						modelMobilita_1.setValueAt(carr_agg.toPlainString(),i,3);
-	
-					}
-					if(i==1) 
-					{
-						modelMobilita_1.setValueAt(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).setScale(2).divide(new BigDecimal("2"),RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP).toPlainString(),i, 1);
-	
-						BigDecimal mpe=getMPE(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).setScale(2).divide(new BigDecimal("2"),RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP).toPlainString(),comboBox_campo.getSelectedIndex(),1);
-	
-						BigDecimal carr_agg=mpe.multiply(new BigDecimal("0.4"));
-	
-						modelMobilita_1.setValueAt(carr_agg.toPlainString(),i,3);
-	
-	
-					}
-					if(i==2) 
-					{
-						modelMobilita_1.setValueAt(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).toPlainString(),i, 1);
-	
-						BigDecimal mpe=getMPE(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).toPlainString(),comboBox_campo.getSelectedIndex(),1);
-	
-						BigDecimal carr_agg=mpe.multiply(new BigDecimal("0.4"));
-	
-						modelMobilita_1.setValueAt(carr_agg.toPlainString(),i,3);
-					}
-				
-				}
-				else {
-						if(i==0) 
-						{	
-							modelMobilita_1.setValueAt(strumento.getPortataMinCampo(campo, strumento.getId_tipo_strumento()).toPlainString(),i, 1);
-		
-							BigDecimal mpe=getMPE(strumento.getPortataMinCampo(campo, strumento.getId_tipo_strumento()).toPlainString(),comboBox_campo.getSelectedIndex(),1);
-		
-							BigDecimal carr_agg=mpe.multiply(new BigDecimal("0.4"));
-		
-							modelMobilita_1.setValueAt(carr_agg.toPlainString(),i,3);
-		
-						}
-						if(i==1) 
-						{
-							modelMobilita_1.setValueAt(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).setScale(2).divide(new BigDecimal("2"),RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP).toPlainString(),i, 1);
-		
-							BigDecimal mpe=getMPE(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).setScale(2).divide(new BigDecimal("2"),RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP).toPlainString(),comboBox_campo.getSelectedIndex(),1);
-		
-							BigDecimal carr_agg=mpe.multiply(new BigDecimal("0.4"));
-		
-							modelMobilita_1.setValueAt(carr_agg.toPlainString(),i,3);
-		
-		
-						}
-						if(i==2) 
-						{
-							modelMobilita_1.setValueAt(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).toPlainString(),i, 1);
-		
-							BigDecimal mpe=getMPE(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).toPlainString(),comboBox_campo.getSelectedIndex(),1);
-		
-							BigDecimal carr_agg=mpe.multiply(new BigDecimal("0.4"));
-		
-							modelMobilita_1.setValueAt(carr_agg.toPlainString(),i,3);
-						}
-
-				}
-
-			}
-			if(mob.getIndicazione()!=null) 
-			{
-				modelMobilita_1.setValueAt(mob.getIndicazione(),i, 2);
-			}
-			if(mob.getCaricoAgg()!=null) 
-			{
-				modelMobilita_1.setValueAt(mob.getCaricoAgg(),i, 3);
-			}
-			if(mob.getPostIndicazione()!=null) 
-			{
-				modelMobilita_1.setValueAt(mob.getPostIndicazione(),i, 4);
-			}
-			if(mob.getDifferenziale()!=null) 
-			{
-				modelMobilita_1.setValueAt(mob.getDifferenziale(),i, 5);
-			}
-			if(mob.getDivisione()!=null) 
-			{
-				modelMobilita_1.setValueAt(mob.getDivisione(),i, 6);
-			}
-			if(mob.getCheck()!=null) 
-			{
-				modelMobilita_1.setValueAt(mob.getCheck(),i, 7);
-			}
-			modelMobilita_1.setValueAt(mob.getId(), i, 8);
-		}
-
-		if(listaMobilita1.get(0).getEsito()!=null) 
-		{
-			if(listaMobilita1.get(0).getEsito().equals("POSITIVO")) 
-			{
-				textField_esito_mob_1.setBackground(Color.GREEN);
-			}else 
-			{
-				textField_esito_mob_1.setBackground(Color.RED);
-			}
-			textField_esito_mob_1.setText(listaMobilita1.get(0).getEsito());
-		}
-
-
-		ArrayList<VerMobilitaDTO> listaMobilita2=(ArrayList<VerMobilitaDTO>)misura.getVerMobilitas(comboBox_campo.getSelectedIndex()+1, 2);
+		ArrayList<VerMobilitaDTO> listaMobilita=(ArrayList<VerMobilitaDTO>)misura.getVerMobilitas(comboBox_campo.getSelectedIndex()+1, 2);
 
 		for (int i = 0; i <3; i++) {
 
-			VerMobilitaDTO mob=listaMobilita2.get(i);
+			VerMobilitaDTO mob=listaMobilita.get(i);
 
 			int risoluzioneBilancia=0;
 			int risoluzioneIndicazione=0;
 
 			if(mob.getMassa()!=null) 
 			{
-				risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),mob.getMassa()).scale()+1;
-				risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),mob.getMassa()).scale();
-
-				modelMobilita_2.setValueAt(mob.getMassa().stripTrailingZeros().toPlainString(),i, 1);
+				
+				if(strumento.getTipologia()!=2) 
+				{
+					risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),mob.getMassa()).scale()+1;
+					risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),mob.getMassa()).scale();
+				}
+				else 
+				{
+					risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),mob.getMassa()).scale()+2;
+					risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),mob.getMassa()).scale()+1;
+				}
+				modelMobilita.setValueAt(mob.getMassa().stripTrailingZeros().toPlainString(),i, 1);
 			}
 			else 
 			{
@@ -5173,29 +5031,29 @@ public class PannelloMisuraMaster extends JPanel
 				{
 					if(i==0) 
 					{	
-						modelMobilita_2.setValueAt(""+0,i, 1);
+						modelMobilita.setValueAt(""+0,i, 1);
 	
-						BigDecimal mpe=getMPE(strumento.getPortataMinCampo(campo, strumento.getId_tipo_strumento()).stripTrailingZeros().toPlainString(),comboBox_campo.getSelectedIndex(),1);
+						BigDecimal mpe=getMPE("0",comboBox_campo.getSelectedIndex(),2);
 	
-						modelMobilita_2.setValueAt(mpe,i,3);
+						modelMobilita.setValueAt(mpe,i,3);
 	
 					}
 					if(i==1) 
 					{
-						modelMobilita_2.setValueAt(""+0,i, 1);
+						modelMobilita.setValueAt(""+0,i, 1);
 	
-						BigDecimal mpe=getMPE(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).setScale(2).divide(new BigDecimal("2"),RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString(),comboBox_campo.getSelectedIndex(),1);
+						BigDecimal mpe=getMPE("0",comboBox_campo.getSelectedIndex(),2);
 	
-						modelMobilita_2.setValueAt(mpe,i,3);
+						modelMobilita.setValueAt(mpe,i,3);
 	
 					}
 					if(i==2) 
 					{
-						modelMobilita_2.setValueAt(""+0,i, 1);
+						modelMobilita.setValueAt(""+0,i, 1);
 	
-						BigDecimal mpe=getMPE(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).toPlainString(),comboBox_campo.getSelectedIndex(),1);
+						BigDecimal mpe=getMPE("0",comboBox_campo.getSelectedIndex(),2);
 	
-						modelMobilita_2.setValueAt(mpe,i,3);
+						modelMobilita.setValueAt(mpe,i,3);
 	
 					}
 				
@@ -5204,29 +5062,29 @@ public class PannelloMisuraMaster extends JPanel
 				{
 					if(i==0) 
 					{	
-						modelMobilita_2.setValueAt(strumento.getPortataMinCampo(campo, strumento.getId_tipo_strumento()).stripTrailingZeros().toPlainString(),i, 1);
+						modelMobilita.setValueAt(strumento.getPortataMinCampo(campo, strumento.getId_tipo_strumento()).stripTrailingZeros().toPlainString(),i, 1);
 	
 						BigDecimal mpe=getMPE(strumento.getPortataMinCampo(campo, strumento.getId_tipo_strumento()).stripTrailingZeros().toPlainString(),comboBox_campo.getSelectedIndex(),1);
 	
-						modelMobilita_2.setValueAt(mpe,i,3);
+						modelMobilita.setValueAt(mpe,i,3);
 	
 					}
 					if(i==1) 
 					{
-						modelMobilita_2.setValueAt(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).setScale(2).divide(new BigDecimal("2"),RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString(),i, 1);
+						modelMobilita.setValueAt(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).setScale(2).divide(new BigDecimal("2"),RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString(),i, 1);
 	
 						BigDecimal mpe=getMPE(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).setScale(2).divide(new BigDecimal("2"),RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString(),comboBox_campo.getSelectedIndex(),1);
 	
-						modelMobilita_2.setValueAt(mpe,i,3);
+						modelMobilita.setValueAt(mpe,i,3);
 	
 					}
 					if(i==2) 
 					{
-						modelMobilita_2.setValueAt(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).stripTrailingZeros().toPlainString(),i, 1);
+						modelMobilita.setValueAt(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).stripTrailingZeros().toPlainString(),i, 1);
 	
 						BigDecimal mpe=getMPE(strumento.getPortataMaxCampo(campo, strumento.getId_tipo_strumento()).toPlainString(),comboBox_campo.getSelectedIndex(),1);
 	
-						modelMobilita_2.setValueAt(mpe,i,3);
+						modelMobilita.setValueAt(mpe,i,3);
 	
 					}
 
@@ -5234,174 +5092,95 @@ public class PannelloMisuraMaster extends JPanel
 			}
 			if(mob.getIndicazione()!=null) 
 			{
-				modelMobilita_2.setValueAt(mob.getIndicazione().setScale(risoluzioneIndicazione,RoundingMode.HALF_UP),i, 2);
+				modelMobilita.setValueAt(mob.getIndicazione().setScale(risoluzioneIndicazione,RoundingMode.HALF_UP),i, 2);
 			}
 			if(mob.getCaricoAgg()!=null) 
 			{
-				modelMobilita_2.setValueAt(mob.getCaricoAgg().setScale(risoluzioneBilancia,RoundingMode.HALF_UP),i, 3);
+				modelMobilita.setValueAt(mob.getCaricoAgg().setScale(risoluzioneBilancia,RoundingMode.HALF_UP),i, 3);
 			}
 			if(mob.getPostIndicazione()!=null) 
 			{
-				modelMobilita_2.setValueAt(mob.getPostIndicazione().setScale(risoluzioneIndicazione,RoundingMode.HALF_UP),i, 4);
+				modelMobilita.setValueAt(mob.getPostIndicazione().setScale(risoluzioneIndicazione,RoundingMode.HALF_UP),i, 4);
 			}
 			if(mob.getDifferenziale()!=null) 
 			{
-				modelMobilita_2.setValueAt(mob.getDifferenziale().setScale(risoluzioneBilancia,RoundingMode.HALF_UP),i, 5);
+				modelMobilita.setValueAt(mob.getDifferenziale().setScale(risoluzioneBilancia,RoundingMode.HALF_UP),i, 5);
 			}
 			if(mob.getDivisione()!=null) 
 			{
-				modelMobilita_2.setValueAt(mob.getDivisione().setScale(risoluzioneBilancia,RoundingMode.HALF_UP),i, 6);
+				modelMobilita.setValueAt(mob.getDivisione().setScale(risoluzioneBilancia,RoundingMode.HALF_UP),i, 6);
 			}
 			if(mob.getCheck()!=null) 
 			{
-				modelMobilita_2.setValueAt(mob.getCheck(),i, 7);
+				modelMobilita.setValueAt(mob.getCheck(),i, 7);
 			}
-			modelMobilita_2.setValueAt(mob.getId(), i, 8);
+			modelMobilita.setValueAt(mob.getId(), i, 8);
 		}
 
-		if(listaMobilita2.get(0).getEsito()!=null) 
+		if(listaMobilita.get(0).getEsito()!=null) 
 		{
-			if(listaMobilita2.get(0).getEsito().equals("POSITIVO")) 
+			if(listaMobilita.get(0).getEsito().equals("POSITIVO")) 
 			{
-				textField_esito_mob_2.setBackground(Color.GREEN);
+				textField_esito_mob.setBackground(Color.GREEN);
 			}else 
 			{
-				textField_esito_mob_2.setBackground(Color.RED);
+				textField_esito_mob.setBackground(Color.RED);
 			}
-			textField_esito_mob_2.setText(listaMobilita2.get(0).getEsito());
+			textField_esito_mob.setText(listaMobilita.get(0).getEsito());
 		}
 
-
-		/*CASO 1*/
-		tabellaMobilita1.getModel().addTableModelListener(new TableModelListener() {
+		 
+		tabellaMobilita.getModel().addTableModelListener(new TableModelListener() {
 
 			public void tableChanged(TableModelEvent e) {
 
 				int row = e.getFirstRow();
 				int column=e.getColumn();
 
-				if(column==2 || column==4 ) 
+				BigDecimal m;
+
+				if(modelMobilita.getValueAt(row, 1)!=null && !modelMobilita.getValueAt(row, 1).toString().equals("")) 
 				{
-
-					Object indicazione=modelMobilita_1.getValueAt(row, 2);
-					Object post_indicazione=modelMobilita_1.getValueAt(row, 4);
-
-					try 
-					{
-
-						if(indicazione!=null && post_indicazione!=null) 
-						{	
-							BigDecimal indicazioneTab=new BigDecimal (indicazione.toString());
-							BigDecimal post_indicazioneTab=new BigDecimal (post_indicazione.toString());
-
-
-							int risoluzioneBilancia=getERisoluzione(comboBox.getSelectedIndex(), strumento.getId_tipo_strumento(), indicazioneTab).scale()+1;
-							int risoluzioneIndicazione=getERisoluzione(comboBox.getSelectedIndex(), strumento.getId_tipo_strumento(),indicazioneTab).scale();
-
-							BigDecimal mpe=getMPE(modelMobilita_1.getValueAt(row, 1).toString(),comboBox_campo.getSelectedIndex(),1);
-
-							BigDecimal carr_agg=mpe.multiply(new BigDecimal("0.4"));
-
-							modelMobilita_1.setValueAt(carr_agg.setScale(risoluzioneBilancia,RoundingMode.HALF_UP).toPlainString(), row, 3);
-
-							BigDecimal diff=post_indicazioneTab.subtract(indicazioneTab).setScale(risoluzioneIndicazione, RoundingMode.HALF_UP);
-
-							modelMobilita_1.setValueAt(diff.setScale(risoluzioneIndicazione,RoundingMode.HALF_UP), row, 5);
-
-							BigDecimal divisione=strumento.getDivisioneReale(comboBox_campo.getSelectedIndex()+1,strumento.getId_tipo_strumento(),new BigDecimal(modelMobilita_1.getValueAt(row, 1).toString()).doubleValue());
-
-							modelMobilita_1.setValueAt(divisione.setScale(risoluzioneBilancia,RoundingMode.HALF_UP), row, 6);
-
-							String check="";
-							if(Math.abs(diff.doubleValue())>=Math.abs(divisione.doubleValue())) 
-							{
-								modelMobilita_1.setValueAt("OK", row, 7);
-								check="OK";
-							}
-							else 
-							{
-								modelMobilita_1.setValueAt("KO", row, 7);
-								check="KO";
-							}
-
-							String esito =valutaEsitoMobilita(modelMobilita_1);
-
-							if(esito.equals("POSITIVO")) 
-							{
-								textField_esito_mob_1.setBackground(Color.GREEN);
-							}
-							else if(esito.equals("INCOMPLETO"))
-							{
-								textField_esito_mob_1.setBackground(Color.YELLOW);
-							}
-							else 
-							{
-								textField_esito_mob_1.setBackground(Color.RED);	
-							}
-							textField_esito_mob_1.setText(esito);
-
-							VerMobilitaDTO mob = new VerMobilitaDTO();
-
-							mob.setId(Integer.parseInt(modelMobilita_1.getValueAt(row, 8).toString()));
-							mob.setCampo(comboBox_campo.getSelectedIndex()+1);
-							mob.setCaso(1);
-							mob.setMassa(new BigDecimal(modelMobilita_1.getValueAt(row, 1).toString()));
-							mob.setIndicazione(indicazioneTab);
-							mob.setCaricoAgg(carr_agg);
-							mob.setPostIndicazione(post_indicazioneTab);
-							mob.setDifferenziale(diff);
-							mob.setDivisione(divisione);
-							mob.setCheck(check);
-							mob.setEsito(esito);
-
-
-							GestioneMisuraBO.updateValoriMobilita(mob,misura.getId());
-
-						}
-					}catch (Exception ex) 
-					{
-						ex.printStackTrace();
-					}
+					m=new BigDecimal(modelMobilita.getValueAt(row, 1).toString());
 				}
-			}
+				else 
+				{
+					return;
+				}
 
-
-
-		});
-
-		/*CASO 2*/			 
-		tabellaMobilita2.getModel().addTableModelListener(new TableModelListener() {
-
-			public void tableChanged(TableModelEvent e) {
-
-				int row = e.getFirstRow();
-				int column=e.getColumn();
-
+				int risoluzioneBilancia=0;
+				int risoluzioneIndicazione=0;
+				
+				if(strumento.getTipologia()!=2) 
+				{
+					 risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),m).scale()+1;
+					 risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),m).scale();
+				}
+				else 
+				{
+					 risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),m).scale()+2;
+					 risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),m).scale()+1;
+				}
+				
+				if(column==1) 
+				{
+					BigDecimal mpe=getMPE(modelMobilita.getValueAt(row, 1).toString(),comboBox_campo.getSelectedIndex(),2);
+					modelMobilita.setValueAt(mpe.setScale(risoluzioneBilancia,RoundingMode.HALF_UP).toPlainString(), row, 3);
+				}
+				
 				if(column==2 || column==4 ) 
 				{
 
-					Object indicazione=modelMobilita_2.getValueAt(row, 2);
-					Object post_indicazione=modelMobilita_2.getValueAt(row, 4);
+					Object indicazione=modelMobilita.getValueAt(row, 2);
+					Object post_indicazione=modelMobilita.getValueAt(row, 4);
 
-					BigDecimal m;
-
-					if(modelMobilita_2.getValueAt(row, 1)!=null && !modelMobilita_2.getValueAt(row, 1).toString().equals("")) 
-					{
-						m=new BigDecimal(modelMobilita_2.getValueAt(row, 1).toString());
-					}
-					else 
-					{
-						return;
-					}
-
-					int risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),m).scale()+1;
-					int risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),m).scale();
-
+				
+					
 					if(indicazione!=null &&!indicazione.toString().equals("") && new BigDecimal(indicazione.toString()).scale()>risoluzioneIndicazione) 
 					{
 						BigDecimal ind=new BigDecimal(indicazione.toString());
 						JOptionPane.showMessageDialog(null,"Il valore inserito eccede la risoluzione massima ["+risoluzioneIndicazione+"]. \nIl valore verrà troncato a "+ind.setScale(risoluzioneIndicazione,RoundingMode.FLOOR).toPlainString(),"Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
-						modelMobilita_2.setValueAt(ind.setScale(risoluzioneIndicazione,RoundingMode.FLOOR).toPlainString(),row, 2);
+						modelMobilita.setValueAt(ind.setScale(risoluzioneIndicazione,RoundingMode.FLOOR).toPlainString(),row, 2);
 						return;
 					}
 
@@ -5410,7 +5189,7 @@ public class PannelloMisuraMaster extends JPanel
 					{
 						BigDecimal post_ind = new BigDecimal(post_indicazione.toString());
 						JOptionPane.showMessageDialog(null,"Il valore inserito eccede la risoluzione massima ["+risoluzioneIndicazione+"].\nIl valore verrà troncato a "+post_ind.setScale(risoluzioneIndicazione,RoundingMode.FLOOR).toPlainString(),"Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
-						modelMobilita_2.setValueAt(post_ind.setScale(risoluzioneIndicazione,RoundingMode.FLOOR).toPlainString(),row, 4);
+						modelMobilita.setValueAt(post_ind.setScale(risoluzioneIndicazione,RoundingMode.FLOOR).toPlainString(),row, 4);
 						return;
 					}
 
@@ -5423,55 +5202,55 @@ public class PannelloMisuraMaster extends JPanel
 							BigDecimal post_indicazioneTab=new BigDecimal (post_indicazione.toString());
 
 
-							BigDecimal mpe=getMPE(modelMobilita_2.getValueAt(row, 1).toString(),comboBox_campo.getSelectedIndex(),2);
+							BigDecimal mpe=getMPE(modelMobilita.getValueAt(row, 1).toString(),comboBox_campo.getSelectedIndex(),2);
 
 							BigDecimal carr_agg=mpe;
 
-							modelMobilita_2.setValueAt(carr_agg.setScale(risoluzioneBilancia,RoundingMode.HALF_UP).toPlainString(), row, 3);
+							modelMobilita.setValueAt(carr_agg.setScale(risoluzioneBilancia,RoundingMode.HALF_UP).toPlainString(), row, 3);
 
 							BigDecimal diff=(post_indicazioneTab.multiply(Costanti.gFactor).subtract(indicazioneTab.multiply(Costanti.gFactor))).setScale(risoluzioneIndicazione, RoundingMode.HALF_UP);
 
-							modelMobilita_2.setValueAt(diff.setScale(risoluzioneBilancia,RoundingMode.HALF_UP), row, 5);
+							modelMobilita.setValueAt(diff.setScale(risoluzioneBilancia,RoundingMode.HALF_UP), row, 5);
 
 							BigDecimal car_agg_07=carr_agg.multiply(new BigDecimal("0.7"));
 
-							modelMobilita_2.setValueAt(car_agg_07.setScale(risoluzioneBilancia,RoundingMode.HALF_UP), row, 6);
+							modelMobilita.setValueAt(car_agg_07.setScale(risoluzioneBilancia,RoundingMode.HALF_UP), row, 6);
 
 							String check="";
 
 							if(diff.doubleValue()>=car_agg_07.doubleValue()) 
 							{
-								modelMobilita_2.setValueAt("OK", row, 7);
+								modelMobilita.setValueAt("OK", row, 7);
 								check="OK";
 							}
 							else 
 							{
-								modelMobilita_2.setValueAt("KO", row, 7);
+								modelMobilita.setValueAt("KO", row, 7);
 								check="KO";
 							}
 
-							String esito =valutaEsitoMobilita(modelMobilita_2);
+							String esito =valutaEsitoMobilita(modelMobilita);
 
 							if(esito.equals("POSITIVO")) 
 							{
-								textField_esito_mob_2.setBackground(Color.GREEN);
+								textField_esito_mob.setBackground(Color.GREEN);
 							}
 							else if(esito.equals("INCOMPLETO"))
 							{
-								textField_esito_mob_2.setBackground(Color.YELLOW);
+								textField_esito_mob.setBackground(Color.YELLOW);
 							}
 							else 
 							{
-								textField_esito_mob_2.setBackground(Color.RED);	
+								textField_esito_mob.setBackground(Color.RED);	
 							}
-							textField_esito_mob_2.setText(esito);
+							textField_esito_mob.setText(esito);
 
 							VerMobilitaDTO mob = new VerMobilitaDTO();
 
-							mob.setId(Integer.parseInt(modelMobilita_2.getValueAt(row, 8).toString()));
+							mob.setId(Integer.parseInt(modelMobilita.getValueAt(row, 8).toString()));
 							mob.setCampo(comboBox_campo.getSelectedIndex()+1);
 							mob.setCaso(2);
-							mob.setMassa(new BigDecimal(modelMobilita_2.getValueAt(row, 1).toString()));
+							mob.setMassa(new BigDecimal(modelMobilita.getValueAt(row, 1).toString()));
 							mob.setIndicazione(indicazioneTab.setScale(risoluzioneIndicazione,RoundingMode.HALF_UP));
 							mob.setCaricoAgg(carr_agg.setScale(risoluzioneBilancia,RoundingMode.HALF_UP));
 							mob.setPostIndicazione(post_indicazioneTab.setScale(risoluzioneIndicazione,RoundingMode.HALF_UP));
@@ -6635,7 +6414,10 @@ public class PannelloMisuraMaster extends JPanel
 	class ModelAccuratezza extends DefaultTableModel {
 		private static final long serialVersionUID = 1L;
 
-		public ModelAccuratezza(String um) 
+		private int classe;
+		private int tipologia;
+		
+		public ModelAccuratezza(String um,int _classe,int _tipologia) 
 		{
 			addColumn("Rif.");
 			addColumn("Massa L ("+um+")");
@@ -6645,6 +6427,8 @@ public class PannelloMisuraMaster extends JPanel
 			addColumn("Er. corretto Ec ("+um+")");
 			addColumn("MPE(±) ("+um+")");
 			addColumn("id");
+			classe=_classe;
+			tipologia=_tipologia;
 
 		}
 		@Override
@@ -6674,13 +6458,25 @@ public class PannelloMisuraMaster extends JPanel
 		@Override
 		public boolean isCellEditable(int row, int column) {
 
-			if(column==2 || column==3)
+		//	if(classe!=5 && tipologia!=2)
+		//	{	
+				if(column==2 || column==3)
+				{
+					return true;
+				}else
+				{
+					return false;
+				}
+		/*	}else 
 			{
-				return true;
-			}else
-			{
-				return false;
-			}
+				if(column==2 )
+				{
+					return true;
+				}else
+				{
+					return false;
+				}
+			}*/
 		}
 
 

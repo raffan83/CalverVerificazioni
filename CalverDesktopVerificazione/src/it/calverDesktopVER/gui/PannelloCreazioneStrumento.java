@@ -756,9 +756,14 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 					
 						if(id>0) 
 						{
-							JOptionPane.showMessageDialog(null,"Inserimento completato correttamente - ID Strumento: "+id,"Strumento",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/confirm.png")));
-							JPanel panelDB =new PannelloStrumentoMaster();
-			    			SystemGUI.callPanel(panelDB, "PSS");
+							
+							int scelta =JOptionPane.showConfirmDialog(null,"Inserimento completato correttamente - ID Strumento: "+id + "\n Vuoi tornare al menu principale?","Strumento",JOptionPane.YES_NO_OPTION,JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/confirm.png")));
+							
+							if(scelta==0) 
+							{
+								JPanel panelDB =new PannelloStrumentoMaster();
+								SystemGUI.callPanel(panelDB, "PSS");
+							}
 						
 						}
 					}
