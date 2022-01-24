@@ -375,7 +375,7 @@ public class PannelloMisuraMaster extends JPanel
 			e1.printStackTrace();
 		}
 
-		//	final JComboBox<String> comboBox_lista_campioni = new JComboBox<String>();
+	    //final JComboBox<String> comboBox_lista_campioni = new JComboBox<String>();
 		final JComboBox<String> comboBox_lista_campioni = new JComboBox<String>(listaCampioniCompleta);
 		comboBox_lista_campioni.setFont(new Font("Arial", Font.BOLD, 12));
 		pannelloDatiGenerali.add(comboBox_lista_campioni, "cell 2 7");
@@ -3343,9 +3343,13 @@ public class PannelloMisuraMaster extends JPanel
 
 		if(strumento.getClasse()>=5 || strumento.getTipologia()==2) 
 		{
-			BigDecimal sugg=new BigDecimal(listaClassi.get(0).getLimiteSuperiore()).multiply(getE(campo, strumento.getId_tipo_strumento(), BigDecimal.ZERO));
-			lbl_lettura_fine.setText("Tenendo in considerazione il punto di variazione calcolato pari a: "+sugg.stripTrailingZeros().toPlainString()+" "+strumento.getUm()+", se non diversamente specificato equi spaziare gli ulteriori due punti previsti tra il minimo e il massimo.");
+			if(strumento.getId_tipo_strumento()!=5) 
+			{
+				BigDecimal sugg=new BigDecimal(listaClassi.get(0).getLimiteSuperiore()).multiply(getE(campo, strumento.getId_tipo_strumento(), BigDecimal.ZERO));
+				lbl_lettura_fine.setText("Tenendo in considerazione il punto di variazione calcolato pari a: "+sugg.stripTrailingZeros().toPlainString()+" "+strumento.getUm()+", se non diversamente specificato equi spaziare gli ulteriori due punti previsti tra il minimo e il massimo.");
+			}
 		}
+	
 
 		if(listaLinearita.get(0).getEsito()!=null) 
 		{
@@ -3853,7 +3857,7 @@ public class PannelloMisuraMaster extends JPanel
 		tableLin.setFont(new Font("Arial", Font.PLAIN, 12));
 		tableLin.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
 
-		tableLin.setDefaultRenderer(Object.class, new RenderTable(2,strumento.getClasse(),strumento.getTipologia()));
+		tableLin.setDefaultRenderer(Object.class, new RenderTableCorredoEsterno());
 
 		TableColumn column = tableLin.getColumnModel().getColumn(tableLin.getColumnModel().getColumnIndex("id"));
 		tableLin.removeColumn(column);
@@ -3865,10 +3869,13 @@ public class PannelloMisuraMaster extends JPanel
 
 		int campo=comboBox_campo.getSelectedIndex()+1;
 
+		BigDecimal primo_punto_variazione=null;
 		BigDecimal secondo_punto_variazione=null;
+		BigDecimal terzo_punto_variazione=null;
 
-		
-		
+		 primo_punto_variazione=getEVariazione(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),BigDecimal.ZERO).multiply(new BigDecimal(listaClassi.get(0).getLimiteSuperiore()));
+		 secondo_punto_variazione=getEVariazione(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),BigDecimal.ZERO).multiply(new BigDecimal(listaClassi.get(1).getLimiteSuperiore()));
+		 terzo_punto_variazione=(strumento.getPortataMaxCampo(campo,strumento.getId_tipo_strumento()).add(secondo_punto_variazione)).divide(new BigDecimal(2),RoundingMode.HALF_UP);
 		for (int i = 0; i <=8; i++) {
 
 			VerLinearitaDTO lin=listaLinearita.get(i);
@@ -3911,11 +3918,7 @@ public class PannelloMisuraMaster extends JPanel
 							BigDecimal campoMaxPrec=strumento.getPortataMaxCampo(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento());
 							modelLinCorredoEsterno.setValueAt(campoMaxPrec.add(getEVariazione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(), BigDecimal.ZERO).multiply(new BigDecimal(100))).stripTrailingZeros().stripTrailingZeros().toPlainString(), i, 1);
 						}
-						else 
-						{
-							BigDecimal primo_punto_variazione=getEVariazione(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),BigDecimal.ZERO).multiply(new BigDecimal(listaClassi.get(0).getLimiteSuperiore()));
-							modelLinCorredoEsterno.setValueAt(primo_punto_variazione.stripTrailingZeros().toPlainString(), i, 1);
-						}
+						
 					}
 				}
 				if(i==3) 
@@ -3931,11 +3934,7 @@ public class PannelloMisuraMaster extends JPanel
 							BigDecimal factor=(campoMax.subtract(campoMaxPrec)).divide(new BigDecimal(3),RoundingMode.HALF_UP);
 							modelLinCorredoEsterno.setValueAt(campoMaxPrec.add(factor).stripTrailingZeros().stripTrailingZeros().toPlainString(), i, 1);
 						}
-						else 
-						{
-							secondo_punto_variazione=getEVariazione(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),BigDecimal.ZERO).multiply(new BigDecimal(listaClassi.get(1).getLimiteSuperiore()));
-							modelLinCorredoEsterno.setValueAt(secondo_punto_variazione.stripTrailingZeros().stripTrailingZeros().toPlainString(), i, 1);
-						}
+					
 					}
 				}
 				if(i==4) 
@@ -3951,11 +3950,6 @@ public class PannelloMisuraMaster extends JPanel
 							BigDecimal factor=(campoMax.subtract(campoMaxPrec)).divide(new BigDecimal(3),RoundingMode.HALF_UP);
 							factor=factor.multiply(new BigDecimal(2));
 							modelLinCorredoEsterno.setValueAt(campoMaxPrec.add(factor).stripTrailingZeros().stripTrailingZeros().toPlainString(), i, 1);
-						}else 
-						{
-							secondo_punto_variazione=getEVariazione(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),BigDecimal.ZERO).multiply(new BigDecimal(listaClassi.get(1).getLimiteSuperiore()));
-							BigDecimal terzo_punto_variazione=(strumento.getPortataMaxCampo(campo,strumento.getId_tipo_strumento()).add(secondo_punto_variazione)).divide(new BigDecimal(2),RoundingMode.HALF_UP);
-							modelLinCorredoEsterno.setValueAt(terzo_punto_variazione.stripTrailingZeros().stripTrailingZeros().toPlainString(), i, 1);
 						}
 					}
 				}
@@ -4144,11 +4138,14 @@ public class PannelloMisuraMaster extends JPanel
 		lbl_lettura_fine.setFont(new Font("Arial", Font.BOLD, 12));
 		pannelloLinearita.add(lbl_lettura_fine, "cell 1 7 2 1");
 
-		if(strumento.getClasse()>=5 || strumento.getTipologia()==2) 
-		{
-			BigDecimal sugg=new BigDecimal(listaClassi.get(0).getLimiteSuperiore()).multiply(getE(campo, strumento.getId_tipo_strumento(), BigDecimal.ZERO));
-			lbl_lettura_fine.setText("Tenendo in considerazione il punto di variazione calcolato pari a: "+sugg.stripTrailingZeros().toPlainString()+" "+strumento.getUm()+", se non diversamente specificato equi spaziare gli ulteriori due punti previsti tra il minimo e il massimo.");
-		}
+	//	if(strumento.getClasse()>=5 || strumento.getTipologia()==2) 
+	//	{
+	//		BigDecimal sugg=new BigDecimal(listaClassi.get(0).getLimiteSuperiore()).multiply(getE(campo, strumento.getId_tipo_strumento(), BigDecimal.ZERO));
+	//		lbl_lettura_fine.setText("Tenendo in considerazione il punto di variazione calcolato pari a: "+sugg.stripTrailingZeros().toPlainString()+" "+strumento.getUm()+", se non diversamente specificato equi spaziare gli ulteriori due punti previsti tra il minimo e il massimo.");
+	//	}
+	
+
+		lbl_lettura_fine.setText("Primo punto di variazione ["+primo_punto_variazione.stripTrailingZeros().toPlainString()+"] - Secondo punto di variazione ["+secondo_punto_variazione.stripTrailingZeros().toPlainString()+"] - Terzo punto di variazione ["+terzo_punto_variazione.stripTrailingZeros().toPlainString()+"]");
 
 		if(listaLinearita.get(0).getEsito()!=null) 
 		{
@@ -4271,7 +4268,7 @@ public class PannelloMisuraMaster extends JPanel
 							}
 
 
-							String esito=valutaEsitoLinearita();
+							String esito=valutaEsitoLinearitaCorredoEsterno();
 
 							if(esito.equals("POSITIVO")) 
 							{
@@ -4443,7 +4440,7 @@ public class PannelloMisuraMaster extends JPanel
 
 							}
 
-							String esito=valutaEsitoLinearita();
+							String esito=valutaEsitoLinearitaCorredoEsterno();
 
 							if(esito.equals("POSITIVO")) 
 							{
@@ -4514,10 +4511,11 @@ public class PannelloMisuraMaster extends JPanel
 				}
 			}
 
-			private String valutaEsitoLinearita() {
+			private String valutaEsitoLinearitaCorredoEsterno() {
 
 
-				for (int i = 0; i <modelLinCorredoEsterno.getRowCount(); i++) 
+			//	for (int i = 0; i <modelLinCorredoEsterno.getRowCount(); i++) 
+					for (int i = 0; i <6; i++) 
 				{
 					Object mpe= modelLinCorredoEsterno.getValueAt(i,12);
 					Object err_corr= modelLinCorredoEsterno.getValueAt(i,11);
@@ -5008,6 +5006,17 @@ public class PannelloMisuraMaster extends JPanel
 
 			int risoluzioneBilancia=0;
 			int risoluzioneIndicazione=0;
+			
+			if(strumento.getTipologia()!=2) 
+			{
+				 risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),BigDecimal.ZERO).scale()+1;
+				 risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),BigDecimal.ZERO).scale();
+			}
+			else 
+			{
+				 risoluzioneBilancia=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),BigDecimal.ZERO).scale()+2;
+				 risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),BigDecimal.ZERO).scale()+1;
+			}
 
 			if(mob.getMassa()!=null) 
 			{
@@ -5033,27 +5042,27 @@ public class PannelloMisuraMaster extends JPanel
 					{	
 						modelMobilita.setValueAt(""+0,i, 1);
 	
-						BigDecimal mpe=getMPE("0",comboBox_campo.getSelectedIndex(),2);
+						BigDecimal mpe=getMPE("0",comboBox_campo.getSelectedIndex(),1);
 	
-						modelMobilita.setValueAt(mpe,i,3);
+						modelMobilita.setValueAt(mpe.setScale(risoluzioneBilancia,RoundingMode.HALF_UP).toPlainString(),i,3);
 	
 					}
 					if(i==1) 
 					{
 						modelMobilita.setValueAt(""+0,i, 1);
 	
-						BigDecimal mpe=getMPE("0",comboBox_campo.getSelectedIndex(),2);
+						BigDecimal mpe=getMPE("0",comboBox_campo.getSelectedIndex(),1);
 	
-						modelMobilita.setValueAt(mpe,i,3);
+						modelMobilita.setValueAt(mpe.setScale(risoluzioneBilancia,RoundingMode.HALF_UP).toPlainString(),i,3);
 	
 					}
 					if(i==2) 
 					{
 						modelMobilita.setValueAt(""+0,i, 1);
 	
-						BigDecimal mpe=getMPE("0",comboBox_campo.getSelectedIndex(),2);
+						BigDecimal mpe=getMPE("0",comboBox_campo.getSelectedIndex(),1);
 	
-						modelMobilita.setValueAt(mpe,i,3);
+						modelMobilita.setValueAt(mpe.setScale(risoluzioneBilancia,RoundingMode.HALF_UP).toPlainString(),i,3);
 	
 					}
 				
@@ -5164,7 +5173,7 @@ public class PannelloMisuraMaster extends JPanel
 				
 				if(column==1) 
 				{
-					BigDecimal mpe=getMPE(modelMobilita.getValueAt(row, 1).toString(),comboBox_campo.getSelectedIndex(),2);
+					BigDecimal mpe=getMPE(modelMobilita.getValueAt(row, 1).toString(),comboBox_campo.getSelectedIndex(),1);
 					modelMobilita.setValueAt(mpe.setScale(risoluzioneBilancia,RoundingMode.HALF_UP).toPlainString(), row, 3);
 				}
 				
@@ -5202,7 +5211,7 @@ public class PannelloMisuraMaster extends JPanel
 							BigDecimal post_indicazioneTab=new BigDecimal (post_indicazione.toString());
 
 
-							BigDecimal mpe=getMPE(modelMobilita.getValueAt(row, 1).toString(),comboBox_campo.getSelectedIndex(),2);
+							BigDecimal mpe=getMPE(modelMobilita.getValueAt(row, 1).toString(),comboBox_campo.getSelectedIndex(),1);
 
 							BigDecimal carr_agg=mpe;
 
@@ -6458,8 +6467,8 @@ public class PannelloMisuraMaster extends JPanel
 		@Override
 		public boolean isCellEditable(int row, int column) {
 
-		//	if(classe!=5 && tipologia!=2)
-		//	{	
+			if(classe!=5 )
+			{	
 				if(column==2 || column==3)
 				{
 					return true;
@@ -6467,7 +6476,7 @@ public class PannelloMisuraMaster extends JPanel
 				{
 					return false;
 				}
-		/*	}else 
+		}else 
 			{
 				if(column==2 )
 				{
@@ -6476,7 +6485,7 @@ public class PannelloMisuraMaster extends JPanel
 				{
 					return false;
 				}
-			}*/
+			}
 		}
 
 
@@ -6572,6 +6581,44 @@ public class PannelloMisuraMaster extends JPanel
 	//		} 
 	//	}
 
+	
+	
+	class RenderTableCorredoEsterno extends DefaultTableCellRenderer
+	{
+		
+		public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, java.lang.Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+
+			final java.awt.Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+			try
+			{
+				setHorizontalAlignment(CENTER);
+				if (row % 2 == 0) 
+				{
+					cellComponent.setForeground(Color.black);
+					cellComponent.setBackground(Color.white);
+
+				}
+				else
+				{
+					cellComponent.setForeground(Color.black);
+					cellComponent.setBackground(new Color(224,224,224));
+
+				}
+
+				
+					if(column==2 ||  column==3 ||column==4||column==5)
+					{
+						cellComponent.setForeground(Color.black);
+						cellComponent.setBackground(Color.YELLOW);
+					}
+				
+			}catch (Exception e) {
+					PannelloConsole.printException(e);
+				}
+				return cellComponent;
+		}	
+	}
 	class RenderTable extends DefaultTableCellRenderer
 	{
 
@@ -6617,7 +6664,7 @@ public class PannelloMisuraMaster extends JPanel
 
 					}
 
-					if(classe<5 && tipologia!=2) 
+					if(classe<5 /*&& tipologia!=2*/) 
 					{
 						if(column==2 ||  column==3)
 						{
