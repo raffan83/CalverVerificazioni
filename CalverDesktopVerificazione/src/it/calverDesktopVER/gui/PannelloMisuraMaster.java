@@ -2182,6 +2182,10 @@ public class PannelloMisuraMaster extends JPanel
 
 		int indice=1;
 
+		int risoluzioneBilanciaE0=0;
+		int risoluzioneBilancia=0;
+		int risoluzioneIndicazione=0;
+
 		for (int i = 0; i < listaDecentramento.size(); i=i+2) {
 
 			VerDecentramentoDTO ver = listaDecentramento.get(i);
@@ -2190,9 +2194,7 @@ public class PannelloMisuraMaster extends JPanel
 			modelDec.addRow(new Object[0]);
 			modelDec.setValueAt(indice, i+1, 0);
 
-			int risoluzioneBilanciaE0=0;
-			int risoluzioneBilancia=0;
-			int risoluzioneIndicazione=0;
+		
 
 			if(ver.getMassa()!=null) 
 			{
@@ -2386,9 +2388,22 @@ public class PannelloMisuraMaster extends JPanel
 		textField_punti_appoggio.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
+				int risoluzioneImpostaCarico=0;
+				
+				if(strumento.getTipologia()!=2) 
+				{
+					risoluzioneImpostaCarico=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(), BigDecimal.ZERO).scale();
+					
+				}
+				else 
+				{
+					risoluzioneImpostaCarico=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(), BigDecimal.ZERO).scale()+1;
+				}
+				
+				
 				if(Utility.isNumber(textField_punti_appoggio.getText()) && Integer.parseInt(textField_punti_appoggio.getText())>2) 
 				{
-					impostaCarico(listaDecentramento);
+					impostaCarico(listaDecentramento,risoluzioneImpostaCarico);
 				}
 				else 
 				{
@@ -2486,8 +2501,20 @@ public class PannelloMisuraMaster extends JPanel
 
 		if(listaDecentramento.get(0).getPuntiAppoggio()!=0) 
 		{
+			int risoluzioneImpostaCarico=0;
+			
+			if(strumento.getTipologia()!=2) 
+			{
+				risoluzioneImpostaCarico=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(), BigDecimal.ZERO).scale();
+				
+			}
+			else 
+			{
+				risoluzioneImpostaCarico=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(), BigDecimal.ZERO).scale()+1;
+			}
+			
 			textField_punti_appoggio.setText(""+listaDecentramento.get(0).getPuntiAppoggio());
-			impostaCarico(listaDecentramento);
+			impostaCarico(listaDecentramento,risoluzioneImpostaCarico);
 			BigDecimal caricoDec=getCaricoDecentramento(listaDecentramento.get(0).getPuntiAppoggio(),comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento());
 			textField_carico.setText(caricoDec.toPlainString());
 
@@ -2804,9 +2831,9 @@ public class PannelloMisuraMaster extends JPanel
 		return pannelloDecentramento;
 	}
 
-	protected void impostaCarico(ArrayList<VerDecentramentoDTO> listaDecentramento) {
+	protected void impostaCarico(ArrayList<VerDecentramentoDTO> listaDecentramento,int risoluzione) {
 		BigDecimal carico = getCaricoDecentramento(Integer.parseInt(textField_punti_appoggio.getText()),comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento());
-		textField_carico.setText(carico.stripTrailingZeros().toPlainString());
+		textField_carico.setText(carico.setScale(risoluzione,RoundingMode.HALF_UP).stripTrailingZeros().toPlainString());
 
 		BigDecimal err =getE(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),carico);
 
@@ -2817,15 +2844,15 @@ public class PannelloMisuraMaster extends JPanel
 			{
 				if(comboBox_campo.getSelectedIndex()==0) 
 				{
-					modelDec.setValueAt(strumento.getDiv_ver_C1().multiply(BigDecimal.TEN).stripTrailingZeros().toPlainString(),i, 1);
+					modelDec.setValueAt(strumento.getDiv_ver_C1().multiply(BigDecimal.TEN).setScale(risoluzione,RoundingMode.HALF_UP).stripTrailingZeros().toPlainString(),i, 1);
 				}
 				if(comboBox_campo.getSelectedIndex()==1) 
 				{
-					modelDec.setValueAt(strumento.getDiv_ver_C2().multiply(BigDecimal.TEN).stripTrailingZeros().toPlainString(),i, 1);
+					modelDec.setValueAt(strumento.getDiv_ver_C2().multiply(BigDecimal.TEN).setScale(risoluzione,RoundingMode.HALF_UP).stripTrailingZeros().toPlainString(),i, 1);
 				}
 				if(comboBox_campo.getSelectedIndex()==2) 
 				{
-					modelDec.setValueAt(strumento.getDiv_ver_C3().multiply(BigDecimal.TEN).stripTrailingZeros().toPlainString(),i, 1);
+					modelDec.setValueAt(strumento.getDiv_ver_C3().multiply(BigDecimal.TEN).setScale(risoluzione,RoundingMode.HALF_UP).stripTrailingZeros().toPlainString(),i, 1);
 				}
 			}else 
 			{
@@ -2837,7 +2864,7 @@ public class PannelloMisuraMaster extends JPanel
 					}
 					else 
 					{
-						modelDec.setValueAt(listaDecentramento.get(i).getMassa().stripTrailingZeros().toPlainString(),i, 1);
+						modelDec.setValueAt(listaDecentramento.get(i).getMassa().setScale(risoluzione,RoundingMode.HALF_UP).stripTrailingZeros().toPlainString(),i, 1);
 					}
 				}else 
 				{
