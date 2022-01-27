@@ -3374,6 +3374,7 @@ public class PannelloMisuraMaster extends JPanel
 			{
 				BigDecimal sugg=new BigDecimal(listaClassi.get(0).getLimiteSuperiore()).multiply(getE(campo, strumento.getId_tipo_strumento(), BigDecimal.ZERO));
 				lbl_lettura_fine.setText("Tenendo in considerazione il punto di variazione calcolato pari a: "+sugg.stripTrailingZeros().toPlainString()+" "+strumento.getUm()+", se non diversamente specificato equi spaziare gli ulteriori due punti previsti tra il minimo e il massimo.");
+				
 			}
 		}
 	
@@ -3870,10 +3871,7 @@ public class PannelloMisuraMaster extends JPanel
 		pannelloLinearita.setBorder(new TitledBorder(new LineBorder(new Color(255, 0, 0), 2, true), "Prova Linearità", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		pannelloLinearita.setBackground(Color.WHITE);
 		pannelloLinearita.setLayout(new MigLayout("", "[22.00][][grow]", "[][][][][][][][]"));
-
 		
-		
-
 		tableLin = new JTable();
 
 		modelLinCorredoEsterno = new ModelLinearitaCorredoEsterno(strumento.getUm());
@@ -3982,7 +3980,7 @@ public class PannelloMisuraMaster extends JPanel
 				}
 				if(i==8) 
 				{
-					modelLinCorredoEsterno.setValueAt(strumento.getPortataMaxCampo(campo,strumento.getId_tipo_strumento()).stripTrailingZeros().toPlainString(), i, 1);
+				//	modelLinCorredoEsterno.setValueAt(strumento.getPortataMaxCampo(campo,strumento.getId_tipo_strumento()).stripTrailingZeros().toPlainString(), i, 1);
 				}
 			
 			}
@@ -4164,16 +4162,15 @@ public class PannelloMisuraMaster extends JPanel
 		lbl_lettura_fine = new JLabel("");
 		lbl_lettura_fine.setFont(new Font("Arial", Font.BOLD, 12));
 		pannelloLinearita.add(lbl_lettura_fine, "cell 1 7 2 1");
+		
+		JLabel lbl_lettura_fine_seguito = new JLabel("");
+		lbl_lettura_fine_seguito.setFont(new Font("Arial", Font.BOLD, 12));
+		pannelloLinearita.add(lbl_lettura_fine_seguito, "cell 1 8 2 1");
 
-	//	if(strumento.getClasse()>=5 || strumento.getTipologia()==2) 
-	//	{
-	//		BigDecimal sugg=new BigDecimal(listaClassi.get(0).getLimiteSuperiore()).multiply(getE(campo, strumento.getId_tipo_strumento(), BigDecimal.ZERO));
-	//		lbl_lettura_fine.setText("Tenendo in considerazione il punto di variazione calcolato pari a: "+sugg.stripTrailingZeros().toPlainString()+" "+strumento.getUm()+", se non diversamente specificato equi spaziare gli ulteriori due punti previsti tra il minimo e il massimo.");
-	//	}
-	
-
-		lbl_lettura_fine.setText("Primo punto di variazione ["+primo_punto_variazione.stripTrailingZeros().toPlainString()+"] - Secondo punto di variazione ["+secondo_punto_variazione.stripTrailingZeros().toPlainString()+"] - Terzo punto di variazione ["+terzo_punto_variazione.stripTrailingZeros().toPlainString()+"]");
-
+		lbl_lettura_fine.setText("Primo punto di variazione ["+primo_punto_variazione.stripTrailingZeros().toPlainString()+" "+strumento.getUm()+"] - Secondo punto di variazione ["+secondo_punto_variazione.stripTrailingZeros().toPlainString()+" "+strumento.getUm()+"] - Punto medio di  variazione ["+terzo_punto_variazione.stripTrailingZeros().toPlainString()+" "+strumento.getUm()+"]");
+		lbl_lettura_fine_seguito.setText("Punto Massimo = Portata bilancia - massima indicazione quadrante");
+		
+		
 		if(listaLinearita.get(0).getEsito()!=null) 
 		{
 			if(listaLinearita.get(0).getEsito().equals("POSITIVO")) 
