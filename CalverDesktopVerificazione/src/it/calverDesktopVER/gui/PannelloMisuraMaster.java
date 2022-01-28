@@ -4640,7 +4640,7 @@ public class PannelloMisuraMaster extends JPanel
 
 		tableAcc = new JTable();
 
-		modelAccuratezza = new ModelAccuratezza(strumento.getUm(),strumento.getClasse(),strumento.getTipologia());
+		modelAccuratezza = new ModelAccuratezza(strumento.getUm(),strumento.getClasse());
 
 		tableAcc.setModel(modelAccuratezza);
 
@@ -4817,7 +4817,7 @@ public class PannelloMisuraMaster extends JPanel
 				int row = e.getFirstRow();
 				int column=e.getColumn();
 
-				if(column==1 || column==2 || column==3 ) 
+				if(column==1 || column==2 ) 
 				{
 					int campo=comboBox_campo.getSelectedIndex();
 
@@ -4852,7 +4852,7 @@ public class PannelloMisuraMaster extends JPanel
 						 risoluzioneIndicazione=getERisoluzione(comboBox_campo.getSelectedIndex(), strumento.getId_tipo_strumento(),m).scale()+1;
 					}
 
-					if(indicazione!=null &&!indicazione.toString().equals("") && new BigDecimal(indicazione.toString()).scale()>risoluzioneIndicazione) 
+					if(indicazione!=null &&!indicazione.toString().equals("") && new BigDecimal(indicazione.toString()).scale()>risoluzioneBilancia) 
 					{
 						BigDecimal ind=new BigDecimal(indicazione.toString());
 						JOptionPane.showMessageDialog(null,"Il valore inserito eccede la risoluzione massima ["+risoluzioneIndicazione+"]. \nIl valore verrà troncato a "+ind.setScale(risoluzioneIndicazione,RoundingMode.FLOOR).toPlainString(),"Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
@@ -4881,9 +4881,9 @@ public class PannelloMisuraMaster extends JPanel
 							car_aggiuntivo=new BigDecimal(car_agg.toString());
 
 
-							BigDecimal e2=getE(campo,strumento.getId_tipo_strumento(),mas).setScale(5).divide(new BigDecimal(2).setScale(5), RoundingMode.HALF_UP);
+							//BigDecimal e2=getE(campo,strumento.getId_tipo_strumento(),mas).setScale(5).divide(new BigDecimal(2).setScale(5), RoundingMode.HALF_UP);
 
-							//				BigDecimal errore=(indicaz.multiply(Costanti.gFactor).add(e2).subtract(car_aggiuntivo).subtract(mas)).setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
+							//BigDecimal errore=(indicaz.multiply(Costanti.gFactor).add(e2).subtract(car_aggiuntivo).subtract(mas)).setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
 
 							BigDecimal errore=(indicaz.multiply(Costanti.gFactor).subtract(mas)).setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
 
@@ -6448,20 +6448,20 @@ public class PannelloMisuraMaster extends JPanel
 		private static final long serialVersionUID = 1L;
 
 		private int classe;
-		private int tipologia;
 		
-		public ModelAccuratezza(String um,int _classe,int _tipologia) 
+		
+		public ModelAccuratezza(String um,int _classe) 
 		{
 			addColumn("Rif.");
-			addColumn("Massa L ("+um+")");
-			addColumn("Indicazione I ("+um+")");
-			addColumn("Carico Agg.  ΔL ("+um+")");
+			addColumn("Posizione 0 P0 ("+um+")");
+			addColumn("Scarto 0 S ("+um+")");
+			addColumn("Max valore Tara("+um+")");
 			addColumn("Errore E ("+um+")");
 			addColumn("Er. corretto Ec ("+um+")");
 			addColumn("MPE(±) ("+um+")");
 			addColumn("id");
 			classe=_classe;
-			tipologia=_tipologia;
+			
 
 		}
 		@Override
@@ -6491,25 +6491,15 @@ public class PannelloMisuraMaster extends JPanel
 		@Override
 		public boolean isCellEditable(int row, int column) {
 
-			if(classe!=5 )
-			{	
-				if(column==2 || column==3)
+			
+				if(column==1 || column==2 || column==3)
 				{
 					return true;
 				}else
 				{
 					return false;
 				}
-		}else 
-			{
-				if(column==2 )
-				{
-					return true;
-				}else
-				{
-					return false;
-				}
-			}
+	
 		}
 
 

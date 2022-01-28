@@ -278,6 +278,7 @@ public class SQLiteDAO {
 			strumento.setFreq_mesi(rs.getInt("freq_mesi"));
 			strumento.setFamiglia_strumento(rs.getString("famiglia_strumento"));
 			strumento.setPosizioni_cambio(rs.getInt("posizione_cambio"));
+			strumento.setMasse_corredo(rs.getString("masse_corredo"));
 		
 			
 		}
@@ -1346,7 +1347,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 																"portata_min_C1,portata_max_C1,div_ver_C1,div_rel_C1,numero_div_C1," +
 																"portata_min_C2,portata_max_C2,div_ver_C2,div_rel_C2,numero_div_C2," +
 																"portata_min_C3,portata_max_C3,div_ver_C3,div_rel_C3,numero_div_C3," +
-																"anno_marcatura_CE,data_ms,id_tipologia,freq_mesi,creato,famiglia_strumento,posizione_cambio) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+																"anno_marcatura_CE,data_ms,id_tipologia,freq_mesi,creato,famiglia_strumento,posizione_cambio,masse_corredo) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 																Statement.RETURN_GENERATED_KEYS);
 			
 			
@@ -1384,6 +1385,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			pst.setString(27,"S");
 			pst.setString(28, strumento.getFamiglia_strumento());
 			pst.setInt(29, strumento.getPosizioni_cambio());
+			pst.setString(30, strumento.getMasse_corredo());
 			
 	
 			pst.executeUpdate();
@@ -1647,7 +1649,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 										   +"portata_min_C1=?,portata_max_C1=?,div_ver_C1=?,div_rel_C1=?,numero_div_C1=?,"
 										   +"portata_min_C2=?,portata_max_C2=?,div_ver_C2=?,div_rel_C2=?,numero_div_C2=?,"
 										   +"portata_min_C3=?,portata_max_C3=?,div_ver_C3=?,div_rel_C3=?,numero_div_C3=?, "
-										   +"classe=?,id_ver_tipo_strumento=?,um=?,id_tipologia=?, famiglia_strumento=?,posizione_cambio=? WHERE id=?");
+										   +"classe=?,id_ver_tipo_strumento=?,um=?,id_tipologia=?, famiglia_strumento=?,posizione_cambio=?,masse_corredo=? WHERE id=?");
 		
 			pst.setString(1,strumento.getDenominazione());
 			pst.setString(2,strumento.getCostruttore());
@@ -1682,9 +1684,10 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			pst.setString(27, strumento.getFamiglia_strumento());
 
 			pst.setInt(28, strumento.getPosizioni_cambio());
+			pst.setString(29,strumento.getMasse_corredo());
 
 			
-			pst.setInt(29, strumento.getId());
+			pst.setInt(30, strumento.getId());
 			
 			
 			toReturn=pst.executeUpdate();

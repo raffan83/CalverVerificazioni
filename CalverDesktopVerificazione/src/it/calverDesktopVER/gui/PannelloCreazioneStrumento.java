@@ -71,6 +71,7 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 	 private JTextField textField_anno_ce;
 	 private JTextField textField_data_ms;
 	 private JTextField textField_posizioni_cambio;
+	 private JTextField textField_masse_corredo;
 	
 	 @SuppressWarnings("unchecked")
 	public PannelloCreazioneStrumento() {
@@ -387,6 +388,18 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 		textField_posizioni_cambio.setColumns(10);
 		add(textField_posizioni_cambio, "cell 1 14,growx");
 		
+		JLabel lblMasseACorredo = new JLabel("Masse a corredo");
+		lblMasseACorredo.setFont(new Font("Arial", Font.BOLD, 14));
+		add(lblMasseACorredo, "cell 0 15,alignx trailing");
+		
+		textField_masse_corredo = new JTextField();
+		textField_masse_corredo.setEnabled(false);
+		textField_masse_corredo.setEditable(false);
+		textField_masse_corredo.setHorizontalAlignment(SwingConstants.LEFT);
+		textField_masse_corredo.setFont(new Font("Arial", Font.BOLD, 14));
+		textField_masse_corredo.setColumns(10);
+		add(textField_masse_corredo, "cell 1 15 4 1,growx");
+		
 		JButton btnInserisci = new JButton("Inserisci");
 		btnInserisci.setFont(new Font("Arial", Font.BOLD, 18));
 		btnInserisci.setIcon(new ImageIcon(PannelloTOP.class.getResource("/image/insert.png")));
@@ -517,6 +530,16 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 					textField_divisione_verifica_c3.setEditable(true);
 					textField_divisione_reali_c3.setEditable(true);
 					textField_numero_divisioni_c3.setEditable(true);
+				}
+				
+				if(comboBox_tipo_strumento.getSelectedIndex()==3) 
+				{
+					textField_masse_corredo.setEditable(true);
+					textField_masse_corredo.setEnabled(true);
+				}else 
+				{
+					textField_masse_corredo.setEditable(false);
+					textField_masse_corredo.setEnabled(false);
 				}
 				
 				if(comboBox_tipo_strumento.getSelectedIndex()==4) 
@@ -735,6 +758,18 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 					{
 						save=false;
 						JOptionPane.showMessageDialog(null,"Inserire tutti i dati per singolo campo/divisione coerentemente con il tipo strumento scelto \n i campi vuoti non sono ammessi inserire \"0\" ","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+					}
+					
+					if(comboBox_tipo_strumento.getSelectedIndex()==3) 
+					{
+						if(textField_masse_corredo.getText()!=null && textField_masse_corredo.getText().length()>0 ) 
+						{
+							strumento.setMasse_corredo(textField_masse_corredo.getText());
+						}
+						else 
+						{
+							strumento.setMasse_corredo("");
+						}
 					}
 					
 					if(comboBox_tipo_strumento.getSelectedIndex()==4) 

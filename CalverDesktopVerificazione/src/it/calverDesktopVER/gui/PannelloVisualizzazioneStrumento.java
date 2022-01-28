@@ -73,6 +73,7 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 	 
 	 VerStrumentoDTO strumento=null;
 	 private JTextField textField_posizioni_cambio;
+	 private JTextField textField_masse_corredo;
 	 @SuppressWarnings("unchecked")
 	public PannelloVisualizzazioneStrumento(VerStrumentoDTO _strumento) {
 		 
@@ -91,7 +92,7 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 		SessionBO.prevPage="PSS";
 		
 	//	setBackground(Costanti.backgroundGrey);
-		setLayout(new MigLayout("", "[86.00][120px:120:200px,grow][120px:120:200px,grow][120px:120px:200px,grow][120px:120px:200px,grow][120px:120px:200px,grow]", "[][40][40][40][40][40][40][40px][][40][40][40][40][][40][][][50][]"));
+		setLayout(new MigLayout("", "[86.00][120px:120:200px,grow][120px:120:200px,grow][120px:120px:200px,grow][120px:120px:200px,grow][120px:120px:200px,grow]", "[][40][40][40][40][40][40][40px][][40][40][40][40][][40][40px][][][50][]"));
 		
 		JLabel lblCreazioneStrumentoIn = new JLabel("Visualizza Strumento");
 		lblCreazioneStrumentoIn.setFont(new Font("Arial", Font.ITALIC, 22));
@@ -522,11 +523,27 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 		textField_posizioni_cambio.setColumns(10);
 		add(textField_posizioni_cambio, "cell 1 14,growx");
 		
+		JLabel lblMasseACorredo = new JLabel("Masse a corredo");
+		lblMasseACorredo.setFont(new Font("Arial", Font.BOLD, 14));
+		add(lblMasseACorredo, "cell 0 15,alignx trailing");
+		
+		textField_masse_corredo = new JTextField();
+		textField_masse_corredo.setHorizontalAlignment(SwingConstants.LEFT);
+		textField_masse_corredo.setFont(new Font("Arial", Font.BOLD, 14));
+		textField_masse_corredo.setEditable(false);
+		textField_masse_corredo.setColumns(10);
+		add(textField_masse_corredo, "cell 1 15 4 1,growx");
+		
+		
 		if(strumento.getPosizioni_cambio()!=0) 
 		{
 			textField_posizioni_cambio.setText(""+strumento.getPosizioni_cambio());
 		}
 		
+		if(strumento.getMasse_corredo()!=null) 
+		{
+			textField_masse_corredo.setText(strumento.getMasse_corredo());
+		}
 		
 		JButton btnModifica = new JButton("Modifica");
 		btnModifica.setIcon(new ImageIcon(PannelloVisualizzazioneStrumento.class.getResource("/image/incertezza.png")));
@@ -535,7 +552,7 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 		try {
 		if(SQLiteDAO.getMisuraByIDStrumento(strumento.getId())==null)
 		
-			add(btnModifica, "flowx,cell 0 15 6 1,width :150:,alignx center,height :35:");
+			add(btnModifica, "flowx,cell 0 16 6 1,width :150:,alignx center,height :35:");
 		}
 		catch (Exception e) 
 		{
@@ -625,6 +642,7 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 		});
 		
 	
+	
 		
 		
 		
@@ -632,7 +650,7 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 		btnSalva.setIcon(new ImageIcon(PannelloVisualizzazioneStrumento.class.getResource("/image/save.png")));
 		btnSalva.setFont(new Font("Arial", Font.BOLD, 16));
 		//add(btnSalva, "cell 0 16,width :150:,height :35:");
-		add(btnSalva, "flowx,cell 0 15 6 1,width :150:,alignx center,height :35:");
+		add(btnSalva, "flowx,cell 0 16 6 1,width :150:,alignx center,height :35:");
 		
 		btnSalva.setVisible(false);
 		
@@ -685,6 +703,16 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 					textField_divisione_verifica_c3.setEditable(true);
 					textField_numero_divisioni_c3.setEditable(true);
 				}
+				if(comboBox_tipo_strumento.getSelectedIndex()==3) 
+				{
+				  textField_masse_corredo.setEditable(true);
+				
+				}else 
+				{
+					textField_masse_corredo.setEditable(false);
+					
+				} 
+				
 				if(comboBox_tipo_strumento.getSelectedIndex()==4) 
 				{
 				  textField_posizioni_cambio.setEditable(true);
@@ -1053,6 +1081,14 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 					}else 
 					{
 						strumento.setPosizioni_cambio(0);
+					}
+					
+					if(textField_masse_corredo.getText().length()>0) 
+					{
+						strumento.setMasse_corredo(textField_masse_corredo.getText());
+					}else 
+					{
+						strumento.setMasse_corredo("");
 					}
 					
 					try {

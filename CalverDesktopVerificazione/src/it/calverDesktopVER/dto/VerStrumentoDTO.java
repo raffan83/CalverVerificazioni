@@ -39,6 +39,7 @@ public class VerStrumentoDTO {
 	private int freq_mesi;
 	private String famiglia_strumento;
 	private int posizioni_cambio;
+	private String masse_corredo;
 	
 
 	public int getId() {
@@ -367,6 +368,12 @@ public class VerStrumentoDTO {
 	}
 	public void setPosizioni_cambio(int posizioni_cambio) {
 		this.posizioni_cambio = posizioni_cambio;
+	}
+	public String getMasse_corredo() {
+		return masse_corredo;
+	}
+	public void setMasse_corredo(String masse_corredo) {
+		this.masse_corredo = masse_corredo;
 	}
 
 		
