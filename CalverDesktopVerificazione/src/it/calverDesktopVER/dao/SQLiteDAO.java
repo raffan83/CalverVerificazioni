@@ -1866,7 +1866,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 
 			if(strumento.getId_tipo_strumento()==4) 
 			{
-				for (int i = 0; i < 9; i++) 
+				for (int i = 0; i < 11; i++) 
 
 				{
 					pst.setInt(1,idMisura);		
@@ -2244,9 +2244,9 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 				misura.setgFactor(rs.getDouble("gFactor"));
 				misura.setNoteCombinazioni(rs.getString("note_combinazioni"));
 				
-				if (rs.wasNull()) {
-					misura.setNumeroSigilli(null);
-			    }
+		//		if (rs.wasNull()) {
+		//			misura.setNumeroSigilli(null);
+		//	    }
 			}
 			
 		}
