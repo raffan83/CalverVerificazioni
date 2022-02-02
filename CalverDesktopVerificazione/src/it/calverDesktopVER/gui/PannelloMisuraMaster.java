@@ -5240,7 +5240,7 @@ public class PannelloMisuraMaster extends JPanel
 							BigDecimal post_indicazioneTab=new BigDecimal (post_indicazione.toString());
 
 
-							BigDecimal mpe=getMPE(modelMobilita.getValueAt(row, 1).toString(),comboBox_campo.getSelectedIndex(),2);
+							BigDecimal mpe=getMPE(modelMobilita.getValueAt(row, 1).toString(),comboBox_campo.getSelectedIndex(),1);
 
 							BigDecimal carr_agg=mpe;
 
