@@ -4890,8 +4890,9 @@ public class PannelloMisuraMaster extends JPanel
 
 							//BigDecimal errore=(indicaz.multiply(Costanti.gFactor).add(e2).subtract(car_aggiuntivo).subtract(mas)).setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
 
-							BigDecimal errore=(indicaz.multiply(Costanti.gFactor).subtract(mas)).setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
+							//BigDecimal errore=(indicaz.multiply(Costanti.gFactor).subtract(mas)).setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
 
+							BigDecimal errore=(mas.multiply(Costanti.gFactor).add(indicaz)).setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
 							String mpe="";
 
 							BigDecimal e1=getE(campo,strumento.getId_tipo_strumento(),mas);
@@ -6479,8 +6480,8 @@ public class PannelloMisuraMaster extends JPanel
 		public ModelAccuratezza(String um,int _classe) 
 		{
 			addColumn("Rif.");
-			addColumn("Posizione 0 P0 ("+um+")");
-			addColumn("Scarto 0 S ("+um+")");
+			addColumn("Indicazione tara attiva ("+um+")");
+			addColumn("Carico Azzeramento ("+um+")");
 			addColumn("Max valore Tara("+um+")");
 			addColumn("Errore E ("+um+")");
 			addColumn("Er. corretto Ec ("+um+")");

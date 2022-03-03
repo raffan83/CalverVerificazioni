@@ -594,6 +594,7 @@ public class PannelloStrumentoMaster extends JPanel implements ActionListener {
 
 		String[] data={"Tutti","Lavorati","Chiusi","Aperti"};
 		final JComboBox<String> combo= new JComboBox<String>(data);
+		
 		combo.setFont(new Font("Arial",Font.BOLD, 14));
 		combo.setForeground(Color.black);
 		add(combo,"cell 0 1, width 150::, height :30:");

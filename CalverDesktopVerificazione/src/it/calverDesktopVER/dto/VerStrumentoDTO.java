@@ -40,7 +40,7 @@ public class VerStrumentoDTO {
 	private String famiglia_strumento;
 	private int posizioni_cambio;
 	private String masse_corredo;
-	
+	private int tipologia_indice;
 
 	public int getId() {
 		return id;
@@ -375,6 +375,10 @@ public class VerStrumentoDTO {
 	public void setMasse_corredo(String masse_corredo) {
 		this.masse_corredo = masse_corredo;
 	}
-
-		
+	public int getTipologia_indice() {
+		return tipologia_indice;
+	}
+	public void setTipologia_indice(int tipologia_indice) {
+		this.tipologia_indice = tipologia_indice;
+	}		
 }

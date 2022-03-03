@@ -72,6 +72,8 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 	 private JTextField textField_data_ms;
 	 private JTextField textField_posizioni_cambio;
 	 private JTextField textField_masse_corredo;
+	 private  JComboBox<String> comboBox_tipo_indicazione;
+	 private  JComboBox<String> comboBox_tipologia;
 	
 	 @SuppressWarnings("unchecked")
 	public PannelloCreazioneStrumento() {
@@ -227,10 +229,20 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 		lblTipo.setFont(new Font("Arial", Font.BOLD, 18));
 		add(lblTipo, "cell 0 6,alignx trailing");
 		
-		final JComboBox comboBox_tipologia = new JComboBox();
+		comboBox_tipologia = new JComboBox();
 		comboBox_tipologia.setModel(new DefaultComboBoxModel(new String[] {"Elettronica", "Non Elettronica"}));
 		comboBox_tipologia.setFont(new Font("Arial", Font.PLAIN, 14));
 		add(comboBox_tipologia, "cell 1 6 2 1");
+		
+		JLabel lblTipoIndicazione = new JLabel("Tipo Indicazione");
+		lblTipoIndicazione.setFont(new Font("Arial", Font.BOLD, 18));
+		add(lblTipoIndicazione, "cell 3 6,alignx trailing");
+		
+		comboBox_tipo_indicazione = new JComboBox();
+		comboBox_tipo_indicazione.setModel(new DefaultComboBoxModel(new String[] {"Digitale - misurazione elettronica"}));
+		comboBox_tipo_indicazione.setFont(new Font("Arial", Font.PLAIN, 14));
+		comboBox_tipo_indicazione.setEnabled(false);
+		add(comboBox_tipo_indicazione, "cell 4 6,growx");
 		
 		
 		comboBox_tipologia.addActionListener(new ActionListener() {
@@ -242,13 +254,23 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 				{
 					textField_freqMesi.setText("36");
 					textField_freqMesi.setEditable(false);
+					comboBox_tipo_indicazione.removeAllItems();
+					comboBox_tipo_indicazione.addItem("Analogico");
+					comboBox_tipo_indicazione.addItem("Digitale - strumento meccanico");
+					comboBox_tipo_indicazione.setEnabled(true);
+					
 				}else 
 				{
+					comboBox_tipo_indicazione.removeAllItems();
+					comboBox_tipo_indicazione.addItem("Digitale - misurazione elettronica");
+					comboBox_tipo_indicazione.setEnabled(false);
 					textField_freqMesi.setEditable(true);
 				}
 				
 			}
 		});
+		
+		
 		
 		JLabel lblFamigliaStrumento = new JLabel("Famiglia strumento");
 		lblFamigliaStrumento.setFont(new Font("Arial", Font.BOLD, 18));
@@ -544,8 +566,6 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 				
 				if(comboBox_tipo_strumento.getSelectedIndex()==4) 
 				{
-				
-			
 					comboBox_tipologia.setSelectedIndex(1);
 					comboBox_tipologia.setEnabled(false);
 					textField_posizioni_cambio.setEnabled(true);
@@ -632,6 +652,20 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 					strumento.setClasse(comboBox_classe.getSelectedIndex()+1);
 					strumento.setUm(comboBox_um.getSelectedItem().toString());
 					strumento.setTipologia(comboBox_tipologia.getSelectedIndex()+1);
+					
+					if(comboBox_tipologia.getSelectedIndex()==0) 
+					{
+						strumento.setTipologia_indice(1);
+					}else 
+					{
+						if(comboBox_tipo_indicazione.getSelectedIndex()==0) 
+						{
+							strumento.setTipologia_indice(2);
+						}else 
+						{
+							strumento.setTipologia_indice(3);
+						}
+					}
 					
 					if(comboBox_tipo_strumento.getSelectedIndex()==0) 
 					{
@@ -784,6 +818,7 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 					{
 						strumento.setPosizioni_cambio(0);
 					}
+					
 					
 					if(save)
 					{
