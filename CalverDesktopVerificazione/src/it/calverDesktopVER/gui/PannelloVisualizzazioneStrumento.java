@@ -1049,6 +1049,21 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 					{
 						strumento.setId_tipo_strumento(5);
 					}
+					
+					if(comboBox_tipologia.getSelectedIndex()==0) 
+					{
+						strumento.setTipologia_indice(1);
+					}else 
+					{
+						if(comboBox_tipo_indicazione.getSelectedItem().toString().equals("Analogico")) 
+						{
+							strumento.setTipologia_indice(2);
+						}else 
+						{
+							strumento.setTipologia_indice(3);
+						}
+					}
+					
 					strumento.setPortata_min_C1(new BigDecimal(textField_pr_min_c1.getText()));
 					strumento.setPortata_max_C1(new BigDecimal(textField_pr_max_c1.getText()));
 					strumento.setDiv_rel_C1(new BigDecimal(textField_divisione_reali_c1.getText()));

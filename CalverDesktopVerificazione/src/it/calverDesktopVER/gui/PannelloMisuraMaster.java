@@ -3400,6 +3400,8 @@ public class PannelloMisuraMaster extends JPanel
 				int row = e.getFirstRow();
 				int column=e.getColumn();
 
+				
+				
 				if(column==1 || column==2 || column==4 ) 
 				{
 					int campo=comboBox_campo.getSelectedIndex();
@@ -3408,6 +3410,9 @@ public class PannelloMisuraMaster extends JPanel
 					Object indicazioneSalita=modelLin.getValueAt(row, 2);
 					Object car_agg_salita=modelLin.getValueAt(row, 4);
 
+					
+					controlloPuntoMinimo(modelLin.getValueAt(0, 1),modelLin.getValueAt(1, 1));
+					
 					BigDecimal m;
 
 					if(massa!=null && !massa.toString().equals("")) 
@@ -3737,6 +3742,27 @@ public class PannelloMisuraMaster extends JPanel
 
 				}
 
+			}
+
+			private void controlloPuntoMinimo(Object massa0, Object massa1) {
+				
+				try {
+					
+					if(massa0!=null && massa1!=null) 
+					{
+						double m0=Double.parseDouble(massa0.toString());
+						double m1=Double.parseDouble(massa1.toString());
+						
+						if(m0>=m1) 
+						{
+							PannelloConsole.printArea("attenzione! E0 > punto Min");
+						}
+					}
+					
+				} catch (Exception e) {
+					return;
+				}
+				
 			}
 
 			private BigDecimal getValue(Object valueAt) {
@@ -4187,6 +4213,7 @@ public class PannelloMisuraMaster extends JPanel
 
 		tableLin.getModel().addTableModelListener(new TableModelListener() {
 
+			
 			public void tableChanged(TableModelEvent e) {
 
 				int row = e.getFirstRow();
@@ -4194,6 +4221,9 @@ public class PannelloMisuraMaster extends JPanel
 
 				if(column==1 || column==2 || column==4 ) 
 				{
+					
+					controlloPuntoMinimo(modelLin.getValueAt(0, 1),modelLin.getValueAt(1, 1));
+					
 					int campo=comboBox_campo.getSelectedIndex();
 
 					Object massa=modelLinCorredoEsterno.getValueAt(row, 1);
@@ -4523,6 +4553,27 @@ public class PannelloMisuraMaster extends JPanel
 
 				}
 
+			}
+
+				private void controlloPuntoMinimo(Object massa0, Object massa1) {
+				
+				try {
+					
+					if(massa0!=null && massa1!=null) 
+					{
+						double m0=Double.parseDouble(massa0.toString());
+						double m1=Double.parseDouble(massa1.toString());
+						
+						if(m0>=m1) 
+						{
+							PannelloConsole.printArea("attenzione! E0 > punto Min");
+						}
+					}
+					
+				} catch (Exception e) {
+					return;
+				}
+				
 			}
 
 			private BigDecimal getValue(Object valueAt) {
@@ -6481,7 +6532,7 @@ public class PannelloMisuraMaster extends JPanel
 		{
 			addColumn("Rif.");
 			addColumn("Indicazione tara attiva ("+um+")");
-			addColumn("Carico Azzeramento ("+um+")");
+			addColumn("Carico Effettivo Tara ("+um+")");
 			addColumn("Max valore Tara("+um+")");
 			addColumn("Errore E ("+um+")");
 			addColumn("Er. corretto Ec ("+um+")");

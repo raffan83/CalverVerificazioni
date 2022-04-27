@@ -79,6 +79,7 @@ public class PannelloConsole extends JPanel{
 			public void run() {  
 				area.append("CAL>"+text+"\n"); 
 				area.setCaretPosition(area.getText().length() - 1);
+				
 			}  
 		};  
 		try{

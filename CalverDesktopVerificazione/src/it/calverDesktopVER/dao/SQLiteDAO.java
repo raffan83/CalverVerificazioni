@@ -1651,7 +1651,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 										   +"portata_min_C1=?,portata_max_C1=?,div_ver_C1=?,div_rel_C1=?,numero_div_C1=?,"
 										   +"portata_min_C2=?,portata_max_C2=?,div_ver_C2=?,div_rel_C2=?,numero_div_C2=?,"
 										   +"portata_min_C3=?,portata_max_C3=?,div_ver_C3=?,div_rel_C3=?,numero_div_C3=?, "
-										   +"classe=?,id_ver_tipo_strumento=?,um=?,id_tipologia=?, famiglia_strumento=?,posizione_cambio=?,masse_corredo=? WHERE id=?");
+										   +"classe=?,id_ver_tipo_strumento=?,um=?,id_tipologia=?, famiglia_strumento=?,posizione_cambio=?,masse_corredo=?,tipo_indicazione=? WHERE id=?");
 		
 			pst.setString(1,strumento.getDenominazione());
 			pst.setString(2,strumento.getCostruttore());
@@ -1687,9 +1687,10 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 
 			pst.setInt(28, strumento.getPosizioni_cambio());
 			pst.setString(29,strumento.getMasse_corredo());
+			pst.setInt(30,strumento.getTipologia_indice());
 
 			
-			pst.setInt(30, strumento.getId());
+			pst.setInt(31, strumento.getId());
 			
 			
 			toReturn=pst.executeUpdate();
