@@ -165,6 +165,52 @@ public class GestioneStrumentoVER_BO {
 				return false;
 			}
 		}
+		if(strumento.getId_tipo_strumento()==4) 
+		{
+			if(strumento.getPortata_min_C1()==null) 
+			{
+				return false;
+			}
+			if(strumento.getPortata_max_C1()==null) 
+			{
+				return false;
+			}
+			if(strumento.getDiv_rel_C1()==null) 
+			{
+				return false;
+			}
+			if(strumento.getDiv_ver_C1()==null) 
+			{
+				return false;
+			}
+			if(strumento.getNumero_div_C1()==null) 
+			{
+				return false;
+			}
+		}
+		if(strumento.getId_tipo_strumento()==5) 
+		{
+			if(strumento.getPortata_min_C1()==null) 
+			{
+				return false;
+			}
+			if(strumento.getPortata_max_C1()==null) 
+			{
+				return false;
+			}
+			if(strumento.getDiv_rel_C1()==null) 
+			{
+				return false;
+			}
+			if(strumento.getDiv_ver_C1()==null) 
+			{
+				return false;
+			}
+			if(strumento.getNumero_div_C1()==null) 
+			{
+				return false;
+			}
+		}
 		
 		return true;
 	}

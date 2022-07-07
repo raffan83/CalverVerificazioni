@@ -558,6 +558,11 @@ public class PannelloCreazioneStrumento extends JPanel implements FocusListener{
 				{
 					textField_masse_corredo.setEditable(true);
 					textField_masse_corredo.setEnabled(true);
+					
+					if(textField_modello.getText().length()==0)
+						{
+						textField_modello.setText("A DUE PIATTI");
+						}
 				}else 
 				{
 					textField_masse_corredo.setEditable(false);

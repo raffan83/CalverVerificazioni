@@ -1053,13 +1053,13 @@ public class PannelloMisuraMaster extends JPanel
 
 					BigDecimal g_util=GestioneMisuraBO.calcoloG(Double.parseDouble(textField_altezza_util.getText()),Double.parseDouble(textField_latitudine_util.getText()));
 
-					textField_res_g_org.setText(""+g_org.setScale(risoluzioneBilancia+2,RoundingMode.HALF_UP).toPlainString());
+					textField_res_g_org.setText(""+g_org.setScale(6,RoundingMode.HALF_UP).toPlainString());
 
-					textField__res_g_util.setText(""+g_util.setScale(risoluzioneBilancia+2,RoundingMode.HALF_UP).toPlainString());
+					textField__res_g_util.setText(""+g_util.setScale(6,RoundingMode.HALF_UP).toPlainString());
 
 					BigDecimal res = g_util.divide(g_org,RoundingMode.HALF_UP);
 
-					textField_res_gx_gy.setText(""+res.setScale(risoluzioneBilancia+2,RoundingMode.HALF_UP).toPlainString());
+					textField_res_gx_gy.setText(""+res.setScale(6,RoundingMode.HALF_UP).toPlainString());
 
 					Costanti.gFactor=res;
 				}
@@ -1360,7 +1360,7 @@ public class PannelloMisuraMaster extends JPanel
 							}
 							else 
 							{
-								portata= ind;
+								portata= ind.multiply(Costanti.gFactor);
 							}
 							BigDecimal deltaPortata=getDeltaPorta(portata,row,strumento.getId_tipo_strumento()).setScale(risoluzioneBilanciaE0, RoundingMode.HALF_UP);
 
@@ -1683,7 +1683,7 @@ public class PannelloMisuraMaster extends JPanel
 							
 						
 
-							BigDecimal portata=indicazione;
+							indicazione=indicazione.multiply(Costanti.gFactor);
 
 							/*	if(strumento.getClasse()<5 && strumento.getTipologia()!=2) 
 							{
@@ -1693,7 +1693,7 @@ public class PannelloMisuraMaster extends JPanel
 							{
 								portata= ind;
 							}*/
-							BigDecimal deltaPortata=getDeltaPorta(portata,row,strumento.getId_tipo_strumento()).setScale(risoluzioneBilanciaE0, RoundingMode.HALF_UP);
+							BigDecimal deltaPortata=getDeltaPorta(indicazione,row,strumento.getId_tipo_strumento()).setScale(risoluzioneBilanciaE0, RoundingMode.HALF_UP);
 
 							textField_p_p_rip.setText(deltaPortata.toPlainString());
 
@@ -1725,7 +1725,7 @@ public class PannelloMisuraMaster extends JPanel
 
 							ripetibilita.setPosizione(modelRipCorredoEsterno.getValueAt(row, 2).toString());
 							ripetibilita.setCaricoAgg(new BigDecimal(modelRipCorredoEsterno.getValueAt(row, 3).toString()).setScale(risoluzioneBilancia));
-							ripetibilita.setIndicazione(new BigDecimal(modelRipCorredoEsterno.getValueAt(row, 4).toString()).setScale(risoluzioneIndicazione));
+							ripetibilita.setIndicazione(new BigDecimal(modelRipCorredoEsterno.getValueAt(row, 4).toString()).setScale(risoluzioneIndicazione,RoundingMode.HALF_UP));
 
 							ripetibilita.setDeltaPortata(BigDecimal.ZERO.setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP));
 
@@ -2323,7 +2323,7 @@ public class PannelloMisuraMaster extends JPanel
 		rdbtn_tri.setBackground(Color.WHITE);
 		pannelloDecentramento.add(rdbtn_tri, "cell 4 3,alignx center");
 
-		JLabel lblNewLabel_6 = new JLabel("Numero di punti di appoggi del ricettore di carico:");
+		JLabel lblNewLabel_6 = new JLabel("Punti di appoggio decentrati:");
 		lblNewLabel_6.setFont(new Font("Arial", Font.BOLD, 12));
 		pannelloDecentramento.add(lblNewLabel_6, "cell 1 4 3 1,alignx left");
 
@@ -4439,7 +4439,7 @@ public class PannelloMisuraMaster extends JPanel
 
 							
 
-							if(posizioneDiscesa.toString().equals("S"))
+							if(posizioneDiscesa.toString().equals("SX"))
 							{
 								indDiscesa=mas.subtract(car_aggDiscesa);
 							}else 
@@ -4721,10 +4721,16 @@ public class PannelloMisuraMaster extends JPanel
 		pannelloAccuratezza.add(lblTipoDispositivoDi, "cell 1 2,alignx trailing");
 
 		final JComboBox<String> comboBox_tipo_azzeramento = new JComboBox<String>();
-		comboBox_tipo_azzeramento.setModel(new DefaultComboBoxModel<String>(new String[] {"Non automatico o semiautomatico","Automatico"}));
+		comboBox_tipo_azzeramento.setModel(new DefaultComboBoxModel<String>(new String[] {"Non automatico o semiautomatico","Automatico","Non presente"}));
 		comboBox_tipo_azzeramento.setFont(new Font("Arial", Font.PLAIN, 12));
 		pannelloAccuratezza.add(comboBox_tipo_azzeramento, "cell 2 2");
 
+		
+		final JScrollPane scrollTab = new JScrollPane(tableAcc);
+
+		pannelloAccuratezza.add(scrollTab, "cell 1 4 2 1,width :800:,height :75:,aligny top");
+		
+		
 		if(strumento.getId_tipo_strumento()==5) 
 		{
 			comboBox_tipo_azzeramento.setEnabled(false);
@@ -4739,7 +4745,7 @@ public class PannelloMisuraMaster extends JPanel
 				{
 					modelAccuratezza.setValueAt(BigDecimal.ZERO.stripTrailingZeros(), 0, 1);
 				}
-				else 
+				else if(comboBox_tipo_azzeramento.getSelectedIndex()==1)
 				{
 
 					if(comboBox_campo.getSelectedIndex()==0) 
@@ -4758,15 +4764,33 @@ public class PannelloMisuraMaster extends JPanel
 						modelAccuratezza.setValueAt(eDiv.stripTrailingZeros().toPlainString(), 0, 1);
 					}
 				}
+				else 
+				{
+					
+					modelAccuratezza.setValueAt("0", 0, 2);
+					modelAccuratezza.setValueAt("0", 0, 3);
+					modelAccuratezza.setValueAt("0", 0, 4);
+					modelAccuratezza.setValueAt("0", 0, 5);
+					modelAccuratezza.setValueAt("0", 0, 6);
+					modelAccuratezza.setValueAt("0", 0, 1);
+					
+					tableAcc.setEnabled(false);
+					scrollTab.setEnabled(false);
+					
+					textField_esito_acc.setBackground(Color.GREEN);					
+					textField_esito_acc.setText("POSITIVO");
+					
+					scrollTab.setEnabled(false);
+					
+					
+				}
 
 			}
 		});
 
 
 
-		JScrollPane scrollTab = new JScrollPane(tableAcc);
-
-		pannelloAccuratezza.add(scrollTab, "cell 1 4 2 1,width :800:,height :75:,aligny top");
+	
 
 
 		VerAccuratezzaDTO ver = (VerAccuratezzaDTO)misura.getVerAccuratezzas(comboBox_campo.getSelectedIndex()+1).get(0);
@@ -5521,8 +5545,8 @@ public class PannelloMisuraMaster extends JPanel
 
 		ArrayList<String> listaDomande=GestioneMisuraBO.getListaDomandeControlloPreliminare(tipoDomande);
 
-		int[] y= {10,60,130,180,230,280,330,520,670,720};
-		int[] sY= {40,60,40,40,40,40,180,140,40,40};
+		int[] y= {10,60,130,180,230,280,460,600,650,700};
+		int[] sY= {50,60,40,40,40,180,140,40,40,40};
 		pannelloDomande.setPreferredSize(new Dimension(1200,770));
 
 		Font f = new Font("Arial",Font.ITALIC, 14);
@@ -5589,7 +5613,7 @@ public class PannelloMisuraMaster extends JPanel
 			}else 
 			{
 
-				if(i>=5 && i<=7) 
+				if(i>=4 && i<=6) 
 				{
 					na.setSelected(true);
 				}

@@ -66,34 +66,30 @@ public class GestioneMisuraBO
 		
 		if(i==0)
 		{
-			toReturn.add("<html>A) Verificare se lo strumento sottoposto a verificazione è munito di decreto di ammissione a verifica (per gli strumenti muniti di bolli<br> "
-					+ "di verificazione prima nazionale)</html>");
-			toReturn.add("<html> B) Verificare se lo strumento di misura sottoposto a verificazione è munito dell’ulteriore documentazione indicata nel Decreto di ammissione <br>"
+			toReturn.add("<html> A) Verificare se lo strumento di misura sottoposto a verificazione è munito dell’ulteriore documentazione indicata nel Decreto di ammissione <br>"
 					+ "a verifica (per gli strumenti muniti di bolli di verificazione prima nazionale) es. manuale istruzione, manuale di uso e manutenzione, data sheet, eventuali<br> "
 					+ "specifiche dei componenti software, ecc.<html>");
-			toReturn.add("<html>C) Verificare l’esistenza e la corrispondenza sullo strumento di misura delle iscrizioni regolamentari previste nel corrispondente decreto di ammissione <br>"
+			toReturn.add("<html>B) Verificare l’esistenza e la corrispondenza sullo strumento di misura delle iscrizioni regolamentari previste nel corrispondente decreto di ammissione <br>"
 					+ "a verifica (per gli strumenti muniti di bolli di verificazione prima nazionale)</html>");
-			toReturn.add("<html>D) Accertare la presenza, integrità, leggibilità e rispondenza ai documenti di omologazione e piani di legalizzazione dello strumento di misura, delle seguenti<br> "
+			toReturn.add("<html>C) Accertare la presenza, integrità, leggibilità e rispondenza ai documenti di omologazione e piani di legalizzazione dello strumento di misura, delle seguenti<br> "
 					+ "tipologie di impronte di verificazione prima nazionale, oppure di verificazione prima CEE, oppure di verificazione prima CE, oppure di verifica CE.<html>");
-			toReturn.add("<html>E) Verificare l’esistenza sullo strumento di misura dei sigilli o di altri elementi di protezione in rispondenza a decreto di ammissione a verifica <br>"
+			toReturn.add("<html>D) Verificare l’esistenza sullo strumento di misura dei sigilli o di altri elementi di protezione in rispondenza a decreto di ammissione a verifica <br>"
 					+ "(per gli strumenti muniti di bolli di verificazione prima nazionale)</html>");
 		}else 
 		{
-			toReturn.add("<html>A) Verificare se lo strumento sottoposto a verificazione è munito di Attestazione/Certificazione di esame CE/UE del tipo o di progetto <br>"
-					+ "(per gli strumenti conformi alla normativa europea)</html>");
-			toReturn.add("<html>B) Verificare se lo strumento di misura sottoposto a verificazione è munito dell’ulteriore documentazione indicata nell’Attestazione/Certificazione <br>"
+			toReturn.add("<html>A) Verificare se lo strumento di misura sottoposto a verificazione è munito dell’ulteriore documentazione indicata nell’Attestazione/Certificazione <br>"
 					+ "di esame CE/UE del tipo o di progetto (per gli strumenti conformi alla normativa europea) es. manuale istruzione, manuale di uso e manutenzione, data <br>"
 					+ "sheet, eventuali specifiche dei componenti software, ecc.</html>");
-			toReturn.add("<html>C)Verificare l’esistenza e la corrispondenza sullo strumento di misura delle iscrizioni regolamentari previste nel corrispondente <br>"
+			toReturn.add("<html>B)Verificare l’esistenza e la corrispondenza sullo strumento di misura delle iscrizioni regolamentari previste nel corrispondente <br>"
 					+ "Attestazione/Certificazione di esame CE/UE del tipo o di progetto (per gli strumenti conformi alla normativa europea)<html>");
-			toReturn.add("<html>D)Accertare la presenza, integrità, leggibilità e rispondenza ai documenti di omologazione e piani di legalizzazione dello strumento di misura, delle <br>"
+			toReturn.add("<html>C)Accertare la presenza, integrità, leggibilità e rispondenza ai documenti di omologazione e piani di legalizzazione dello strumento di misura, delle <br>"
 					+ "seguenti tipologie di impronte di verificazione prima nazionale, oppure di verificazione prima CEE, oppure di verificazione prima CE, oppure di verifica CE.</html>");
-			toReturn.add("<html>E)Verificare l’esistenza sullo strumento di misura dei sigilli o di altri elementi di protezione in rispondenza all Attestazione/Certificazione di esame CE/UE<br> "
+			toReturn.add("<html>D)Verificare l’esistenza sullo strumento di misura dei sigilli o di altri elementi di protezione in rispondenza all Attestazione/Certificazione di esame CE/UE<br> "
 					+ "del tipo o di progetto (per gli strumenti conformi alla normativa europea)<html>");
 		}
-		toReturn.add("<html>F) In caso di presenza di sigillo elettronico con contatore di eventi, accertare la corrispondenza tra l’indicazione di detto contatore e il numero <br>"
+		toReturn.add("<html>E) In caso di presenza di sigillo elettronico con contatore di eventi, accertare la corrispondenza tra l’indicazione di detto contatore e il numero <br>"
 				+ " riscontrato ,secondo i casi, in occasione dell’ultima verificazione periodica, della verificazione prima o CE oppure dell’ultima rilegalizzazione</html>");
-		toReturn.add("<html>G) Strumento di misura sottoposto a riparazione (ove siano stati rimossi i sigilli di protezione anche di tipo elettronico) antecedentemente alla prima <br>"
+		toReturn.add("<html>F) Strumento di misura sottoposto a riparazione (ove siano stati rimossi i sigilli di protezione anche di tipo elettronico) antecedentemente alla prima <br>"
 				+ "verificazione periodica.<br>"+
 				"Se applicabile, procedere con i seguenti punti 1, 2 e 3.<br>"+ 
 				"In caso di non applicabilità, procedere al successivo punto H<br>"+
@@ -103,14 +99,15 @@ public class GestioneMisuraBO
 				+ " &nbsp; &nbsp;dichiarazione di cui al precedente punto G.1.<br>"+
 				"3. Annotare sul libretto metrologico la dichiarazione di riparazione (o sua copia) rilasciata al titolare dello strumento dal riparatore indicata al precedente"
 				+ "<br>&nbsp; &nbsp; punto G.1.</html>");
-		toReturn.add("<html>H) Strumento di misura sottoposto a riparazione (ove siano stati rimossi i sigilli di protezione anche di tipo elettronico) successivamente alla prima verificazione periodica:<br>" + 
+		toReturn.add("<html>G) Strumento di misura sottoposto a riparazione (ove siano stati rimossi i sigilli di protezione anche di tipo elettronico) successivamente alla prima verificazione periodica:<br>" + 
 				"Se applicabile, procedere con i seguenti punti 1 e 2.<br>" + 
 				"1. Verificare la presenza dell’annotazione della riparazione effettuata dal riparatore all’interno del libretto metrologico dello strumento di misura. <br>" + 
 				"2. Verificare la corrispondenza tra i sigilli provvisori applicati sullo strumento dal riparatore e la descrizione della riparazione effettuata annotata sul libretto<br>"
 				+ "&nbsp; &nbsp; metrologico di cui al precedente punto H.1.<br>");
-		toReturn.add("<html>I) Verificare le condizioni esterne dello strumento, dei dispositivi di comando, regolazione (es. piedini di livello e bolla) e di visualizzazione <br>"
+		toReturn.add("<html>H) Verificare le condizioni esterne dello strumento, dei dispositivi di comando, regolazione (es. piedini di livello e bolla) e di visualizzazione <br>"
 				+ "(es. display, scale graduate)<html>");
-		toReturn.add("<html>L) Controllare la presenza e lo stato di aggiornamento del libretto metrologico dello strumento sottoposto a verificazione<html>");
+		toReturn.add("<html>I) Rilascio libretto metrologico (art.4 c.12 DM 93/17)<html>");
+		toReturn.add("<html>L) Compilazione libretto metrologico esistente<html>");
 		return toReturn;
 	}
 
