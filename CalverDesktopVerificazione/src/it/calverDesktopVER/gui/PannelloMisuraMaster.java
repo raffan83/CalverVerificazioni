@@ -1788,7 +1788,7 @@ public class PannelloMisuraMaster extends JPanel
 			if(i==row) 
 			{
 				portata=portataCorrente;
-				max=portataCorrente.doubleValue();
+			//	max=portataCorrente.doubleValue();
 			}
 			else 
 			{
