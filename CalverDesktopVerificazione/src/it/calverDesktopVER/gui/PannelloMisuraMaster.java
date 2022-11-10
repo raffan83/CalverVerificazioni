@@ -376,7 +376,7 @@ public class PannelloMisuraMaster extends JPanel
 			e1.printStackTrace();
 		}
 
-	   // final JComboBox<String> comboBox_lista_campioni = new JComboBox<String>();
+	    //final JComboBox<String> comboBox_lista_campioni = new JComboBox<String>();
 		final JComboBox<String> comboBox_lista_campioni = new JComboBox<String>(listaCampioniCompleta);
 		comboBox_lista_campioni.setFont(new Font("Arial", Font.BOLD, 12));
 		pannelloDatiGenerali.add(comboBox_lista_campioni, "cell 2 7");
@@ -2107,12 +2107,13 @@ public class PannelloMisuraMaster extends JPanel
 
 		pannelloDecentramento.setBorder(new TitledBorder(new LineBorder(new Color(255, 0, 0), 2, true), "Prova Decentramento", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		pannelloDecentramento.setBackground(Color.WHITE);
-		pannelloDecentramento.setLayout(new MigLayout("", "[22.00][][160.00][160][160][160px][160px]", "[][][][][][][][]"));
+		pannelloDecentramento.setLayout(new MigLayout("", "[22.00][][160.00][160][160][160px][160px][160px]", "[][][][][][][][]"));
 
 		final ArrayList<VerDecentramentoDTO> listaDecentramento=(ArrayList<VerDecentramentoDTO>)misura.getVerDecentramentos(comboBox_campo.getSelectedIndex()+1);
 
 		tableDec = new JTable();
 		comboBox = new JComboBox<String>();
+		
 		comboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
@@ -2137,6 +2138,10 @@ public class PannelloMisuraMaster extends JPanel
 		JLabel label_2 = new JLabel("");
 		label_2.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/tipo_4.png")));
 		pannelloDecentramento.add(label_2, "cell 6 2,alignx center");
+		
+		JLabel label_3 = new JLabel("");
+		label_3.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/tipo_5.png")));
+		pannelloDecentramento.add(label_3, "cell 7 2,alignx center");
 
 		JRadioButton rdbtn_tipo_3 = new JRadioButton("");
 		rdbtn_tipo_3.setBackground(Color.WHITE);
@@ -2145,13 +2150,21 @@ public class PannelloMisuraMaster extends JPanel
 		JRadioButton rdbtn_tipo_4 = new JRadioButton("");
 		rdbtn_tipo_4.setBackground(Color.WHITE);
 		pannelloDecentramento.add(rdbtn_tipo_4, "cell 6 3,alignx center");
+		
+		JRadioButton rdbtn_tipo_5 = new JRadioButton("");
+		rdbtn_tipo_5.setBackground(Color.WHITE);
+		pannelloDecentramento.add(rdbtn_tipo_5, "cell 7 3,alignx center");
+		pannelloDecentramento.add(comboBox, "cell 5 4,alignx right");
+		
+		
 		comboBox.setModel(new DefaultComboBoxModel<>(new String[] {"NO", "SI"}));
 		
 		if(strumento.getId_tipo_strumento()==5) 
 		{
 			comboBox.setEnabled(false);
 		}
-		pannelloDecentramento.add(comboBox, "cell 5 4,alignx right");
+		
+	
 
 		if(listaDecentramento.get(0).getSpeciale().equals("N")) 
 		{
@@ -2334,43 +2347,43 @@ public class PannelloMisuraMaster extends JPanel
 		JLabel lblStrumentoSpeciale = new JLabel("Strumento speciale");
 		lblStrumentoSpeciale.setFont(new Font("Arial", Font.BOLD, 12));
 		pannelloDecentramento.add(lblStrumentoSpeciale, "flowx,cell 5 4,alignx right");
+		
+				JButton btnRicalcola = new JButton("Ricalcola");
+				btnRicalcola.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
 
-		JButton btnRicalcola = new JButton("Ricalcola");
-		btnRicalcola.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+						for(int i =0; i<tableDec.getRowCount();i++) 
+						{
+							int column=1;
+							if(modelDec.getValueAt(i, column)!=null && modelDec.getValueAt(i, column).toString().length()>0)
+							{
+								modelDec.setValueAt(modelDec.getValueAt(i, column),i, column);
+							}
 
-				for(int i =0; i<tableDec.getRowCount();i++) 
-				{
-					int column=1;
-					if(modelDec.getValueAt(i, column)!=null && modelDec.getValueAt(i, column).toString().length()>0)
-					{
-						modelDec.setValueAt(modelDec.getValueAt(i, column),i, column);
+							column=2;
+							if(modelDec.getValueAt(i, column)!=null && modelDec.getValueAt(i, column).toString().length()>0)
+							{
+								modelDec.setValueAt(modelDec.getValueAt(i, column),i, column);
+							}
+
+							column=3;
+							if(modelDec.getValueAt(i, column)!=null && modelDec.getValueAt(i, column).toString().length()>0)
+							{
+								modelDec.setValueAt(modelDec.getValueAt(i, column),i, column);
+							}
+
+						}
+						chk_btn_decentramento=true;
 					}
-
-					column=2;
-					if(modelDec.getValueAt(i, column)!=null && modelDec.getValueAt(i, column).toString().length()>0)
-					{
-						modelDec.setValueAt(modelDec.getValueAt(i, column),i, column);
-					}
-
-					column=3;
-					if(modelDec.getValueAt(i, column)!=null && modelDec.getValueAt(i, column).toString().length()>0)
-					{
-						modelDec.setValueAt(modelDec.getValueAt(i, column),i, column);
-					}
-
-				}
-				chk_btn_decentramento=true;
-			}
-		});
-		btnRicalcola.setFont(new Font("Arial", Font.BOLD, 12));
-		pannelloDecentramento.add(btnRicalcola, "cell 6 4,alignx center");
+				});
+				btnRicalcola.setFont(new Font("Arial", Font.BOLD, 12));
+				pannelloDecentramento.add(btnRicalcola, "cell 7 4,alignx center");
 
 
 
 		JScrollPane scrollTab = new JScrollPane(tableDec);
 
-		pannelloDecentramento.add(scrollTab, "cell 1 5 6 1,growx,width :750:,height :200:,aligny top");
+		pannelloDecentramento.add(scrollTab, "cell 1 5 7 1,growx,width :750:,height :200:,aligny top");
 
 		JLabel lblEsito = new JLabel("ESITO:");
 		lblEsito.setFont(new Font("Arial", Font.BOLD, 12));
@@ -2428,6 +2441,7 @@ public class PannelloMisuraMaster extends JPanel
 		bg.add(rdbtn_tri);
 		bg.add(rdbtn_tipo_3);
 		bg.add(rdbtn_tipo_4);
+		bg.add(rdbtn_tipo_5);
 
 		rdbtn_quad.addActionListener(new ActionListener() {
 
@@ -2492,6 +2506,22 @@ public class PannelloMisuraMaster extends JPanel
 
 				try {
 					GestioneMisuraBO.setRicettoreDecentramento(misura.getId(),4);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		rdbtn_tipo_5.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				try {
+					GestioneMisuraBO.setRicettoreDecentramento(misura.getId(),5);
+					
+					
+					
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
