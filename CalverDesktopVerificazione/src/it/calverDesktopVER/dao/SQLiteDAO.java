@@ -280,6 +280,13 @@ public class SQLiteDAO {
 			strumento.setPosizioni_cambio(rs.getInt("posizione_cambio"));
 			strumento.setMasse_corredo(rs.getString("masse_corredo"));
 			strumento.setTipologia_indice(rs.getInt("tipo_indicazione"));
+			
+			try 
+			{
+				strumento.setTipo_legalizzazione(rs.getInt("tipo_legalizzazione"));	
+			} catch (Exception e) {
+				System.out.println("Manca tipo legalizzazione");
+			}
 		
 			
 		}
@@ -323,7 +330,7 @@ public class SQLiteDAO {
 
 
 
-	public static int insertMisura(String id) throws Exception {
+	public static int insertMisura(String id,VerStrumentoDTO strumento) throws Exception {
 		
 		Connection con =null;
 		PreparedStatement pst= null;
@@ -336,7 +343,7 @@ public class SQLiteDAO {
 			SimpleDateFormat sdf =new SimpleDateFormat("dd/MM/yyyy");
 			Date d = new Date();
 			pst.setString(2,sdf.format(d));
-			pst.setString(3,"1");
+			pst.setString(3,""+strumento.getTipo_legalizzazione());
 			pst.setString(4,"0");
 			pst.setString(5,"0");
 			pst.execute();

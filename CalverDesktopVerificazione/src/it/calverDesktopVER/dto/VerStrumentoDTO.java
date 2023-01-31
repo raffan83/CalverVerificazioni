@@ -41,6 +41,7 @@ public class VerStrumentoDTO {
 	private int posizioni_cambio;
 	private String masse_corredo;
 	private int tipologia_indice;
+	private int tipo_legalizzazione=0;
 
 	public int getId() {
 		return id;
@@ -380,5 +381,12 @@ public class VerStrumentoDTO {
 	}
 	public void setTipologia_indice(int tipologia_indice) {
 		this.tipologia_indice = tipologia_indice;
-	}		
+	}
+	public int getTipo_legalizzazione() {
+		return tipo_legalizzazione;
+	}
+	public void setTipo_legalizzazione(int tipo_legalizzazione) {
+		this.tipo_legalizzazione = tipo_legalizzazione;
+	}	
+	
 }

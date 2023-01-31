@@ -38,7 +38,7 @@ public class GestioneMisuraBO
     public static int insertMisura(String id, int tipoStrumento, VerStrumentoDTO strumento)
         throws Exception
     {
-    	int idMisura=SQLiteDAO.insertMisura(id);
+    	int idMisura=SQLiteDAO.insertMisura(id,strumento);
     	
     	SQLiteDAO.insertProvaLineare(idMisura,strumento);
     	
