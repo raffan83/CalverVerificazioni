@@ -237,7 +237,8 @@ public class PannelloMisuraMaster extends JPanel
 		tabbedPane.addTab("Prova Decentramento", panel_prova_decentramento);
 
 		panel_prova_linearita=costruisciPannelloLinearita();
-		tabbedPane.addTab("Prova Linearità", panel_prova_linearita);
+	//	tabbedPane.addTab("Prova Linearità", panel_prova_linearita);
+		tabbedPane.addTab("Prova Pesatura", panel_prova_linearita);
 
 
 		/*Eliminare*/
@@ -3163,7 +3164,7 @@ public class PannelloMisuraMaster extends JPanel
 
 							if(controlloPuntiVariazione(campo)==true) 
 							{
-								BigDecimal primo_punto_variazione=getEVariazione(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),BigDecimal.ZERO).multiply(new BigDecimal(listaClassi.get(1).getLimiteSuperiore())).multiply(new BigDecimal("0.1"));
+								BigDecimal primo_punto_variazione=getEVariazione(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),BigDecimal.ZERO).multiply(new BigDecimal(listaClassi.get(0).getLimiteSuperiore())).multiply(new BigDecimal("0.1"));
 								modelLin.setValueAt(primo_punto_variazione.stripTrailingZeros().toPlainString(), i, 1);
 							}
 							else 
@@ -3196,7 +3197,7 @@ public class PannelloMisuraMaster extends JPanel
 						{
 							if(controlloPuntiVariazione(campo)==true) 
 							{
-								secondo_punto_variazione=getEVariazione(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),BigDecimal.ZERO).multiply(new BigDecimal(listaClassi.get(1).getLimiteSuperiore())).multiply(new BigDecimal("0.5"));
+								secondo_punto_variazione=getEVariazione(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),BigDecimal.ZERO).multiply(new BigDecimal(listaClassi.get(0).getLimiteSuperiore())).multiply(new BigDecimal("0.5"));
 								modelLin.setValueAt(secondo_punto_variazione.stripTrailingZeros().stripTrailingZeros().toPlainString(), i, 1);
 							}
 							else 
@@ -3231,7 +3232,7 @@ public class PannelloMisuraMaster extends JPanel
 						{
 							if(controlloPuntiVariazione(campo)==true) 
 							{
-								BigDecimal ptVar=getEVariazione(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),BigDecimal.ZERO).multiply(new BigDecimal(listaClassi.get(1).getLimiteSuperiore()));
+								BigDecimal ptVar=getEVariazione(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),BigDecimal.ZERO).multiply(new BigDecimal(listaClassi.get(0).getLimiteSuperiore()));
 								modelLin.setValueAt(ptVar.stripTrailingZeros().stripTrailingZeros().toPlainString(), i, 1);
 							}
 							else 
@@ -3342,6 +3343,27 @@ public class PannelloMisuraMaster extends JPanel
 			modelLin.setValueAt(lin.getId(), i, 11);
 		}
 
+		
+		/*
+		 *  Controllo congruenza E0 e pt1
+		 */
+		
+			try 
+			{
+				BigDecimal E0 = new BigDecimal(tableLin.getValueAt(0, 1).toString());
+				BigDecimal pt1 = new BigDecimal(tableLin.getValueAt(1, 1).toString());
+				
+				if(pt1.doubleValue()<E0.doubleValue()) 
+				{
+					tableLin.setValueAt(pt1.toPlainString(), 0, 1);
+					tableLin.setValueAt(E0.toPlainString(), 1, 1);
+				}
+			} 
+			catch (Exception e) 
+			{
+				System.out.println("Errore congruenza E0 - PT1");
+			}
+		
 
 		JLabel lblNewLabel = new JLabel("Prova di Linearità");
 		lblNewLabel.setFont(new Font("Calibri", Font.BOLD, 14));
@@ -4950,7 +4972,7 @@ public class PannelloMisuraMaster extends JPanel
 
 		JLabel lblNewLabel_3 = new JLabel("* Con l'indice a sinistra dello 0, indicare lo scarto (S) con il segno negativo (-)");
 		lblNewLabel_3.setFont(new Font("Arial", Font.BOLD, 12));
-		pannelloAccuratezza.add(lblNewLabel_3, "cell 1 5 2 1");
+	//	pannelloAccuratezza.add(lblNewLabel_3, "cell 1 5 2 1");
 
 		JLabel lblEsito = new JLabel("ESITO:");
 		lblEsito.setFont(new Font("Arial", Font.BOLD, 12));
@@ -5057,7 +5079,11 @@ public class PannelloMisuraMaster extends JPanel
 
 							//BigDecimal errore=(indicaz.multiply(Costanti.gFactor).subtract(mas)).setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
 
-							BigDecimal errore=(mas.multiply(Costanti.gFactor).add(indicaz)).setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
+						//	BigDecimal errore=(mas.multiply(Costanti.gFactor).add(indicaz)).setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
+							
+							BigDecimal errore=((mas.multiply(Costanti.gFactor).abs())).subtract(indicaz.abs()).setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP);
+						
+							
 							String mpe="";
 
 							BigDecimal e1=getE(campo,strumento.getId_tipo_strumento(),mas);
