@@ -259,15 +259,15 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 		comboBox_famiglia.setFont(new Font("Arial", Font.PLAIN, 12));
 		add(comboBox_famiglia, "cell 1 7 2 1,growx");
 		
-		JLabel lblPortatamin = new JLabel("Portata(min)");
+		JLabel lblPortatamin = new JLabel("Portata(min) /"+strumento.getUm());
 		lblPortatamin.setFont(new Font("Arial", Font.BOLD, 14));
 		add(lblPortatamin, "cell 1 9,alignx center");
 		
-		JLabel lblPortatamax = new JLabel("Portata(max)");
+		JLabel lblPortatamax = new JLabel("Portata(max) /"+strumento.getUm());
 		lblPortatamax.setFont(new Font("Arial", Font.BOLD, 14));
 		add(lblPortatamax, "flowx,cell 2 9,alignx center");
 		
-		JLabel lblDivisioniVerifica = new JLabel("Divisioni Verifica");
+		JLabel lblDivisioniVerifica = new JLabel("Divisioni Verifica \"e\" /"+strumento.getUm());
 		lblDivisioniVerifica.setFont(new Font("Arial", Font.BOLD, 14));
 		add(lblDivisioniVerifica, "flowx,cell 3 9,alignx center");
 		
@@ -415,7 +415,7 @@ public class PannelloVisualizzazioneStrumento extends JPanel  implements FocusLi
 		textField_numero_divisioni_c3.setColumns(10);
 		add(textField_numero_divisioni_c3, "cell 5 12,growx");
 		
-		JLabel lblDivisioniReali = new JLabel("Divisioni Reali");
+		JLabel lblDivisioniReali = new JLabel("Divisioni Reali \"d\" /"+strumento.getUm());
 		lblDivisioniReali.setFont(new Font("Arial", Font.BOLD, 14));
 		add(lblDivisioniReali, "cell 4 9,alignx center");
 		

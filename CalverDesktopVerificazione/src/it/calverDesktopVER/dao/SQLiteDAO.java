@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import it.calverDesktopVER.bo.SessionBO;
 import it.calverDesktopVER.dto.VerAccuratezzaDTO;
 import it.calverDesktopVER.dto.VerClassiDTO;
 import it.calverDesktopVER.dto.VerDecentramentoDTO;
@@ -284,8 +285,10 @@ public class SQLiteDAO {
 			try 
 			{
 				strumento.setTipo_legalizzazione(rs.getInt("tipo_legalizzazione"));	
+				SessionBO.presenzaLegalizzazione=1;
 			} catch (Exception e) {
 				System.out.println("Manca tipo legalizzazione");
+				SessionBO.presenzaLegalizzazione=0;
 			}
 		
 			

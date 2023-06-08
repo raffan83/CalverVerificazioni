@@ -162,6 +162,11 @@ public class PannelloMisuraMaster extends JPanel
 
 	private boolean chk_btn_decentramento=false;
 	private boolean chk_btn_linearita=false;
+	
+	private final Object lock = new Object();
+	private boolean tableChangedEnabled = true;
+	
+	
 	JLabel lbl_lettura_fine;
 
 	public PannelloMisuraMaster(String id) throws Exception
@@ -2314,15 +2319,15 @@ public class PannelloMisuraMaster extends JPanel
 		pannelloDecentramento.add(lblEsempiDiTipici, "cell 0 1 5 1,alignx center");
 
 		JLabel lblNewLabel_4 = new JLabel("");
-		lblNewLabel_4.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/bil_cer.png")));
+		lblNewLabel_4.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/tipo_0.png")));
 		pannelloDecentramento.add(lblNewLabel_4, "cell 2 2,alignx center");
 
 		JLabel lblNewLabel_5 = new JLabel("");
-		lblNewLabel_5.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/bil_qua.png")));
+		lblNewLabel_5.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/tipo_1.png")));
 		pannelloDecentramento.add(lblNewLabel_5, "cell 3 2,alignx center");
 
 		JLabel label = new JLabel("");
-		label.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/bil_tri.png")));
+		label.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/tipo_2.png")));
 		pannelloDecentramento.add(label, "cell 4 2,alignx center");
 
 		JRadioButton rdbtn_quad = new JRadioButton("");
@@ -3062,6 +3067,23 @@ public class PannelloMisuraMaster extends JPanel
 					}
 
 				}
+				
+				try 
+				{
+					
+					BigDecimal E0 = new BigDecimal(tableLin.getValueAt(0, 1).toString());
+					BigDecimal pt1 = new BigDecimal(tableLin.getValueAt(1, 1).toString());
+					
+					if(pt1.doubleValue()<E0.doubleValue()) 
+					{
+						tableLin.setValueAt(pt1.toPlainString(), 0, 1);
+						tableLin.setValueAt(E0.toPlainString(), 1, 1);
+					}
+				} 
+				catch (Exception ex) 
+				{
+					System.out.println("Errore congruenza E0 - PT1");
+				}
 
 			}
 		});
@@ -3348,8 +3370,11 @@ public class PannelloMisuraMaster extends JPanel
 		 *  Controllo congruenza E0 e pt1
 		 */
 		
+		
+		
 			try 
 			{
+				
 				BigDecimal E0 = new BigDecimal(tableLin.getValueAt(0, 1).toString());
 				BigDecimal pt1 = new BigDecimal(tableLin.getValueAt(1, 1).toString());
 				
@@ -3491,6 +3516,12 @@ public class PannelloMisuraMaster extends JPanel
 		tableLin.getModel().addTableModelListener(new TableModelListener() {
 
 			public void tableChanged(TableModelEvent e) {
+				
+				
+			    synchronized (lock) {
+			        if (!tableChangedEnabled) {
+			            return; // Se la reattività della tabella è disabilitata, esce dal metodo
+			        }
 
 				int row = e.getFirstRow();
 				int column=e.getColumn();
@@ -3836,7 +3867,7 @@ public class PannelloMisuraMaster extends JPanel
 					}
 
 				}
-
+			   }
 			}
 
 			private void controlloPuntoMinimo(Object massa0, Object massa1) {
@@ -3848,9 +3879,24 @@ public class PannelloMisuraMaster extends JPanel
 						double m0=Double.parseDouble(massa0.toString());
 						double m1=Double.parseDouble(massa1.toString());
 
+						/*Caso 1 E0>E1*/
 						if(m0>=m1) 
 						{
-							PannelloConsole.printArea("attenzione! E0 > punto Min");
+							 synchronized (lock) {
+							        tableChangedEnabled = false; // Sospendi la reattività della tabella
+							       
+							        modelLin.setValueAt(m1,0, 1);
+							        modelLin.setValueAt(m0,1, 1);
+							        
+							        tableChangedEnabled = true; // Riattiva la reattività della tabella
+						}
+						}
+						/*Caso 2 E0=E1*/
+						if(m0==m1) 
+						{
+							BigDecimal e0=new BigDecimal(modelLin.getValueAt(0, 1).toString()).divide(new BigDecimal(2));
+							modelLin.setValueAt(e0.stripTrailingZeros(),0, 1);
+							PannelloConsole.printArea("attenzione! E0 > punto Min, il valore è stato dimezzato");
 						}
 					}
 
@@ -4217,6 +4263,30 @@ public class PannelloMisuraMaster extends JPanel
 			modelLinCorredoEsterno.setValueAt(lin.getId(), i, 13);
 		}
 
+		
+		/*
+		 *  Controllo congruenza E0 e pt1
+		 */
+		
+		
+		
+			try 
+			{
+				
+				BigDecimal E0 = new BigDecimal(tableLin.getValueAt(0, 1).toString());
+				BigDecimal pt1 = new BigDecimal(tableLin.getValueAt(1, 1).toString());
+				
+				if(pt1.doubleValue()<E0.doubleValue()) 
+				{
+					tableLin.setValueAt(pt1.toPlainString(), 0, 1);
+					tableLin.setValueAt(E0.toPlainString(), 1, 1);
+				}
+			} 
+			catch (Exception e) 
+			{
+				System.out.println("Errore congruenza E0 - PT1");
+			}
+		
 
 		JLabel lblNewLabel = new JLabel("Prova di Linearità");
 		lblNewLabel.setFont(new Font("Calibri", Font.BOLD, 14));
@@ -4328,6 +4398,11 @@ public class PannelloMisuraMaster extends JPanel
 
 			public void tableChanged(TableModelEvent e) {
 
+				
+				synchronized (lock) {
+			        if (!tableChangedEnabled) {
+			            return; // Se la reattività della tabella è disabilitata, esce dal metodo
+			        }
 				int row = e.getFirstRow();
 				int column=e.getColumn();
 
@@ -4664,7 +4739,7 @@ public class PannelloMisuraMaster extends JPanel
 					}
 
 				}
-
+				}
 			}
 
 			private void controlloPuntoMinimo(Object massa0, Object massa1) {
@@ -4676,9 +4751,25 @@ public class PannelloMisuraMaster extends JPanel
 						double m0=Double.parseDouble(massa0.toString());
 						double m1=Double.parseDouble(massa1.toString());
 
+						
 						if(m0>=m1) 
 						{
-							PannelloConsole.printArea("attenzione! E0 > punto Min");
+							 synchronized (lock) {
+							        tableChangedEnabled = false; // Sospendi la reattività della tabella
+							       
+							        modelLin.setValueAt(m1,0, 1);
+							        modelLin.setValueAt(m0,1, 1);
+							        
+							        tableChangedEnabled = true; // Riattiva la reattività della tabella
+						}
+						}
+						
+						
+						if(m0>=m1) 
+						{
+							BigDecimal e0=new BigDecimal(modelLin.getValueAt(0, 1).toString()).divide(new BigDecimal(2));
+							modelLin.setValueAt(e0.stripTrailingZeros(),0, 1);
+							PannelloConsole.printArea("attenzione! E0 > punto Min, il valore è stato dimezzato");
 						}
 					}
 
@@ -5574,7 +5665,10 @@ public class PannelloMisuraMaster extends JPanel
 		comboBox_nazione.setSelectedIndex(tipoDomande);
 
 
-		comboBox_nazione.setEnabled(false);
+		if(SessionBO.presenzaLegalizzazione==1) 
+		{
+			comboBox_nazione.setEnabled(false);
+		}
 		JPanel tipoDom1= getTabelleDomande(0);
 		JPanel tipoDom2 =getTabelleDomande(1);
 
@@ -5849,7 +5943,7 @@ public class PannelloMisuraMaster extends JPanel
 
 						if(sequence.length()==20 && controlloSequenMutEsclusivo(sequence)==false) 
 						{
-							JOptionPane.showMessageDialog(null,"I punti I e L sono mutuamente esclusivi. Un punto deve assumere valore \"SI\" e l'altro valore \"NO\" oppune \" N/A\"","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+							JOptionPane.showMessageDialog(null,"<html>I punti <i>I)</i> e <i>L)</i> sono mutuamente esclusivi. Un punto deve assumere valore \"SI\" e l'altro valore \" N/A\" </html>","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
 							return;
 						}
 
@@ -5963,6 +6057,25 @@ public class PannelloMisuraMaster extends JPanel
 				}
 
 				if(response[8].equals("2") && response[9].equals("2") ) 
+				{
+					return false;
+				}
+				
+				if(response[8].equals("0") && response[9].equals("1") ) 
+				{
+					return false;
+				}
+				
+				if(response[8].equals("1") && response[9].equals("0") ) 
+				{
+					return false;
+				}
+				if(response[8].equals("1") && response[9].equals("2") ) 
+				{
+					return false;
+				}
+				
+				if(response[8].equals("2") && response[9].equals("1") ) 
 				{
 					return false;
 				}
