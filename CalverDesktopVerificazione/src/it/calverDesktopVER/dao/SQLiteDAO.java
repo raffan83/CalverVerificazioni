@@ -3221,6 +3221,37 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 		}
 		
 	}
+	public static void updateValoriLinearita(double m, int id) throws Exception {
+		
+		Connection con=null;
+		PreparedStatement pst=null;
+		try 
+		{
+			con=getConnection();
+			pst=con.prepareStatement("UPDATE ver_linearita set massa=? WHERE id=?");
+			
+			pst.setDouble(1,m);
+			pst.setInt(2, id);
+			pst.execute();
+			
+		
+		
+			
+			
+	} 
+		catch (Exception e) 
+		{
+		 e.printStackTrace();	
+		 throw e;
+		}
+		finally
+		{
+			pst.close();
+			
+			con.close();
+		}
+		
+	}
 
 
 

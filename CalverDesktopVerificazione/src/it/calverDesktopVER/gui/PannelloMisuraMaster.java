@@ -242,7 +242,7 @@ public class PannelloMisuraMaster extends JPanel
 		tabbedPane.addTab("Prova Decentramento", panel_prova_decentramento);
 
 		panel_prova_linearita=costruisciPannelloLinearita();
-	//	tabbedPane.addTab("Prova Linearità", panel_prova_linearita);
+	//	tabbedPane.addTab("Prova Pesatura", panel_prova_linearita);
 		tabbedPane.addTab("Prova Pesatura", panel_prova_linearita);
 
 
@@ -281,7 +281,7 @@ public class PannelloMisuraMaster extends JPanel
 			tabbedPane.addTab("Prova Ripetibilità", panel_prova_ripetibilita);
 
 			panel_prova_linearita=costruisciPannelloLinearitaCorredoEsteno();
-			tabbedPane.addTab("Prova Linearità", panel_prova_linearita);
+			tabbedPane.addTab("Prova Pesatura", panel_prova_linearita);
 
 			panel_prova_mobilita=costruisciPannelloMobilita();
 			tabbedPane.addTab("Prova Mobilità", panel_prova_mobilita);
@@ -915,7 +915,7 @@ public class PannelloMisuraMaster extends JPanel
 				{
 					double res = Math.abs((Double.parseDouble(textField_t_inizio.getText()) - Double.parseDouble(textField_t_fine.getText())));
 
-					textField_temp_esito.setText(""+new BigDecimal(res).setScale(2).toPlainString());
+					textField_temp_esito.setText(""+new BigDecimal(res).setScale(2,RoundingMode.HALF_UP).toPlainString());
 
 					if(res<=5) 
 					{
@@ -2427,7 +2427,7 @@ public class PannelloMisuraMaster extends JPanel
 				}
 				else 
 				{
-					JOptionPane.showMessageDialog(null,"Il campo accetta minimo 3 punti di ancoraggio","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+					JOptionPane.showMessageDialog(null,"Il campo accetta minimo 3 punti di decentramento","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
 				}
 
 			}
@@ -3026,7 +3026,7 @@ public class PannelloMisuraMaster extends JPanel
 		BigDecimal[] listaValoriCorredoInterno=null;
 
 		int idTipoStrumento=strumento.getId_tipo_strumento();
-		pannelloLinearita.setBorder(new TitledBorder(new LineBorder(new Color(255, 0, 0), 2, true), "Prova Linearità", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		pannelloLinearita.setBorder(new TitledBorder(new LineBorder(new Color(255, 0, 0), 2, true), "Prova Pesatura", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		pannelloLinearita.setBackground(Color.WHITE);
 		pannelloLinearita.setLayout(new MigLayout("", "[22.00][][grow]", "[][][][][][][][]"));
 
@@ -3390,7 +3390,7 @@ public class PannelloMisuraMaster extends JPanel
 			}
 		
 
-		JLabel lblNewLabel = new JLabel("Prova di Linearità");
+		JLabel lblNewLabel = new JLabel("Prova di Pesatura");
 		lblNewLabel.setFont(new Font("Calibri", Font.BOLD, 14));
 		pannelloLinearita.add(lblNewLabel, "cell 0 0 3 1");
 
@@ -3489,6 +3489,8 @@ public class PannelloMisuraMaster extends JPanel
 		lbl_lettura_fine.setFont(new Font("Arial", Font.BOLD, 12));
 		pannelloLinearita.add(lbl_lettura_fine, "cell 1 7 2 1");
 
+		
+		/*
 		if(strumento.getClasse()>=5 || strumento.getTipologia()==2) 
 		{
 			if(strumento.getId_tipo_strumento()!=5) 
@@ -3498,7 +3500,7 @@ public class PannelloMisuraMaster extends JPanel
 
 			}
 		}
-
+*/
 
 		if(listaLinearita.get(0).getEsito()!=null) 
 		{
@@ -3879,6 +3881,11 @@ public class PannelloMisuraMaster extends JPanel
 						double m0=Double.parseDouble(massa0.toString());
 						double m1=Double.parseDouble(massa1.toString());
 
+						
+						int id_m0=Integer.parseInt(modelLin.getValueAt(0, 11).toString());
+						int id_m1=Integer.parseInt(modelLin.getValueAt(1, 11).toString());
+						
+						
 						/*Caso 1 E0>E1*/
 						if(m0>=m1) 
 						{
@@ -3887,6 +3894,10 @@ public class PannelloMisuraMaster extends JPanel
 							       
 							        modelLin.setValueAt(m1,0, 1);
 							        modelLin.setValueAt(m0,1, 1);
+							        
+							        GestioneMisuraBO.updateValoriLinearitaMassa(m1,id_m0);
+							        GestioneMisuraBO.updateValoriLinearitaMassa(m0,id_m1);
+							        
 							        
 							        tableChangedEnabled = true; // Riattiva la reattività della tabella
 						}
@@ -4053,7 +4064,7 @@ public class PannelloMisuraMaster extends JPanel
 		// TODO AAA-Pannello Linearita Masse a corredo
 		JPanel pannelloLinearita= new JPanel();
 
-		pannelloLinearita.setBorder(new TitledBorder(new LineBorder(new Color(255, 0, 0), 2, true), "Prova Linearità", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		pannelloLinearita.setBorder(new TitledBorder(new LineBorder(new Color(255, 0, 0), 2, true), "Prova Pesatura", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		pannelloLinearita.setBackground(Color.WHITE);
 		pannelloLinearita.setLayout(new MigLayout("", "[22.00][][grow]", "[][][][][][][][]"));
 
@@ -4288,7 +4299,7 @@ public class PannelloMisuraMaster extends JPanel
 			}
 		
 
-		JLabel lblNewLabel = new JLabel("Prova di Linearità");
+		JLabel lblNewLabel = new JLabel("Prova di Pesatura");
 		lblNewLabel.setFont(new Font("Calibri", Font.BOLD, 14));
 		pannelloLinearita.add(lblNewLabel, "cell 0 0 3 1");
 
@@ -4751,6 +4762,8 @@ public class PannelloMisuraMaster extends JPanel
 						double m0=Double.parseDouble(massa0.toString());
 						double m1=Double.parseDouble(massa1.toString());
 
+						int id_m0=Integer.parseInt(modelLin.getValueAt(0, 11).toString());
+						int id_m1=Integer.parseInt(modelLin.getValueAt(1, 11).toString());
 						
 						if(m0>=m1) 
 						{
@@ -4759,6 +4772,9 @@ public class PannelloMisuraMaster extends JPanel
 							       
 							        modelLin.setValueAt(m1,0, 1);
 							        modelLin.setValueAt(m0,1, 1);
+							        
+							        GestioneMisuraBO.updateValoriLinearitaMassa(m1,id_m0);
+							        GestioneMisuraBO.updateValoriLinearitaMassa(m0,id_m1);
 							        
 							        tableChangedEnabled = true; // Riattiva la reattività della tabella
 						}
@@ -5921,7 +5937,7 @@ public class PannelloMisuraMaster extends JPanel
 								save=false;
 								break;
 							}
-
+/*
 							if(Utility.isDouble(textField_t_inizio.getText()) && Utility.isDouble(textField_t_fine.getText()) && 
 									Utility.isDouble(textField_altezza_org.getText()) && Utility.isDouble(textField_altezza_util.getText())&&
 									Utility.isDouble(textField_latitudine_org.getText()) && Utility.isDouble(textField_latitudine_util.getText())&&
@@ -5938,7 +5954,7 @@ public class PannelloMisuraMaster extends JPanel
 								JOptionPane.showMessageDialog(null,"I campi del tab \" Temperatura & Posizione\" accettano solo valori numerici","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
 								save=false;
 								break;
-							}
+							}*/
 						}
 
 						if(sequence.length()==20 && controlloSequenMutEsclusivo(sequence)==false) 
@@ -6118,7 +6134,7 @@ public class PannelloMisuraMaster extends JPanel
 						{
 							if( chk_btn_linearita==false) 
 							{
-								JOptionPane.showMessageDialog(null,"Cliccare tasto Ricalcola nel tab Linearità","Mancato Salvataggio",JOptionPane.ERROR_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+								JOptionPane.showMessageDialog(null,"Cliccare tasto Ricalcola nel tab Pesatura","Mancato Salvataggio",JOptionPane.ERROR_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
 								return;
 							}
 
@@ -6127,9 +6143,27 @@ public class PannelloMisuraMaster extends JPanel
 						{	
 							if(chk_btn_decentramento==false || chk_btn_linearita==false) 
 							{
-								JOptionPane.showMessageDialog(null,"Cliccare tasto Ricalcola nei tab Decentramento e Linearità","Mancato Salvataggio",JOptionPane.ERROR_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+								JOptionPane.showMessageDialog(null,"Cliccare tasto Ricalcola nei tab Decentramento e Pesatura","Mancato Salvataggio",JOptionPane.ERROR_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
 								return;
 							}
+						}
+						
+						// Controllo Temperatura
+						
+						if(Utility.isDouble(textField_t_inizio.getText()) && Utility.isDouble(textField_t_fine.getText()) && 
+								Utility.isDouble(textField_altezza_org.getText()) && Utility.isDouble(textField_altezza_util.getText())&&
+								Utility.isDouble(textField_latitudine_org.getText()) && Utility.isDouble(textField_latitudine_util.getText())&&
+								Utility.isDouble(textField_res_g_org.getText()) && Utility.isDouble(textField__res_g_util.getText()) && Utility.isDouble(textField_res_gx_gy.getText())) 
+						{
+							if(Double.parseDouble(textField_t_inizio.getText())==0 || Double.parseDouble(textField_t_fine.getText())==0) 
+							{
+								JOptionPane.showMessageDialog(null,"Indicare Temperatura di Inizio e Fine prova","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+								return;
+							}
+						}else 
+						{
+							JOptionPane.showMessageDialog(null,"I campi del tab \" Temperatura & Posizione\" accettano solo valori numerici","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+							return;
 						}
 
 						//Controllo completamento dati
@@ -6202,7 +6236,7 @@ public class PannelloMisuraMaster extends JPanel
 
 				if(strumento.getTipologia()==1) 
 				{
-					/*Controllo solo su Ripetibilità - Decentramento - Linearità*/
+					/*Controllo solo su Ripetibilità - Decentramento - Pesatura*/
 
 					for (int i = 1; i <= comboBox_campo.getItemCount(); i++) {
 
@@ -6259,7 +6293,7 @@ public class PannelloMisuraMaster extends JPanel
 							{	
 								if(linearita.getEsito()==null)
 								{
-									System.out.println("Valori assenti linearità campo "+linearita.getCampo());
+									System.out.println("Valori assenti Pesatura campo "+linearita.getCampo());
 									return false;
 								}
 
@@ -6276,7 +6310,7 @@ public class PannelloMisuraMaster extends JPanel
 				}
 				else 
 				{
-					/*Controllo solo su Ripetibilità - Decentramento - Linearità - Accuratezza - Mobilita*/
+					/*Controllo solo su Ripetibilità - Decentramento - Pesatura - Accuratezza - Mobilita*/
 
 					for (int j = 1; j <= comboBox_campo.getItemCount(); j++) {
 						/*Ripetibilita*/
@@ -6329,13 +6363,13 @@ public class PannelloMisuraMaster extends JPanel
 							{	
 								if(linearita.getEsito()==null)
 								{
-									System.out.println("Valori assenti linearità campo "+linearita.getCampo());
+									System.out.println("Valori assenti Pesatura campo "+linearita.getCampo());
 									return false;
 								}
 
 								if(linearita.getEsito().equals("INCOMPLETO")) 
 								{
-									System.out.println("Valori INCOMPLETI linearità campo "+linearita.getCampo());
+									System.out.println("Valori INCOMPLETI Pesatura campo "+linearita.getCampo());
 									return false;
 								}
 							}

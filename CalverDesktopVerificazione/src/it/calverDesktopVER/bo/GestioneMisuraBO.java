@@ -230,6 +230,12 @@ public class GestioneMisuraBO
 		SQLiteDAO.updateNoteCombinazioni(text,id);
 		
 	}
+
+	public static void updateValoriLinearitaMassa(double m0, int id_m0) throws Exception {
+	
+		SQLiteDAO.updateValoriLinearita(m0,id_m0);
+		
+	}
 	
 }
 
