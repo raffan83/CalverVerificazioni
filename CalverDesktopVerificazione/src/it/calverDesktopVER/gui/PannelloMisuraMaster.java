@@ -165,6 +165,7 @@ public class PannelloMisuraMaster extends JPanel
 	
 	private final Object lock = new Object();
 	private boolean tableChangedEnabled = true;
+	private boolean azzeramentoEnabled = true;
 	
 	
 	JLabel lbl_lettura_fine;
@@ -3043,6 +3044,12 @@ public class PannelloMisuraMaster extends JPanel
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
+				  synchronized (lock) {
+				        if (!azzeramentoEnabled) {
+				            return;
+				        }
+				  }  
 
 				if(comboBox_tipo_azzeramento.getSelectedIndex()==0) 
 				{
@@ -3071,8 +3078,8 @@ public class PannelloMisuraMaster extends JPanel
 				try 
 				{
 					
-					BigDecimal E0 = new BigDecimal(tableLin.getValueAt(0, 1).toString());
-					BigDecimal pt1 = new BigDecimal(tableLin.getValueAt(1, 1).toString());
+					BigDecimal E0 = new BigDecimal(modelLin.getValueAt(0, 1).toString());
+					BigDecimal pt1 = new BigDecimal(modelLin.getValueAt(1, 1).toString());
 					
 					if(pt1.doubleValue()<E0.doubleValue()) 
 					{
@@ -3406,6 +3413,8 @@ public class PannelloMisuraMaster extends JPanel
 		pannelloLinearita.add(comboBox_tipo_azzeramento, "flowx,cell 2 2");
 
 
+		azzeramentoEnabled=false;
+		
 		if(listaLinearita.get(0).getTipoAzzeramento()!=0) 
 		{
 			if(listaLinearita.get(0).getTipoAzzeramento()==1) 
@@ -3417,7 +3426,8 @@ public class PannelloMisuraMaster extends JPanel
 				comboBox_tipo_azzeramento.setSelectedIndex(0);
 			}
 		}
-
+		
+		azzeramentoEnabled=true;
 
 
 		JScrollPane scrollTab = new JScrollPane(tableLin);
