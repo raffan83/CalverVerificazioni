@@ -5947,7 +5947,7 @@ public class PannelloMisuraMaster extends JPanel
 								save=false;
 								break;
 							}
-/*
+
 							if(Utility.isDouble(textField_t_inizio.getText()) && Utility.isDouble(textField_t_fine.getText()) && 
 									Utility.isDouble(textField_altezza_org.getText()) && Utility.isDouble(textField_altezza_util.getText())&&
 									Utility.isDouble(textField_latitudine_org.getText()) && Utility.isDouble(textField_latitudine_util.getText())&&
@@ -5964,7 +5964,7 @@ public class PannelloMisuraMaster extends JPanel
 								JOptionPane.showMessageDialog(null,"I campi del tab \" Temperatura & Posizione\" accettano solo valori numerici","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
 								save=false;
 								break;
-							}*/
+							}
 						}
 
 						if(sequence.length()==20 && controlloSequenMutEsclusivo(sequence)==false) 
