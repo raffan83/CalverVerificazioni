@@ -338,7 +338,7 @@ public class PannelloMisuraMaster extends JPanel
 		JPanel pannelloDatiGenerali = new JPanel();
 		pannelloDatiGenerali.setBorder(new TitledBorder(new LineBorder(new Color(255, 0, 0), 2, true), "Dati Generali", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		pannelloDatiGenerali.setBackground(Color.WHITE);
-		pannelloDatiGenerali.setLayout(new MigLayout("", "[][9.00][][][][]", "[10.00][][10.00][][15:15.00][][15:15.00][30.00][31.00][60px:60px][grow][][][][][][]"));
+		pannelloDatiGenerali.setLayout(new MigLayout("", "[][9.00][][][][]", "[10.00][][10.00][][15:15.00][][15:15.00][30.00][31.00][60px:60px][grow][][][][][20px:n][]"));
 
 		JLabel lblTipoVerifica = new JLabel("Tipo Verifica");
 		lblTipoVerifica.setFont(new Font("Arial", Font.BOLD, 14));
@@ -456,14 +456,14 @@ public class PannelloMisuraMaster extends JPanel
 		textField_sigilli.setColumns(10);
 		pannelloDatiGenerali.add(textField_sigilli, "cell 2 12,width 25:25:25");
 
-		JLabel lblFotoInizioProva = new JLabel("Foto inizio prova");
+		JLabel lblFotoInizioProva = new JLabel("Foto targa matricolare");
 		lblFotoInizioProva.setFont(new Font("Arial", Font.BOLD, 14));
-		pannelloDatiGenerali.add(lblFotoInizioProva, "cell 0 14");
+		pannelloDatiGenerali.add(lblFotoInizioProva, "cell 0 14,aligny bottom");
 
 		textField_foto_inizio = new JTextField();
 		textField_foto_inizio.setFont(new Font("Arial", Font.PLAIN, 12));
 		textField_foto_inizio.setEditable(false);
-		pannelloDatiGenerali.add(textField_foto_inizio, "cell 2 14,growx");
+		pannelloDatiGenerali.add(textField_foto_inizio, "cell 2 14,growx,aligny bottom");
 		textField_foto_inizio.setColumns(10);
 
 		JButton btnCarica_inizio = new JButton("Carica");
@@ -525,8 +525,12 @@ public class PannelloMisuraMaster extends JPanel
 		btnCarica_inizio.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/attach.png")));
 		btnCarica_inizio.setFont(new Font("Arial", Font.BOLD, 12));
 		pannelloDatiGenerali.add(btnCarica_inizio, "flowx,cell 4 14");
+		
+		JLabel lblcontrassegno = new JLabel("+contrassegno");
+		lblcontrassegno.setFont(new Font("Arial", Font.BOLD, 14));
+		pannelloDatiGenerali.add(lblcontrassegno, "cell 0 15,aligny top");
 
-		JLabel lblFotoFineProva = new JLabel("Foto fine prova");
+		JLabel lblFotoFineProva = new JLabel("Foto libretto metrologico");
 		lblFotoFineProva.setFont(new Font("Arial", Font.BOLD, 14));
 		pannelloDatiGenerali.add(lblFotoFineProva, "cell 0 16");
 
@@ -1734,7 +1738,7 @@ public class PannelloMisuraMaster extends JPanel
 							ripetibilita.setCaricoAgg(new BigDecimal(modelRipCorredoEsterno.getValueAt(row, 3).toString()).setScale(risoluzioneBilancia));
 							ripetibilita.setIndicazione(new BigDecimal(modelRipCorredoEsterno.getValueAt(row, 4).toString()).setScale(risoluzioneIndicazione,RoundingMode.HALF_UP));
 
-							ripetibilita.setDeltaPortata(BigDecimal.ZERO.setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP));
+							ripetibilita.setDeltaPortata(deltaPortata.setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP));
 
 							ripetibilita.setMpe(new BigDecimal(textField_mpe_rip.getText()).stripTrailingZeros());
 							ripetibilita.setEsito(esito);
@@ -2244,7 +2248,7 @@ public class PannelloMisuraMaster extends JPanel
 			}
 			if(ver.getCaricoAgg()==null && (strumento.getClasse()>=5 ||strumento.getTipologia()==2)) 
 			{
-				modelDec.setValueAt("0", i, 3);
+				modelDec.setValueAt(BigDecimal.ZERO.setScale(risoluzioneBilanciaE0,RoundingMode.HALF_UP), i, 3);
 			}
 			if(ver.getErrore()!=null) 
 			{
