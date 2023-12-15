@@ -284,6 +284,15 @@ public class SQLiteDAO {
 			
 			try 
 			{
+				strumento.setLuogo_verifica(rs.getInt("luogo_verifica"));	
+				
+			} catch (Exception e) {
+				System.out.println("Manca luogo verifica");
+				strumento.setLuogo_verifica(0);
+			}
+			
+			try 
+			{
 				strumento.setTipo_legalizzazione(rs.getInt("tipo_legalizzazione"));	
 				SessionBO.presenzaLegalizzazione=1;
 			} catch (Exception e) {

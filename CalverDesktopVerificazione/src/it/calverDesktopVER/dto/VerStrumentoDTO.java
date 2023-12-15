@@ -42,6 +42,7 @@ public class VerStrumentoDTO {
 	private String masse_corredo;
 	private int tipologia_indice;
 	private int tipo_legalizzazione=0;
+	private int luogo_verifica;
 
 	public int getId() {
 		return id;
@@ -387,6 +388,12 @@ public class VerStrumentoDTO {
 	}
 	public void setTipo_legalizzazione(int tipo_legalizzazione) {
 		this.tipo_legalizzazione = tipo_legalizzazione;
+	}
+	public int getLuogo_verifica() {
+		return luogo_verifica;
+	}
+	public void setLuogo_verifica(int luogo_verifica) {
+		this.luogo_verifica = luogo_verifica;
 	}	
 	
 }

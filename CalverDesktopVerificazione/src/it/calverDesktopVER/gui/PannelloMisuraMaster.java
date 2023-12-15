@@ -3121,8 +3121,8 @@ public class PannelloMisuraMaster extends JPanel
 
 		int campo=comboBox_campo.getSelectedIndex()+1;
 		
-		BigDecimal primo_punto_variazione = null;
-		BigDecimal secondo_punto_variazione=null;
+		BigDecimal primo_punto_variazione =BigDecimal.ZERO;
+		BigDecimal secondo_punto_variazione=BigDecimal.ZERO;
 
 		for (int i = 0; i <listaLinearita.size(); i++) 
 		{
@@ -5977,6 +5977,14 @@ public class PannelloMisuraMaster extends JPanel
 								break;
 							}
 
+							
+							if(strumento.getLuogo_verifica()==2 && Costanti.gFactor.doubleValue()==1) 
+							{
+								JOptionPane.showMessageDialog(null,"La prova è indicata in \"Altro luogo\" indicare le coordinate e calcolare","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+								save=false;
+								break;
+							}
+							
 							if(Utility.isDouble(textField_t_inizio.getText()) && Utility.isDouble(textField_t_fine.getText()) && 
 									Utility.isDouble(textField_altezza_org.getText()) && Utility.isDouble(textField_altezza_util.getText())&&
 									Utility.isDouble(textField_latitudine_org.getText()) && Utility.isDouble(textField_latitudine_util.getText())&&
