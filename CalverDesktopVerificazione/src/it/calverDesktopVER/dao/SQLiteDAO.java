@@ -1367,7 +1367,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 																"portata_min_C1,portata_max_C1,div_ver_C1,div_rel_C1,numero_div_C1," +
 																"portata_min_C2,portata_max_C2,div_ver_C2,div_rel_C2,numero_div_C2," +
 																"portata_min_C3,portata_max_C3,div_ver_C3,div_rel_C3,numero_div_C3," +
-																"anno_marcatura_CE,data_ms,id_tipologia,freq_mesi,creato,famiglia_strumento,posizione_cambio,masse_corredo,tipo_indicazione) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+																"anno_marcatura_CE,data_ms,id_tipologia,freq_mesi,creato,famiglia_strumento,posizione_cambio,masse_corredo,tipo_indicazione,luogo_verifica) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 																Statement.RETURN_GENERATED_KEYS);
 			
 			
@@ -1407,7 +1407,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			pst.setInt(29, strumento.getPosizioni_cambio());
 			pst.setString(30, strumento.getMasse_corredo());
 			pst.setInt(31, strumento.getTipologia_indice());
-			
+			pst.setInt(32, 0);
 	
 			pst.executeUpdate();
 			

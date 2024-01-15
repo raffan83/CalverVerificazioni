@@ -24,7 +24,7 @@ public class VersionHTTPBO {
 	    public static String checkVersion() {
 
 	        URL url;
-	        String ver = "";
+	        String ver = null;
 	        try {
 	            url = new URL("https://www.calver.it/version.do");
 
