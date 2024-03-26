@@ -6260,10 +6260,6 @@ public class PannelloMisuraMaster extends JPanel
 						}
 
 
-
-
-
-
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

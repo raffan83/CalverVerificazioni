@@ -32,7 +32,8 @@ public class Splash implements Runnable
 		
     	g.setUndecorated(true);
     	
-    	g.setBackground(new Color(1.0f,1.0f,1.0f,0.5f));
+    	//g.setBackground(new Color(1.0f,1.0f,1.0f,0.5f));
+    	g.setBackground(new Color(0, 0, 0, 0)); 
     	Point d=frm.getLocation(); 
       	
         int x = ( frm.getWidth()  - 300) / 2;
