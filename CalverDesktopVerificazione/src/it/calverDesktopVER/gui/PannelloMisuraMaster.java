@@ -4983,17 +4983,23 @@ public class PannelloMisuraMaster extends JPanel
 		comboBox_tipo_azzeramento.setFont(new Font("Arial", Font.PLAIN, 12));
 		pannelloAccuratezza.add(comboBox_tipo_azzeramento, "cell 2 2");
 
-
+		textField_esito_acc = new JTextField();
+		textField_esito_acc.setEditable(false);
+		textField_esito_acc.setBackground(Color.YELLOW);
+		textField_esito_acc.setFont(new Font("Arial", Font.PLAIN, 12));
+		textField_esito_acc.setColumns(10);
+		pannelloAccuratezza.add(textField_esito_acc, "cell 1 6,width :100:");
+		
 		final JScrollPane scrollTab = new JScrollPane(tableAcc);
 
 		pannelloAccuratezza.add(scrollTab, "cell 1 4 2 1,width :800:,height :75:,aligny top");
 
-
+/*
 		if(strumento.getId_tipo_strumento()==5) 
 		{
 			comboBox_tipo_azzeramento.setEnabled(false);
 		}
-
+*/
 		comboBox_tipo_azzeramento.addActionListener(new ActionListener() {
 
 			@Override
@@ -5032,13 +5038,13 @@ public class PannelloMisuraMaster extends JPanel
 					modelAccuratezza.setValueAt("0", 0, 6);
 					modelAccuratezza.setValueAt("0", 0, 1);
 
-					tableAcc.setEnabled(false);
-					scrollTab.setEnabled(false);
+				//	tableAcc.setEnabled(false);
+				//	scrollTab.setEnabled(false);
 
 					textField_esito_acc.setBackground(Color.GREEN);					
 					textField_esito_acc.setText("POSITIVO");
 
-					scrollTab.setEnabled(false);
+				//	scrollTab.setEnabled(false);
 
 
 				}
@@ -5110,9 +5116,9 @@ public class PannelloMisuraMaster extends JPanel
 			{
 				comboBox_tipo_azzeramento.setSelectedIndex(1);
 			}
-			else 
+			else
 			{
-				comboBox_tipo_azzeramento.setSelectedIndex(1);
+				comboBox_tipo_azzeramento.setSelectedIndex(2);
 			}
 		}
 
@@ -5128,12 +5134,7 @@ public class PannelloMisuraMaster extends JPanel
 
 
 
-		textField_esito_acc = new JTextField();
-		textField_esito_acc.setEditable(false);
-		textField_esito_acc.setBackground(Color.YELLOW);
-		textField_esito_acc.setFont(new Font("Arial", Font.PLAIN, 12));
-		textField_esito_acc.setColumns(10);
-		pannelloAccuratezza.add(textField_esito_acc, "cell 1 6,width :100:");
+
 
 		if(ver.getEsito()!=null) 
 		{
