@@ -1340,8 +1340,8 @@ public class PannelloMisuraMaster extends JPanel
 						modelRip.setValueAt(ind.setScale(risoluzioneIndicazione,RoundingMode.FLOOR).toPlainString(),row, 2);
 						return;
 					}
-
-					/*Controllo Risoluzione Massima Carico Aggiuntivo*/
+/*
+					Controllo Risoluzione Massima Carico Aggiuntivo*/
 					if(carico!=null && new BigDecimal(carico.toString()).scale()>risoluzioneBilancia) 
 					{
 						BigDecimal car = new BigDecimal(carico.toString());
@@ -1350,7 +1350,17 @@ public class PannelloMisuraMaster extends JPanel
 						return;
 					}
 
-
+				/*	Controllo eccedenza carico aggiuntivo*/
+					if(carico!=null) 
+					{
+						
+						BigDecimal risol_bil =getE(comboBox_campo.getSelectedIndex(),strumento.getId_tipo_strumento(),new BigDecimal(carico.toString()));
+						
+						if(Double.parseDouble(carico.toString())>risol_bil.doubleValue()) 
+						{
+							JOptionPane.showMessageDialog(null,"Il carico aggiuntivo(ΔL) eccede la divisione di verifica (e)","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+						}
+					}
 					try 
 					{
 						if(indicazione!=null && carico!=null && massa!=null) 
@@ -5979,12 +5989,14 @@ public class PannelloMisuraMaster extends JPanel
 							}
 
 							
-							if(strumento.getLuogo_verifica()==2 && Costanti.gFactor.doubleValue()==1) 
+							if(strumento.getLuogo_verifica()==2 && Costanti.gFactor.doubleValue()==1 && (strumento.getClasse()!=5 && strumento.getClasse()!=6)) 
 							{
 								JOptionPane.showMessageDialog(null,"La prova è indicata in \"Altro luogo\" indicare le coordinate e calcolare","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
 								save=false;
 								break;
 							}
+							
+							
 							
 							if(Utility.isDouble(textField_t_inizio.getText()) && Utility.isDouble(textField_t_fine.getText()) && 
 									Utility.isDouble(textField_altezza_org.getText()) && Utility.isDouble(textField_altezza_util.getText())&&
@@ -6016,6 +6028,14 @@ public class PannelloMisuraMaster extends JPanel
 							JOptionPane.showMessageDialog(null,"Inserire nome riparatore e data riparazione","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
 							return;
 						}
+						
+						if(strumento.getLuogo_verifica()==2 && Costanti.gFactor.doubleValue()==1 && (strumento.getClasse()==5 || strumento.getClasse()==6)) 
+						{
+							JOptionPane.showMessageDialog(null,"La prova è indicata in \"Altro luogo\" ma non sono presenti le coordinate (possibile autocalibrazione)","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+
+							
+						}
+						
 						if(save) {
 							boolean esito = getEsitoControlloPreliminare(sequence.substring(0, sequence.length()-1));
 
