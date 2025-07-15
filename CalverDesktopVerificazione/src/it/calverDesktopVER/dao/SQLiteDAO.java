@@ -2266,9 +2266,10 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 				misura.setgFactor(rs.getDouble("gFactor"));
 				misura.setNoteCombinazioni(rs.getString("note_combinazioni"));
 				
-		//		if (rs.wasNull()) {
-		//			misura.setNumeroSigilli(null);
-		//	    }
+				if(colonnaEsiste(con, "ver_misura", "numeroSigilli_presenti")) { 
+					misura.setNumeroSigilli_presenti(rs.getInt("numeroSigilli_presenti"));
+					misura.setVersione_sw(rs.getString("versione_sw"));
+				}
 			}
 			
 		}
@@ -2333,6 +2334,11 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 				misura.setgOrg(rs.getDouble("gOrg"));
 				misura.setgUtil(rs.getDouble("gUtil"));
 				misura.setgFactor(rs.getDouble("gFactor"));
+				
+				if(colonnaEsiste(con, "ver_misura", "numeroSigilli_presenti")) { 
+					misura.setNumeroSigilli_presenti(rs.getInt("numeroSigilli_presenti"));
+					misura.setVersione_sw(rs.getString("versione_sw"));
+				}
 			}
 			
 		}
@@ -2969,7 +2975,7 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			
 			pst=con.prepareStatement("UPDATE  ver_misura SET data_verificazione=?,data_scadenza=?,tipo_verifica=?,motivo_verifica=?,isDifetti=?,nome_riparatore=?,data_riparazione=?,"
 								  + "tipo_risposta=?,seq_risposte=?,campioni_lavoro=?,numeroSigilli=? ,tInizio=?, tFine=?, altezza_org=?,altezza_util=?,latitudine_org=?,latitudine_util=?,"
-								  + "gOrg=?,gUtil=?,gFactor=? WHERE id=?");
+								  + "gOrg=?,gUtil=?,gFactor=?,numeroSigilli_presenti=?,versione_sw=? WHERE id=?");
 
 			
 			if(misura.getDataVerificazione()!=null && misura.getDataVerificazione().length()>0) 
@@ -3054,8 +3060,9 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 			pst.setDouble(18,misura.getgOrg());
 			pst.setDouble(19,misura.getgUtil());
 			pst.setDouble(20,misura.getgFactor());
-
-			pst.setInt(21, misura.getId());
+			pst.setInt(21,misura.getNumeroSigilli_presenti());
+			pst.setString(22,misura.getVersione_sw());
+			pst.setInt(23, misura.getId());
 
 			pst.execute();		
 			
@@ -3263,6 +3270,26 @@ public static void updateMisuraRDP(int idRecord, String descrizioneCampione, Str
 	}
 
 
+    public static boolean colonnaEsiste(Connection conn, String nomeTabella, String nomeColonna) {
+        // Query PRAGMA per ottenere informazioni sulle colonne della tabella
+        String query = "PRAGMA table_info(" + nomeTabella + ")";
 
+        try (PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            // Scorre i risultati per cercare il nome della colonna
+            while (rs.next()) {
+                String colonna = rs.getString("name");
+                if (colonna.equals(nomeColonna)) {
+                    return true; // La colonna esiste
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false; // La colonna non esiste
+    }
 
 }

@@ -146,7 +146,7 @@ public class PannelloMisuraMaster extends JPanel
 	JComboBox<String> comboBox_motivo=null;
 	private JTextField textField_foto_inizio;
 	private JTextField textField_foto_fine;
-	private JTextField textField_sigilli;
+	private JTextField textField_sigilli_ripristinati;
 	private JComboBox<String> comboBox_nazione;
 	private JTextField textField_t_inizio;
 	private JTextField textField_t_fine;
@@ -169,6 +169,8 @@ public class PannelloMisuraMaster extends JPanel
 	
 	
 	JLabel lbl_lettura_fine;
+	private JTextField textField_numero_sigilli_presenti;
+	private JTextField textField_versione_sw;
 
 	public PannelloMisuraMaster(String id) throws Exception
 	{
@@ -338,7 +340,7 @@ public class PannelloMisuraMaster extends JPanel
 		JPanel pannelloDatiGenerali = new JPanel();
 		pannelloDatiGenerali.setBorder(new TitledBorder(new LineBorder(new Color(255, 0, 0), 2, true), "Dati Generali", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		pannelloDatiGenerali.setBackground(Color.WHITE);
-		pannelloDatiGenerali.setLayout(new MigLayout("", "[][9.00][][][][]", "[10.00][][10.00][][15:15.00][][15:15.00][30.00][31.00][60px:60px][grow][][][][][20px:n][]"));
+		pannelloDatiGenerali.setLayout(new MigLayout("", "[][9.00][grow][][][][grow]", "[10.00][][10.00][][15:15.00][][15:15.00][30.00][31.00][60px:60px][grow][][][][][][20px:n][]"));
 
 		JLabel lblTipoVerifica = new JLabel("Tipo Verifica");
 		lblTipoVerifica.setFont(new Font("Arial", Font.BOLD, 14));
@@ -447,23 +449,41 @@ public class PannelloMisuraMaster extends JPanel
 		btnElimina.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/delete.png")));
 		pannelloDatiGenerali.add(btnElimina, "cell 4 10,aligny top");
 
-		JLabel lblNumeroSigilli = new JLabel("Numero sigilli");
+		JLabel lblNumeroSigilli = new JLabel("Numero sigilli ripristinati");
 		lblNumeroSigilli.setFont(new Font("Arial", Font.BOLD, 14));
 		pannelloDatiGenerali.add(lblNumeroSigilli, "cell 0 12");
 
-		textField_sigilli = new JTextField();
-		textField_sigilli.setFont(new Font("Arial", Font.PLAIN, 12));
-		textField_sigilli.setColumns(10);
-		pannelloDatiGenerali.add(textField_sigilli, "cell 2 12,width 25:25:25");
+		textField_sigilli_ripristinati = new JTextField();
+		textField_sigilli_ripristinati.setFont(new Font("Arial", Font.PLAIN, 12));
+		textField_sigilli_ripristinati.setColumns(10);
+		pannelloDatiGenerali.add(textField_sigilli_ripristinati, "cell 2 12,width 25:25:25");
+		
+		JLabel lblNumeroSigilliRipristinati = new JLabel("Numero sigilli presenti");
+		lblNumeroSigilliRipristinati.setFont(new Font("Arial", Font.BOLD, 14));
+		pannelloDatiGenerali.add(lblNumeroSigilliRipristinati, "cell 0 13");
+		
+		textField_numero_sigilli_presenti = new JTextField();
+		textField_numero_sigilli_presenti.setFont(new Font("Arial", Font.PLAIN, 12));
+		textField_numero_sigilli_presenti.setColumns(10);
+		pannelloDatiGenerali.add(textField_numero_sigilli_presenti, "cell 2 13,width 25:25:25");
+		
+		JLabel lblVersioneSoftware = new JLabel("Versione software");
+		lblVersioneSoftware.setFont(new Font("Arial", Font.BOLD, 14));
+		pannelloDatiGenerali.add(lblVersioneSoftware, "cell 0 14");
+		
+		textField_versione_sw = new JTextField();
+		textField_versione_sw.setFont(new Font("Arial", Font.PLAIN, 12));
+		textField_versione_sw.setColumns(10);
+		pannelloDatiGenerali.add(textField_versione_sw, "cell 2 14,width 100:100:100");
 
 		JLabel lblFotoInizioProva = new JLabel("Foto targa matricolare");
 		lblFotoInizioProva.setFont(new Font("Arial", Font.BOLD, 14));
-		pannelloDatiGenerali.add(lblFotoInizioProva, "cell 0 14,aligny bottom");
+		pannelloDatiGenerali.add(lblFotoInizioProva, "cell 0 15,aligny bottom");
 
 		textField_foto_inizio = new JTextField();
 		textField_foto_inizio.setFont(new Font("Arial", Font.PLAIN, 12));
 		textField_foto_inizio.setEditable(false);
-		pannelloDatiGenerali.add(textField_foto_inizio, "cell 2 14,growx,aligny bottom");
+		pannelloDatiGenerali.add(textField_foto_inizio, "cell 2 15,growx,aligny bottom");
 		textField_foto_inizio.setColumns(10);
 
 		JButton btnCarica_inizio = new JButton("Carica");
@@ -524,21 +544,21 @@ public class PannelloMisuraMaster extends JPanel
 		});
 		btnCarica_inizio.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/attach.png")));
 		btnCarica_inizio.setFont(new Font("Arial", Font.BOLD, 12));
-		pannelloDatiGenerali.add(btnCarica_inizio, "flowx,cell 4 14");
+		pannelloDatiGenerali.add(btnCarica_inizio, "flowx,cell 4 15");
 		
 		JLabel lblcontrassegno = new JLabel("+contrassegno");
 		lblcontrassegno.setFont(new Font("Arial", Font.BOLD, 14));
-		pannelloDatiGenerali.add(lblcontrassegno, "cell 0 15,aligny top");
+		pannelloDatiGenerali.add(lblcontrassegno, "cell 0 16,aligny top");
 
 		JLabel lblFotoFineProva = new JLabel("Foto libretto metrologico");
 		lblFotoFineProva.setFont(new Font("Arial", Font.BOLD, 14));
-		pannelloDatiGenerali.add(lblFotoFineProva, "cell 0 16");
+		pannelloDatiGenerali.add(lblFotoFineProva, "cell 0 17");
 
 		textField_foto_fine = new JTextField();
 		textField_foto_fine.setFont(new Font("Arial", Font.PLAIN, 12));
 		textField_foto_fine.setEditable(false);
 		textField_foto_fine.setColumns(10);
-		pannelloDatiGenerali.add(textField_foto_fine, "cell 2 16,growx");
+		pannelloDatiGenerali.add(textField_foto_fine, "cell 2 17,growx");
 
 
 		btnVisualizza_inizio.addActionListener(new ActionListener() {
@@ -570,7 +590,7 @@ public class PannelloMisuraMaster extends JPanel
 		});
 		btnVisualizza_inizio.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/search_24.png")));
 		btnVisualizza_inizio.setFont(new Font("Arial", Font.BOLD, 12));
-		pannelloDatiGenerali.add(btnVisualizza_inizio, "cell 4 14");
+		pannelloDatiGenerali.add(btnVisualizza_inizio, "cell 4 15");
 
 		JButton btnCarica_fine = new JButton("Carica");
 		final JButton btnVisualizza_fine = new JButton("Visualizza");
@@ -657,10 +677,10 @@ public class PannelloMisuraMaster extends JPanel
 
 		btnCarica_fine.setIcon(new ImageIcon(PannelloMisuraMaster.class.getResource("/image/attach.png")));
 		btnCarica_fine.setFont(new Font("Arial", Font.BOLD, 12));
-		pannelloDatiGenerali.add(btnCarica_fine, "flowx,cell 4 16");
+		pannelloDatiGenerali.add(btnCarica_fine, "flowx,cell 4 17");
 
 
-		pannelloDatiGenerali.add(btnVisualizza_fine, "cell 4 16");
+		pannelloDatiGenerali.add(btnVisualizza_fine, "cell 4 17");
 
 
 		btnElimina.addActionListener(new ActionListener() {
@@ -804,9 +824,27 @@ public class PannelloMisuraMaster extends JPanel
 
 		if(misura.getNumeroSigilli()!=null) 
 		{
-			textField_sigilli.setText(""+misura.getNumeroSigilli());
+			textField_sigilli_ripristinati.setText(""+misura.getNumeroSigilli());
 		}
 
+		if(misura.getNumeroSigilli_presenti()!=null) 
+		{
+			textField_numero_sigilli_presenti.setText(""+misura.getNumeroSigilli_presenti());
+		}
+		
+		
+		if(misura.getTipoRisposte()==0) 
+		{
+			textField_versione_sw.setVisible(false);
+			lblVersioneSoftware.setVisible(false);
+		}
+		else 
+		{
+			if(misura.getVersione_sw()!=null) 
+			{
+				textField_versione_sw.setText(misura.getVersione_sw());
+			}
+		}
 
 		return pannelloDatiGenerali;
 	}
@@ -5976,16 +6014,42 @@ public class PannelloMisuraMaster extends JPanel
 								break;
 							}
 
-							if(Utility.isNumber(textField_sigilli.getText())) 
+							if(Utility.isNumber(textField_sigilli_ripristinati.getText())) 
 							{
-								textField_sigilli.setBackground(Color.WHITE);
+								textField_sigilli_ripristinati.setBackground(Color.WHITE);
 							}
 							else 
 							{
-								textField_sigilli.setBackground(Color.red);
-								JOptionPane.showMessageDialog(null,"Indicare numero sigilli","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+								textField_sigilli_ripristinati.setBackground(Color.red);
+								JOptionPane.showMessageDialog(null,"Indicare numero sigilli ripristinati","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
 								save=false;
 								break;
+							}
+							
+							if(Utility.isNumber(textField_numero_sigilli_presenti.getText())) 
+							{
+								textField_numero_sigilli_presenti.setBackground(Color.WHITE);
+							}
+							else 
+							{
+								textField_numero_sigilli_presenti.setBackground(Color.red);
+								JOptionPane.showMessageDialog(null,"Indicare numero sigilli presenti","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+								save=false;
+								break;
+							}
+							
+							if(misura.getTipoRisposte()==1) 
+							{
+								if(textField_versione_sw.getText().length()!=0 ) 
+								{ 
+									textField_versione_sw.setBackground(Color.WHITE);
+								}else 
+								{
+									textField_versione_sw.setBackground(Color.red);
+									JOptionPane.showMessageDialog(null,"Indicare la versione software della bilancia","Attenzione",JOptionPane.WARNING_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/attention.png")));
+									save=false;
+									break;
+								}
 							}
 
 							
@@ -6073,7 +6137,8 @@ public class PannelloMisuraMaster extends JPanel
 								}
 
 								misura.setCampioniLavoro(componiCampioni(dlm));
-								misura.setNumeroSigilli(Integer.parseInt(textField_sigilli.getText()));
+								misura.setNumeroSigilli(Integer.parseInt(textField_sigilli_ripristinati.getText()));
+								misura.setNumeroSigilli_presenti(Integer.parseInt(textField_numero_sigilli_presenti.getText()));
 								misura.setTipoRisposte(comboBox_nazione.getSelectedIndex());
 
 								misura.settInizio(Double.parseDouble(textField_t_inizio.getText()));
@@ -6089,6 +6154,14 @@ public class PannelloMisuraMaster extends JPanel
 								misura.setgUtil(Double.parseDouble(textField__res_g_util.getText()));
 								misura.setgFactor(Double.parseDouble(textField_res_gx_gy.getText()));
 
+								if(misura.getTipoRisposte()==1) 
+								{
+									misura.setVersione_sw(textField_versione_sw.getText());
+								}else 
+								{
+									misura.setVersione_sw("");
+								}
+								
 								GestioneMisuraBO.updateMisura(misura);
 								JOptionPane.showMessageDialog(null, "Salvataggio dati completato ","Salvataggio",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/confirm.png")));
 							}else 
@@ -6098,7 +6171,7 @@ public class PannelloMisuraMaster extends JPanel
 						}
 					}else 
 					{
-						if(comboBox_tipo_verifica.getSelectedIndex()>0 && comboBox_motivo.getSelectedIndex()>0 && Utility.isNumber(textField_sigilli.getText()))
+						if(comboBox_tipo_verifica.getSelectedIndex()>0 && comboBox_motivo.getSelectedIndex()>0 && Utility.isNumber(textField_sigilli_ripristinati.getText()))
 						{
 							misura.setTipo_verifica(comboBox_tipo_verifica.getSelectedIndex());
 							misura.setMotivo_verifica(comboBox_motivo.getSelectedIndex());
@@ -6110,7 +6183,7 @@ public class PannelloMisuraMaster extends JPanel
 							}
 
 							misura.setIs_difetti("S");
-							misura.setNumeroSigilli(Integer.parseInt(textField_sigilli.getText()));
+							misura.setNumeroSigilli(Integer.parseInt(textField_sigilli_ripristinati.getText()));
 							GestioneMisuraBO.updateMisura(misura);
 							JOptionPane.showMessageDialog(null, "Salvataggio dati completato \n(attenzione:la bilancia presenta difetti)","Salvataggio",JOptionPane.INFORMATION_MESSAGE,new ImageIcon(PannelloTOP.class.getResource("/image/confirm.png")));
 						}else 

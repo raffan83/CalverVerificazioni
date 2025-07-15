@@ -34,7 +34,11 @@ public class VerMisuraDTO {
 	private String seqRisposte;
 	
 	private Integer numeroSigilli;
+	
+	private Integer numeroSigilli_presenti;
 
+	private String versione_sw;
+	
 	private List<VerDecentramentoDTO> verDecentramentos;
 
 	private List<VerRipetibilitaDTO> verRipetibilitas;
@@ -130,6 +134,24 @@ public class VerMisuraDTO {
 
 	public void setNumeroSigilli(Integer numeroSigilli) {
 		this.numeroSigilli = numeroSigilli;
+	}
+
+	
+
+	public Integer getNumeroSigilli_presenti() {
+		return numeroSigilli_presenti;
+	}
+
+	public void setNumeroSigilli_presenti(Integer numeroSigilli_presenti) {
+		this.numeroSigilli_presenti = numeroSigilli_presenti;
+	}
+
+	public String getVersione_sw() {
+		return versione_sw;
+	}
+
+	public void setVersione_sw(String versione_sw) {
+		this.versione_sw = versione_sw;
 	}
 
 	public String getDataVerificazione() {
